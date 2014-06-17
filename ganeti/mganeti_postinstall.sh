@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #input for node and cluster
-CLUSTERNAME="$1"
-NODEIP="$2"
-NODENAME="$3"
+CLUSTERNAME="$0"
+NODEIP="$1"
+NODENAME="$2"
 
 #setup key pair for cluster
 sudo ssh-keygen
