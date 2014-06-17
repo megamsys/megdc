@@ -1,0 +1,30 @@
+#!/bin/bash
+#Add sshkeys in vm's
+
+#GWM_SSHKEYS="/usr/share/ganeti/misc/sshkeys.py"
+GWM_HOST="192.168.2.13:9869"
+instance=$INSTANCE_NAME
+
+end_args=$instance
+#args="$GWM_HOST $end_args"
+TMPFILE="$TARGET/tmp/$instance"
+# This line is the entire sshkeys.py command with args
+
+#install openssh server
+#apt-get install openssh-server -y
+
+mkdir $TARGET/root/.ssh
+#AUTHORIZED_KEYS = $TARGET/root/.ssh/authorized_keys
+#$GWM_SSHKEYS $args > $TMPFILE
+curl -X GET -d "username=superuser&password=Gomeg4ganeti&instance_name=${instance}" $GWM_HOST/keys/template > $TMPFILE
+if [ $? -eq 0 ] # Did the command work?
+then # Success
+    cat $TMPFILE > $TARGET/root/.ssh/authorized_keys
+    rm -rf $TMPFILE
+else # Fail
+     cat $TMPFILE > $TARGET/root/response
+     echo "An error occured. Error: \n"
+     rm -rf $TMPFILE
+fi
+
+
