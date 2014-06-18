@@ -21,7 +21,7 @@ then # Success
     rm -rf $TMPFILE
 else # Fail
      cat $TMPFILE > $TARGET/root/response
-     echo "An error occured. Error: SSH key file creation was failed"
+     echo "An error occured. Error: \n"
      rm -rf $TMPFILE
 fi
 
