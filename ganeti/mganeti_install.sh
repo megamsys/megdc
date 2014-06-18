@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #download ganeti package
+#install ganeti deb package
 wget http://downloads.ganeti.org/releases/2.11/ganeti-2.11.0~rc1.tar.gz
 tar xvzf ganeti-2.11.0.tar.gz
 cd ganeti-2.11.0

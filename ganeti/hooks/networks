@@ -1,0 +1,56 @@
+#!/bin/bash
+if [ -z "$TARGET" -o ! -d "$TARGET" ]; then
+  echo "Missing target directory"
+  exit 1
+fi
+
+if [ ! -d "$TARGET/etc/network" ]; then
+  echo "Missing target network directory"
+  exit 1
+fi
+
+if [ -z "$NIC_COUNT" ]; then
+  echo "Missing NIC COUNT"
+  exit 1
+fi
+
+if [ "$NIC_COUNT" -gt 0 ]; then
+
+instance=$INSTANCE_NAME
+[ -n "$instance" ] || exit 1
+nic_count=$((NIC_COUNT - 1))
+mac_var="NIC_${nic_count}_MAC"
+echo $mac_var
+nic_ip="NIC_${nic_count}_IP"
+ip=${!nic_ip}
+echo $nic_count
+mac=${!mac_var}
+echo $mac
+  cat > $TARGET/etc/network/interfaces <<EOF
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+auto lo
+iface lo inet loopback
+
+auto eth0 
+iface eth0 inet dhcp
+
+auto eth0:1
+iface eth0:1 inet static
+  address $ip
+  netmask 255.255.255.0
+  
+EOF
+fi
+
+DAEMON_PID_FILES="/var/run/dnsmasq.pid /var/run/dnsmasq/dnsmasq.pid"
+echo "dhcp-host=$mac,$ip" >> /etc/dnsmasq.d/$instance.conf
+#echo "# Bind to only one interface" >> /etc/dnsmasq.d/$instance.conf
+#echo "bind-interfaces" >> /etc/dnsmasq.d/$instance.conf
+#echo "# Choose interface for binding" >> /etc/dnsmasq.d/$instance.conf
+#echo "interface=eth0" >> /etc/dnsmasq.d/$instance.conf
+#echo "# Specify range of IP addresses for DHCP leasses" >> /etc/dnsmasq.d/$instance.conf
+#echo "dhcp-range=$ip,$ip" >> /etc/dnsmasq.d/$instance.conf
+
+
