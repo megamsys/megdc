@@ -53,18 +53,18 @@ ifndef GOPATH
 endif
 #ifneq ($(subst ~,$(HOME),$(GOPATH))/src/github.com/*/gulp, $(PWD))
 #	@echo "FATAL: you must clone gulp inside your GOPATH To do so,"
-#	@echo "       you can run go get github.com/megamsys/gulp/..."
-#	@echo "       or clone it manually to the dir $(GOPATH)/src/github.com/megamsys/gulp"
+#	@echo "       you can run go get github.com/megamsys/cloudinabox/..."
+#	@echo "       or clone it manually to the dir $(GOPATH)/src/github.com/megamsys/cloudinabox"
 #	@exit 1
 #endif
 
 clean:
 	@/bin/rm -f -r $(CIBCODE_HOME)/pkg	
 	@go list -f '{{range .TestImports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/gulp' |\
+		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
 		sort | uniq | xargs -I{} rm -f -r $(CIBCODE_HOME)/src/{}	
 	@go list -f '{{range .Imports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/gulp' |\
+		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
 		sort | uniq | xargs -I{} rm -f -r $(CIBCODE_HOME)/src/{} 
 	@/bin/echo "Clean ...ok"
 
@@ -82,7 +82,7 @@ bzr:
 get-test:
 	@/bin/echo -n "Installing test dependencies... "
 	@go list -f '{{range .TestImports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cib' |\
+		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
 		sort | uniq | xargs go get -u >/tmp/.get-test 2>&1 || (cat /tmp/.get-test && exit 1)	
 	@/bin/echo "ok"
 	@rm -f /tmp/.get-test
@@ -90,7 +90,7 @@ get-test:
 get-prod:
 	@/bin/echo -n "Installing production dependencies... "
 	@go list -f '{{range .Imports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cib' |\
+		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
 		sort | uniq | xargs go get -u >/tmp/.get-prod 2>&1 || (cat /tmp/.get-prod && exit 1)
 	@/bin/echo "ok"
 	@rm -f /tmp/.get-prod

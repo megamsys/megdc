@@ -29,7 +29,7 @@ const (
 	header  = "Supported-Gulp"
 )
 
-const defaultConfigPath = "conf/gulpd.conf"
+const defaultConfigPath = "conf/cib.conf"
 
 func buildManager(name string) *cmd.Manager {
 	m := cmd.BuildBaseManager(name, version, header)

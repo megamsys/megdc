@@ -1,7 +1,6 @@
 package amqp
 
 import (
-	"github.com/megamsys/gulp/safe"
 	"launchpad.net/gocheck"
 	"time"
 )
