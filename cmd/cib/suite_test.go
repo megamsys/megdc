@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"github.com/indykish/gulp/cmd"
+	"github.com/megamsys/cloudinabox/cmd"
 	"launchpad.net/gocheck"
 	"os"
 	"os/exec"

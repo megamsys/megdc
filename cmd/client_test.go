@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"bytes"
-	ttesting "github.com/indykish/gulp/cmd/testing"
+	ttesting "github.com/megamsys/cloudinabox/cmd/testing"
 	"launchpad.net/gocheck"
 	"net/http"
 )

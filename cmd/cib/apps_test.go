@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"github.com/indykish/gulp/cmd"
-	"github.com/indykish/gulp/cmd/testing"
+	"github.com/megamsys/cloudinabox/cmd"
+	"github.com/megamsys/cloudinabox/cmd/testing"
 //	"io/ioutil"
 	"launchpad.net/gocheck"
 	"net/http"
@@ -22,7 +22,7 @@ func (s *S) TestAppStartInfo(c *gocheck.C) {
 
 func (s *S) TestAppStart(c *gocheck.C) {
 	var stdout, stderr bytes.Buffer
-//	result := `{"status":"success", "repository_url":"git@github.com/indykish:nilavu.git"}`
+//	result := `{"status":"success", "repository_url":"git@github.com/megamsys:nilavu.git"}`
 	expected := `App "ble.megam.co" is being started!
 Use appreqs list to check the status of the app.` + "\n"
 	context := cmd.Context{
