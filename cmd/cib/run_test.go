@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/indykish/gulp/cmd"
+	"github.com/megamsys/cloudinabox/cmd"
 	"launchpad.net/gocheck"
 )
 

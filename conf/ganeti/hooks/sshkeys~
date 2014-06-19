@@ -16,7 +16,6 @@ TMPFILE="$TARGET/tmp/$instance"
 mkdir $TARGET/root/.ssh
 #curl -X GET -d "username=superuser&password=Gomeg4ganeti&instance_name=${instance}" $GWM_HOST/keys/template > $TMPFILE
 curl -X GET -d "username=${USERNAME}&password=${PASSWORD}&instance_name=${instance}" $GWM_HOST/keys/template > $TMPFILE
-
 if [ $? -eq 0 ] # Did the command work?
 then # Success
     cat $TMPFILE > $TARGET/root/.ssh/authorized_keys

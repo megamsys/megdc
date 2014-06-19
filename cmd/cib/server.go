@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/indykish/gulp/amqp"
-	"github.com/indykish/gulp/app"
+	"github.com/megamsys/cloudinabox/amqp"
+	"github.com/megamsys/cloudinabox/app"
 	"log"
 	"os"
 	"os/signal"
