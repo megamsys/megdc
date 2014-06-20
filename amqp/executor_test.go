@@ -1,6 +1,7 @@
 package amqp
 
 import (
+    "github.com/megamsys/cloudinabox/safe"
 	"launchpad.net/gocheck"
 	"time"
 )

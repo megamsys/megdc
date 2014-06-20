@@ -2,11 +2,9 @@ package app
 
 import (
 	"encoding/json"
-	"log"
 	"github.com/megamsys/cloudinabox/fs"	
-	"github.com/megamsys/cloudinabox/action"	
-	"github.com/megamsys/cloudinabox/app/bind"
-	"github.com/megamsys/cloudinabox/db"
+	"github.com/megamsys/cloudinabox/action"
+	"github.com/megamsys/cloudinabox/app/bind"	
 	"regexp"
 )
 
@@ -37,12 +35,14 @@ type App struct {
 //the following keys: name, framework, teams, units, repository and ip.
 func (app *App) MarshalJSON() ([]byte, error) {
 	result := make(map[string]interface{})
-	result["name"] = app.Name
-	result["platform"] = app.Platform
-	//result["repository"] = repository.ReadWriteURL(app.Name)
-	result["ip"] = app.Ip
-	result["cname"] = app.CName
-	result["launched"] = app.State == "launched"
+	result["email"] = app.Email
+	result["api_key"] = app.ApiKey
+	result["install_package"] = app.InstallPackage
+	result["need_megam"] = app.NeedMegam
+	result["cluster_name"] = app.ClusterName
+	result["node_ip"] = app.NodeIp
+	result["node_name"] = app.NodeName
+	result["action"] = app.Action
 	return json.Marshal(&result)
 }
 
@@ -116,7 +116,7 @@ func Remove(app *App) error {
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(app)
 	if err != nil {
-		return &AppLifecycleError{app: app.Name, Err: err}
+		return &AppLifecycleError{app: app.ClusterName, Err: err}
 	}
 	return nil
 }
@@ -124,13 +124,13 @@ func Remove(app *App) error {
 //
 // verify needed packages
 //
-func install(app *App) error {
+func Install(app *App) error {
 	actions := []*action.Action{&install}
 
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(app)
 	if err != nil {
-		return &AppLifecycleError{app: app.Name, Err: err}
+		return &AppLifecycleError{app: app.ClusterName, Err: err}
 	}
 	return nil
 }
