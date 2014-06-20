@@ -114,13 +114,25 @@ func Factory() (QFactory, error) {
 //
 // For example, the action "NSTART" could receive one argument: the
 // name of the app for which the app will be stopped.
-type Message struct {
+/*type Message struct {
 	Action string //action NSTART, NSTOP, NRESTART etc.
 	Args   string //any arguments as deemed fit.
 	Id     string //the id in Riak which starts like RIP..
 	mid    uint64 //a counter incremented each time the msg is received.
 	delete bool
-}
+}*/
+type Message struct {
+    Email              string 
+	ApiKey             string 
+	InstallPackage     string 
+	NeedMegam          string 
+	ClusterName        string 
+	NodeIp             string 
+	NodeName           string 
+	Action             string 
+	delete             bool
+	Args               string
+}	
 
 // Delete deletes the message from the queue.
 func (m *Message) Delete() {
