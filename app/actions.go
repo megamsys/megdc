@@ -1,21 +1,13 @@
 package app
 
 import (
-    "encoding/json"
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/tsuru/config"
 	"github.com/megamsys/cloudinabox/action"
 	"github.com/megamsys/cloudinabox/exec"
 	"log"
-	"text/template"
-	"path"
-	"bufio"
 	"strings"
-	"regexp"
-	"os"
-	"bitbucket.org/kardianos/osext"
 )
 
 const (
@@ -96,57 +88,57 @@ var remove = action.Action{
 		}
 		switch app.InstallPackage {
 		case "Ganeti":
-		         app.command = ganetiverify
-		         cmd, err := CommandExecutor(&app)
-		         if err != nil {
-			         log.Printf("Ganeti install pre verification failed %s", err)
+		         app.Command = ganetiverify
+		         _, verify_err := CommandExecutor(&app)
+		         if verify_err != nil {
+			         log.Printf("Ganeti install pre verification failed %s", verify_err)
 			         return nil, errors.New("Ganeti install pre verification failed")
 		          }
-		         app.command = ganetipreinstall
-		         cmd, err := CommandExecutor(&app)
-		         if err != nil {
-			         log.Printf("Ganeti pre installation failed %s", err)
+		         app.Command = ganetipreinstall
+		         _, preinstall_err := CommandExecutor(&app)
+		         if preinstall_err != nil {
+			         log.Printf("Ganeti pre installation failed %s", preinstall_err)
 			         return nil, errors.New("Ganeti pre installation failed")
 		         }
-		         app.command = ganetiinstall
-		         cmd, err := CommandExecutor(&app)
-		         if err != nil {
-			         log.Printf("Ganeti installation failed %s", err)
+		         app.Command = ganetiinstall
+		         _, install_err := CommandExecutor(&app)
+		         if install_err != nil {
+			         log.Printf("Ganeti installation failed %s", install_err)
 			         return nil, errors.New("Ganeti installation failed")
 		         }
-		         app.command = ganetipostinstall
-		         cmd, err := CommandExecutor(&app)
-		         if err != nil {
-			         log.Printf("Ganeti post installation failed %s", err)
+		         app.Command = ganetipostinstall
+		         cmd, postinstall_err := CommandExecutor(&app)
+		         if postinstall_err != nil {
+			         log.Printf("Ganeti post installation failed %s", postinstall_err)
 			         return nil, errors.New("Ganeti post installation failed")
 		         }
-		      return cmd, err
+		      return cmd, postinstall_err
 		 case "Opennebula":
-		        app.command = opennebulaverify
-		        cmd, err := CommandExecutor(&app)
-		        if err != nil {
-			        log.Printf("Opennebula install pre verification failed %s", err)
+		        app.Command = opennebulaverify
+		        _, nverify_err := CommandExecutor(&app)
+		        if nverify_err != nil {
+			        log.Printf("Opennebula install pre verification failed %s", nverify_err)
 			        return nil, errors.New("Opennebula install pre verification failed")
 		        }
-		        app.command = opennebulapreinstall
-		        cmd, err := CommandExecutor(&app)
-		        if err != nil {
-			        log.Printf("Opennebula pre installation failed %s", err)
+		        app.Command = opennebulapreinstall
+		        _, npreinstall_err := CommandExecutor(&app)
+		        if npreinstall_err != nil {
+			        log.Printf("Opennebula pre installation failed %s", npreinstall_err)
 			        return nil, errors.New("Opennebula pre installation failed")
 		        }
-		        app.command = opennebulainstall
-		        cmd, err := CommandExecutor(&app)
-		        if err != nil {
-			        log.Printf("Opennebula installation failed %s", err)
+		        app.Command = opennebulainstall
+		        _, ninstall_err := CommandExecutor(&app)
+		        if ninstall_err != nil {
+			        log.Printf("Opennebula installation failed %s", ninstall_err)
 			        return nil, errors.New("Opennebula installation failed")
 		        }
-		        app.command = opennebulapostinstall
-		        cmd, err := CommandExecutor(&app)
-		        if err != nil {
-			        log.Printf("Opennebula post installation failed %s", err)
+		        app.Command = opennebulapostinstall
+		        cmd, npostinstall_err := CommandExecutor(&app)
+		        if npostinstall_err != nil {
+			        log.Printf("Opennebula post installation failed %s", npostinstall_err)
 			        return nil, errors.New("Opennebula post installation failed")
 		        }
-		     return cmd, err
+		     return cmd, npostinstall_err
 		 default:
 			return nil, errors.New("Wrong package name.")
 		}

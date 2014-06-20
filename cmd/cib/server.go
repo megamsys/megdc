@@ -86,125 +86,31 @@ func handle(msg *amqp.Message) {
 	log.Printf("Handling message %v", msg)
 
 	switch strings.ToLower(msg.Action) {
-	case restartApp:
+	case "install":
 		if len(msg.Args) < 1 {
 			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
 		}
 		//stick the id from msg.
-		ap := app.App{Name: "myapp", Id: "RIPAB"}
+		ap := app.App{Email: "myapp", ApiKey: "RIPAB"}
 
-		if err := ap.Get(msg.Id); err != nil {
-			log.Printf("Error handling %q: Riak didn't cooperate:\n%s.", msg.Action, err)
+		if err := app.Install(&ap); err != nil {
+			log.Printf("Error handling %q: Installation process failed:\n%s.", msg.Action, err)
 			return
-		}
-				
-		log.Printf("Handling message %#v", ap.GetAppReqs())
-		err := app.StopApp(&ap)
-		if err != nil {
-			log.Printf("Error handling %q. App failed to stop:\n%s.", msg.Action, err)
-			return
-		}
-		
-		err = app.StartApp(&ap)
-		if err != nil {
-			log.Printf("Error handling %q. App failed to start:\n%s.", msg.Action, err)
-			return
-		}
+		}		
 
 		msg.Delete()
 		break
-	case startApp:
+	case "remove":
 		if len(msg.Args) < 1 {
 			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
 		}
 		//stick the id from msg.
-		ap := app.App{Name: "myapp", Id: "RIPAB"}
+		ap := app.App{Email: "myapp", ApiKey: "RIPAB"}
 
-		if err := ap.Get(msg.Id); err != nil {
-			log.Printf("Error handling %q: Riak didn't cooperate:\n%s.", msg.Action, err)
+		if err := app.Remove(&ap); err != nil {
+			log.Printf("Error handling %q: Remove process failed:\n%s.", msg.Action, err)
 			return
-		}
-		log.Printf("Handling message %#v", ap.GetAppReqs())
-		err := app.StartApp(&ap)
-		if err != nil {
-			log.Printf("Error handling %q. App failed to start:\n%s.", msg.Action, err)
-			return
-		}
-		msg.Delete()
-		break
-	case stopApp:
-		if len(msg.Args) < 1 {
-			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
-		}
-		//stick the id from msg.
-		ap := app.App{Name: "myapp", Id: "RIPAB"}
-
-		if err := ap.Get(msg.Id); err != nil {
-			log.Printf("Error handling %q: Riak didn't cooperate:\n%s.", msg.Action, err)
-			return
-		}
-		log.Printf("Handling message %#v", ap.GetAppReqs())
-		err := app.StopApp(&ap)
-		if err != nil {
-			log.Printf("Error handling %q. App failed to stop:\n%s.", msg.Action, err)
-			return
-		}
-
-		msg.Delete()
-		break	
-	case buildApp:
-		if len(msg.Args) < 1 {
-			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
-		}
-		//stick the id from msg.
-		ap := app.App{Name: "myapp", Id: "RIPAB"}
-
-		if err := ap.Get(msg.Id); err != nil {
-			log.Printf("Error handling %q: Riak didn't cooperate:\n%s.", msg.Action, err)
-			return
-		}
-		log.Printf("Handling message %#v", ap.GetAppReqs())
-		err := app.BuildApp(&ap)
-		if err != nil {
-			log.Printf("Error handling %q. App failed to build:\n%s.", msg.Action, err)
-			return
-		}
-
-		msg.Delete()
-		break
-	case runningApp:
-		if len(msg.Args) < 1 {
-			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
-		}
-		//stick the i
-		ap := app.App{Name: msg.Id, Id: "RIPAB"}
-
-		log.Printf("Handling message %#v", ap.Name)
-		err := app.LaunchedApp(&ap)
-		if err != nil {
-			log.Printf("Error handling %q. App failed to launch:\n%s.", msg.Action, err)
-			return
-		}
-
-		msg.Delete()
-		break	
-    case addonApp: 
-       if len(msg.Args) < 1 {
-			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
-		}
-		ap := app.App{Name: "myapp", Id: "RIPAB", Type: "addon"}
-		
-		if err := ap.Get(msg.Id); err != nil {
-			log.Printf("Error handling %q: Riak didn't cooperate:\n%s.", msg.Action, err)
-			return
-		}
-		
-		log.Printf("Handling message %#v", ap.GetAppConf())
-		err := app.AddonApp(&ap)
-		if err != nil {
-			log.Printf("Error handling %q. Addon failed to App:\n%s.", msg.Action, err)
-			return
-		}
+		}		
 		msg.Delete()
 		break	
 		
