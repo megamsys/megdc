@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/megamsys/cloudinabox/action"
 	"github.com/megamsys/cloudinabox/exec"
+	"bitbucket.org/kardianos/osext"
 	"log"
 	"strings"
 )
@@ -14,14 +15,14 @@ const (
 	keyremote_repo = "remote_repo="
 	keylocal_repo  = "local_repo="
 	keyproject     = "project="
-	ganetipreinstall = "bash ../conf/ganeti/mganeti_preinstall.sh"
-	ganetiverify = "bash ../conf/ganeti/mganeti_verify.sh"
-	ganetipostinstall = "bash ../conf/ganeti/mganeti_postinstall.sh"
-	ganetiinstall = "bash ../conf/ganeti/mganeti_install.sh"
-	opennebulapreinstall = "bash ../conf/opennebula/one_preinstall.sh"
-	opennebulaverify = "bash ../conf/opennebula/one_verify.sh"
-	opennebulapostinstall = "bash ../conf/opennebula/one_postinstall.sh"
-	opennebulainstall = "bash ../conf/opennebula/one_install.sh"
+	ganetipreinstall = "bash conf/ganeti/mganeti_preinstall.sh"
+	ganetiverify = "bash conf/ganeti/mganeti_verify.sh"
+	ganetipostinstall = "bash conf/ganeti/mganeti_postinstall.sh"
+	ganetiinstall = "bash conf/ganeti/mganeti_install.sh"
+	opennebulapreinstall = "bash conf/opennebula/one_preinstall.sh"
+	opennebulaverify = "bash conf/opennebula/one_verify.sh"
+	opennebulapostinstall = "bash conf/opennebula/one_postinstall.sh"
+	opennebulainstall = "bash conf/opennebula/one_install.sh"
 	rootPath  = "/tmp"
 	defaultEnvPath = "conf/env.sh"	
 	drbd_mnt = "/drbd_mnt"
@@ -71,11 +72,8 @@ var remove = action.Action{
 	MinParams: 1,
 }
 
-//
-// Install Ganeti or Opennebula packages 
-//
- var install = action.Action{
-	Name: "install",
+var ganetiVerify = action.Action{
+	Name: "ganetiVerify",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
 		var app App
 		switch ctx.Params[0].(type) {
@@ -86,62 +84,8 @@ var remove = action.Action{
 		default:
 			return nil, errors.New("First parameter must be App or *App.")
 		}
-		switch app.InstallPackage {
-		case "Ganeti":
-		         app.Command = ganetiverify
-		         _, verify_err := CommandExecutor(&app)
-		         if verify_err != nil {
-			         log.Printf("Ganeti install pre verification failed %s", verify_err)
-			         return nil, errors.New("Ganeti install pre verification failed")
-		          }
-		         app.Command = ganetipreinstall
-		         _, preinstall_err := CommandExecutor(&app)
-		         if preinstall_err != nil {
-			         log.Printf("Ganeti pre installation failed %s", preinstall_err)
-			         return nil, errors.New("Ganeti pre installation failed")
-		         }
-		         app.Command = ganetiinstall
-		         _, install_err := CommandExecutor(&app)
-		         if install_err != nil {
-			         log.Printf("Ganeti installation failed %s", install_err)
-			         return nil, errors.New("Ganeti installation failed")
-		         }
-		         app.Command = ganetipostinstall
-		         cmd, postinstall_err := CommandExecutor(&app)
-		         if postinstall_err != nil {
-			         log.Printf("Ganeti post installation failed %s", postinstall_err)
-			         return nil, errors.New("Ganeti post installation failed")
-		         }
-		      return cmd, postinstall_err
-		 case "Opennebula":
-		        app.Command = opennebulaverify
-		        _, nverify_err := CommandExecutor(&app)
-		        if nverify_err != nil {
-			        log.Printf("Opennebula install pre verification failed %s", nverify_err)
-			        return nil, errors.New("Opennebula install pre verification failed")
-		        }
-		        app.Command = opennebulapreinstall
-		        _, npreinstall_err := CommandExecutor(&app)
-		        if npreinstall_err != nil {
-			        log.Printf("Opennebula pre installation failed %s", npreinstall_err)
-			        return nil, errors.New("Opennebula pre installation failed")
-		        }
-		        app.Command = opennebulainstall
-		        _, ninstall_err := CommandExecutor(&app)
-		        if ninstall_err != nil {
-			        log.Printf("Opennebula installation failed %s", ninstall_err)
-			        return nil, errors.New("Opennebula installation failed")
-		        }
-		        app.Command = opennebulapostinstall
-		        cmd, npostinstall_err := CommandExecutor(&app)
-		        if npostinstall_err != nil {
-			        log.Printf("Opennebula post installation failed %s", npostinstall_err)
-			        return nil, errors.New("Opennebula post installation failed")
-		        }
-		     return cmd, npostinstall_err
-		 default:
-			return nil, errors.New("Wrong package name.")
-		}
+		app.Command = ganetiverify
+	   return CommandExecutor(&app)
 	},
 	Backward: func(ctx action.BWContext) {
 	app := ctx.FWResult.(*App)
@@ -149,5 +93,167 @@ var remove = action.Action{
 	},
 	MinParams: 1,
 	}
+
+
+var ganetiInstall = action.Action{
+	Name: "ganetiInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var app App
+		switch ctx.Params[0].(type) {
+		case App:
+			app = ctx.Params[0].(App)
+		case *App:
+			app = *ctx.Params[0].(*App)
+		default:
+			return nil, errors.New("First parameter must be App or *App.")
+		}
+		
+		log.Printf("Installation %s", app.ClusterName)
+		app.Command = ganetiinstall
+	   return CommandExecutor(&app)
+	},
+	Backward: func(ctx action.BWContext) {
+		app := ctx.FWResult.(*App)		
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)		
+	},
+	MinParams: 1,
+}
+
+var ganetiPreInstall = action.Action{
+	Name: "ganetiPreInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var app App
+		switch ctx.Params[0].(type) {
+		case App:
+			app = ctx.Params[0].(App)
+		case *App:
+			app = *ctx.Params[0].(*App)
+		default:
+			return nil, errors.New("First parameter must be App or *App.")
+		}
+		app.Command = ganetipreinstall
+	   return CommandExecutor(&app)
+	},
+	Backward: func(ctx action.BWContext) {
+		app := ctx.FWResult.(*App)		
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
+	},
+	MinParams: 1,
+	}
+
+  var ganetiPostInstall = action.Action{
+	Name: "ganetiPostInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var app App
+		switch ctx.Params[0].(type) {
+		case App:
+			app = ctx.Params[0].(App)
+		case *App:
+			app = *ctx.Params[0].(*App)
+		default:
+			return nil, errors.New("First parameter must be App or *App.")
+		}
+		app.Command = ganetipostinstall
+	   return CommandExecutor(&app)
+	},
+	Backward: func(ctx action.BWContext) {
+	app := ctx.FWResult.(*App)
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
+	},
+	MinParams: 1,
+	}
+	
+	var opennebulaVerify = action.Action{
+	Name: "opennebulaVerify",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var app App
+		switch ctx.Params[0].(type) {
+		case App:
+			app = ctx.Params[0].(App)
+		case *App:
+			app = *ctx.Params[0].(*App)
+		default:
+			return nil, errors.New("First parameter must be App or *App.")
+		}
+		filename, _ := osext.Executable()
+		app.Command = opennebulaverify
+	   return CommandExecutor(&app)
+	},
+	Backward: func(ctx action.BWContext) {
+	app := ctx.FWResult.(*App)
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
+	},
+	MinParams: 1,
+	}
+
+var opennebulaInstall = action.Action{
+	Name: "opennebulaInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var app App
+		switch ctx.Params[0].(type) {
+		case App:
+			app = ctx.Params[0].(App)
+		case *App:
+			app = *ctx.Params[0].(*App)
+		default:
+			return nil, errors.New("First parameter must be App or *App.")
+		}
+		
+		log.Printf("Installation %s", app.ClusterName)
+		app.Command = opennebulainstall
+	   return CommandExecutor(&app)
+	},
+	Backward: func(ctx action.BWContext) {
+		app := ctx.FWResult.(*App)		
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)		
+	},
+	MinParams: 1,
+}
+
+var opennebulaPreInstall = action.Action{
+	Name: "opennebulaPreInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var app App
+		switch ctx.Params[0].(type) {
+		case App:
+			app = ctx.Params[0].(App)
+		case *App:
+			app = *ctx.Params[0].(*App)
+		default:
+			return nil, errors.New("First parameter must be App or *App.")
+		}
+		app.Command = opennebulapreinstall
+	   return CommandExecutor(&app)
+	},
+	Backward: func(ctx action.BWContext) {
+		app := ctx.FWResult.(*App)		
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
+	},
+	MinParams: 1,
+	}
+
+  var opennebulaPostInstall = action.Action{
+	Name: "opennebulaPostInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var app App
+		switch ctx.Params[0].(type) {
+		case App:
+			app = ctx.Params[0].(App)
+		case *App:
+			app = *ctx.Params[0].(*App)
+		default:
+			return nil, errors.New("First parameter must be App or *App.")
+		}
+		app.Command = opennebulapostinstall
+	   return CommandExecutor(&app)
+	},
+	Backward: func(ctx action.BWContext) {
+	app := ctx.FWResult.(*App)
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
+	},
+	MinParams: 1,
+	}
+
+
 
 

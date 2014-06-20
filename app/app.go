@@ -121,20 +121,34 @@ func Remove(app *App) error {
 	return nil
 }
 
-//
-// verify needed packages
-//
-func Install(app *App) error {
-	actions := []*action.Action{&install}
 
-	pipeline := action.NewPipeline(actions...)
-	err := pipeline.Execute(app)
-	if err != nil {
+// 
+// this executes all actions for ganeti install
+// 
+func GanetiInstall(app *App) error {
+    actions := []*action.Action{&ganetiVerify, &ganetiPreInstall, &ganetiInstall, &ganetiPostInstall}  
+ 
+    pipeline := action.NewPipeline(actions...)
+    err := pipeline.Execute(app)
+    if err != nil {
 		return &AppLifecycleError{app: app.ClusterName, Err: err}
 	}
 	return nil
 }
 
+// 
+// this executes all actions for opennebula install
+// 
+func OpennebulaInstall(app *App) error {
+    actions := []*action.Action{&opennebulaVerify, &opennebulaPreInstall, &opennebulaInstall, &opennebulaPostInstall}  
+ 
+    pipeline := action.NewPipeline(actions...)
+    err := pipeline.Execute(app)
+    if err != nil {
+		return &AppLifecycleError{app: app.ClusterName, Err: err}
+	}
+	return nil
+}
 
 // GetEmail returns the email of the app.
 func (app *App) GetEmail() string {

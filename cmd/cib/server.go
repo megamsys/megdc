@@ -86,20 +86,34 @@ func handle(msg *amqp.Message) {
 	log.Printf("Handling message %v", msg)
 
 	switch strings.ToLower(msg.Action) {
-	case "install":
+	case "ganeti install":
 		if len(msg.Args) < 1 {
 			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
 		}
 		//stick the id from msg.
-		ap := app.App{Email: "myapp", ApiKey: "RIPAB"}
+		ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}
 
-		if err := app.Install(&ap); err != nil {
+		if err := app.GanetiInstall(&ap); err != nil {
 			log.Printf("Error handling %q: Installation process failed:\n%s.", msg.Action, err)
 			return
 		}		
 
 		msg.Delete()
 		break
+	case "opennebula install":
+		if len(msg.Args) < 1 {
+			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
+		}
+		//stick the id from msg.
+		ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}                         
+
+		if err := app.OpennebulaInstall(&ap); err != nil {
+			log.Printf("Error handling %q: Installation process failed:\n%s.", msg.Action, err)
+			return
+		}		
+
+		msg.Delete()
+		break	
 	case "remove":
 		if len(msg.Args) < 1 {
 			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
