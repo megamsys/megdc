@@ -1,0 +1,1 @@
+sudo dd if=~/Downloads/trusty_mini.iso of=/dev/sdb
