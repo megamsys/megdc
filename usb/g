@@ -1,8 +1,17 @@
+#https://wiki.debian.org/DebianInstaller/Modify/CD
+# based on the os, download the mini 64 bit iso.
+# here we assume that the trusy mini iso is downloaded.
+
+sudo mount -o loop trusty_mini.iso /mnt
+cp -fr /mnt ./usb_image
+sudo umount /mnt
+cd usb_image
+#make the changed you want to do.
+
+#create an iso.
+mkisofs -o trusty_megam.iso -r -J -no-emul-boot -boot-load-size 4  -boot-info-table -b isolinux.bin -c boot.cat ./usb_image
 sudo dd if=~/Downloads/trusty.iso of=/dev/sdb
 
-#https://wiki.debian.org/DebianInstaller/Modify/CD
-
-mkisofs -o trusty_megam.iso -r -J -no-emul-boot -boot-load-size 4  -boot-info-table -b isolinux.bin -c boot.cat ./usb_image
-
+#test the iso
 qemu-system-x86_64  -cdrom trusty_megam.iso
 
