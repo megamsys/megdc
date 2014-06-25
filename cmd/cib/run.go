@@ -34,7 +34,7 @@ func (c *GulpStart) Run(context *cmd.Context, client *cmd.Client) error {
 	// The struc will also have the c.manager
 	// c.manager
 	// Now using this value start the queue.
-	RunServer(c.dry)
+	RunServer(c.dry)        
 	return nil
 }
 
@@ -167,3 +167,4 @@ func (c *GulpUpdate) Run(ctx *cmd.Context, client *cmd.Client) error {
 	}
 	return nil
 }
+
