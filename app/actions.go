@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/megamsys/cloudinabox/action"
 	"github.com/megamsys/cloudinabox/exec"
-	"bitbucket.org/kardianos/osext"
+//	"bitbucket.org/kardianos/osext"
 	"log"
 	"strings"
 )
@@ -175,7 +175,7 @@ var ganetiPreInstall = action.Action{
 		default:
 			return nil, errors.New("First parameter must be App or *App.")
 		}
-		filename, _ := osext.Executable()
+		//filename, _ := osext.Executable()
 		app.Command = opennebulaverify
 	   return CommandExecutor(&app)
 	},
