@@ -51,7 +51,7 @@ ifndef GOPATH
 	@echo "       http://golang.org/cmd/go/#GOPATH_environment_variable"
 	@exit 1
 endif
-#ifneq ($(subst ~,$(HOME),$(GOPATH))/src/github.com/*/cloudinabox, $(PWD))
+#ifneq ($(subst ~,$(HOME),$(GOPATH))/src/github.com/*/megam_bee, $(PWD))
 #	@echo "FATAL: you must clone gulp inside your GOPATH To do so,"
 #	@echo "       you can run go get github.com/megamsys/cloudinabox/..."
 #	@echo "       or clone it manually to the dir $(GOPATH)/src/github.com/megamsys/cloudinabox"
@@ -100,14 +100,14 @@ _go_test:
 	@go test ./...
 
 _gulpd_dry:
-	@go build -o cib ./cmd/cib
-	@./cib start --dry --config ./config/cib.conf
-	@rm -f cib
+	@go build -o beeweb beeweb.go
+	@./beeweb --config ./conf/app.conf
+	@rm -f beeweb
 
 test: _go_test _gulpd_dry
 
 
 client:
-	@go build -o cib ./cmd/cib
+	@go build -o beeweb beeweb.go
 	@echo "Done."
 

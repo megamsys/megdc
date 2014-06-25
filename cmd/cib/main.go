@@ -16,12 +16,15 @@
 package main
 
 import (
-	"fmt"
+//	"fmt"
 	"github.com/megamsys/cloudinabox/cmd"
 	"github.com/tsuru/config"
-	"log"
-	"os"
-	"path/filepath"
+	"github.com/astaxie/beego"
+	"github.com/megamsys/cloudinabox/controllers"
+	"strconv"
+//	"log"
+//	"os"
+//	"path/filepath"        
 )
 
 const (
@@ -57,11 +60,25 @@ func buildManager(name string) *cmd.Manager {
 	return m
 }
 
+//func main() {
+//	p, _ := filepath.Abs(defaultConfigPath)
+//	log.Println(fmt.Errorf("Conf: %s", p))
+//	config.ReadConfigFile(defaultConfigPath)
+//	name := cmd.ExtractProgramName(os.Args[0])
+//	manager := buildManager(name) 
+//	manager.Run(os.Args[1:])        
+//}
+
+
 func main() {
-	p, _ := filepath.Abs(defaultConfigPath)
-	log.Println(fmt.Errorf("Conf: %s", p))
-	config.ReadConfigFile(defaultConfigPath)
-	name := cmd.ExtractProgramName(os.Args[0])
-	manager := buildManager(name)
-	manager.Run(os.Args[1:])
+    beego.SetStaticPath("../../static_source", "static_source")
+    beego.DirectoryIndex = true
+    beego.Router("/", &controllers.LoginController{})
+    port, _ := config.GetString("beego:http_port")
+	if port == "" {
+		port = "8085"
+	}
+	http_port, _ := strconv.Atoi(port)
+    beego.HttpPort = http_port
+    beego.Run()
 }
