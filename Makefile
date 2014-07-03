@@ -101,7 +101,7 @@ _go_test:
 
 _gulpd_dry:
 	@go build -o beeweb beeweb.go
-	@./beeweb --config ./conf/app.conf
+	@./beeweb --config ./conf/cib.conf
 	@rm -f beeweb
 
 test: _go_test _gulpd_dry

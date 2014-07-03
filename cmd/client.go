@@ -4,11 +4,15 @@ import (
 	"crypto/x509"
 	"errors"
 	"fmt"
-	"github.com/tsuru/config"
+//	"github.com/tsuru/config"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 )
+
+const (
+  target = "https://api.megam.co"
+  )
 
 type Client struct {
 	HTTPClient     *http.Client
@@ -37,10 +41,10 @@ func (c *Client) detectClientError(err error) error {
 	}
 	switch urlErr.Err.(type) {
 	case x509.UnknownAuthorityError:
-		target, _ := config.GetString("api:server")
+	//	target, _ := config.GetString("api:server")
 		return fmt.Errorf("Failed to connect to api server (%s): %s", target, urlErr.Err)
 	}
-	target, _ := config.GetString("api:server")
+	//target, _ := config.GetString("api:server")
 	return fmt.Errorf("Failed to connect to api server (%s): %s.", target, urlErr.Err)
 }
 

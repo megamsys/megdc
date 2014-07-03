@@ -18,7 +18,10 @@ package main
 import (
 	"github.com/tsuru/config"
 	"github.com/astaxie/beego"
-	"github.com/megamsys/cloudinabox/controllers"
+	"github.com/megamsys/cloudinabox/routers/auth"
+	"github.com/megamsys/cloudinabox/routers/page"
+	"github.com/megamsys/cloudinabox/models/orm"
+//	"github.com/megamsys/cloudinabox/setting"
 	"strconv"
 )
 
@@ -30,10 +33,25 @@ const (
 const defaultConfigPath = "conf/cib.conf"
 
 func main() {
+	//setting.LoadConfig()
+	
+	// set db 	
+    db := orm.OpenDB()
+    dbmap := orm.GetDBMap(db)
+    // initialize the DbMap
+    orm.InitDB(dbmap)
+    defer db.Close()
+    
+	beego.SessionOn = true
     beego.SetStaticPath("/static_source", "static_source")
     beego.DirectoryIndex = true
-    beego.Router("/", &controllers.LoginController{})
-    beego.Router("/signin", &controllers.SignInController{})
+    login := new(auth.LoginRouter)
+	beego.Router("/", login, "get:Get")
+	beego.Router("/signin", login, "post:Login")
+	beego.Router("/logout", login, "get:Logout")
+	user := new(page.PageRouter)
+	beego.Router("/index", user, "get:Get")
+	
     port, _ := config.GetString("beego:http_port")
 	if port == "" {
 		port = "8085"
