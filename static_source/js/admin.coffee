@@ -2,9 +2,9 @@ $(document).ready ->
 
   # chat demo
   makeMessageString = (content)->
-    "<li class='right'><img src='placeholders/avatars/9.jpg' class='img-circle'><div class='message'>#{content}</div></li>"
+    "<li class='right'><img src='/static/placeholders/avatars/9.jpg' class='img-circle'><div class='message'>#{content}</div></li>"
   makeReplyString = (content)->
-    "<li><img src='placeholders/avatars/avatar.jpg' class='img-circle' width='26'><div class='message'>#{content}</div></li>"
+    "<li><img src='/static/placeholders/avatars/avatar.jpg' class='img-circle' width='26'><div class='message'>#{content}</div></li>"
 
   addMessage = (content, reply=false)->
     messages = $('.chat-messages')

@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+
 const (
 	X_Megam_EMAIL       = "X-Megam-EMAIL"
 	X_Megam_APIKEY      = "X-Megam-APIKEY"
@@ -107,10 +108,10 @@ func CalcBase64(data string) string {
 
 func GetURL(path string) (string, error) {
 	var prefix string
-	target, err := config.GetString("api:server")
-	if err != nil {
-		return "", err
-	}
+//	target, err := config.GetString("api:server")
+//	if err != nil {
+	//	return "", err
+//	}
 	if m, _ := regexp.MatchString("^https?://", target); !m {
 		prefix = "http://"
 	}
