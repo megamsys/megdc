@@ -20,6 +20,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/megamsys/cloudinabox/routers/auth"
 	"github.com/megamsys/cloudinabox/routers/page"
+	"github.com/megamsys/cloudinabox/routers/servers"
 	"github.com/megamsys/cloudinabox/models/orm"
 //	"github.com/megamsys/cloudinabox/setting"
 	"strconv"
@@ -51,6 +52,10 @@ func main() {
 	beego.Router("/logout", login, "get:Logout")
 	user := new(page.PageRouter)
 	beego.Router("/index", user, "get:Get")
+	server := new(servers.ServerRouter)
+	beego.Router("/servers", server, "get:Get")
+	beego.Router("/servers/1", server, "get:Progress")
+	beego.Router("/servers/join", server, "get:Join")
 	
     port, _ := config.GetString("beego:http_port")
 	if port == "" {

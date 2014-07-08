@@ -1,0 +1,170 @@
+{{template "base/base.html" .}} {{ define "body" }}
+
+<div id="dashboard-page" class="bg-gray-light">
+	{{ template "base/nav.html" .}}
+
+	<!-- JavaScript jQuery code from Bootply.com editor  -->
+
+	<script type='text/javascript'>
+		$(document).ready(function() {
+
+			$('#MyWizard').on('change', function(e, data) {
+				console.log('change');
+				if (data.step === 4 && data.direction === 'next') {
+					$('#btnWizardNext').attr('value', 'Done');
+				}
+			});
+			$('#MyWizard').on('changed', function(e, data) {
+				console.log('changed');
+			});
+			$('#MyWizard').on('finished', function(e, data) {
+				console.log('finished');
+			});
+			$('#btnWizardPrev').on('click', function() {
+				$('#MyWizard').wizard('previous');
+			});
+			$('#btnWizardNext').on('click', function() {
+				$('#MyWizard').wizard('next', 'foo');
+			});
+			$('#btnWizardStep').on('click', function() {
+				var item = $('#MyWizard').wizard('selectedItem');
+				console.log(item.step);
+			});
+			$('#MyWizard').on('stepclick', function(e, data) {
+				console.log('step' + data.step + ' clicked');
+				if (data.step === 1) {
+					// return e.preventDefault();
+				}
+			});
+
+			// optionally navigate back to 2nd step
+			$('#btnStep2').on('click', function(e, data) {
+				$('[data-target=#step2]').trigger("click");
+			});
+		});
+	</script>
+
+	<div class="fuelux">
+		<div class="well wizard-example">
+			<div id="MyWizard" class="wizard">
+				<ul class="steps">
+					<li data-target="#step1" class="active"><span
+						class="badge badge-info">1</span>Step 1<span class="chevron"></span></li>
+					<li data-target="#step2"><span class="badge">2</span>Step 2<span
+						class="chevron"></span></li>
+					<li data-target="#step3"><span class="badge">3</span>Step 3<span
+						class="chevron"></span></li>
+					<li data-target="#step4"><span class="badge">4</span>Step 4<span
+						class="chevron"></span></li>
+					<li data-target="#step5"><span class="badge">5</span>Step 5<span
+						class="chevron"></span></li>
+				</ul>
+				<div class="actions fi-icons">
+					<button class="btn btn-mini btn-prev">
+						<i class="glyphicon glyphicon-chevron-left"></i>Prev
+					</button>
+					<button class="btn btn-mini btn-next" data-last="Finish">
+						Next<i class="glyphicon glyphicon-chevron-right"></i>
+					</button>
+				</div>
+			</div>
+			<div class="step-content">
+				<div class="step-pane active" id="step1">
+					<div
+						class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light">
+						<h1 class="text-center font-w-100">
+							Welcome <span class="text-blue">{{.Username}}</span>
+						</h1>
+						<div class="row">
+							<p class="m-b-30 p-b-30 text-success text-uppercase text-center ">Cloud
+								in a Box set default servers in your box.</p>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<!-- MESSAGES -->
+								<div class="iconmelon m-r-10">
+									<svg viewBox="0 0 32 32">
+                                     <g filter="">
+                                         <use xlink:href="#email-mail"></use>
+                                     </g>
+                                </svg>
+								</div>
+
+								<!-- <a href="messages.html" class="btn-group pull-right">
+									<div class="btn btn-alt">
+										<i class="glyphicon glyphicon-list text-white"></i>
+									</div>
+									<div class="btn btn-primary">
+										Read all
+									</div>
+								</a> -->
+
+								<hr class="m-b-0">
+
+								<ul class="unstyled messages">
+									<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span
+											class="avatar"> <i
+												class="glyphicon glyphicon-star m-r-10 text-orange"></i>
+										</span> <span class="author hidden-xs m-r-1">Megam Gateway</span> <span
+											class="subject">
+												<div class="progress progress-striped">
+													<div class="progress-bar progress-bar-info"
+														role="progressbar" aria-valuenow="20" aria-valuemin="0"
+														aria-valuemax="100" style="width: 0%">
+														<span class="sr-only">20% Complete</span>
+													</div>
+												</div>
+										</span> <span class="date"><span class="text-gray-dark">23</span>
+												minutes ago</span>
+									</a></li>
+									<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span
+											class="avatar"> <i
+												class="glyphicon glyphicon-star m-r-10 text-orange"></i>
+										</span> <span class="author hidden-xs m-r-1">cobbler</span> <span
+											class="subject">
+												<div class="progress progress-striped">
+													<div class="progress-bar progress-bar-info"
+														role="progressbar" aria-valuenow="20" aria-valuemin="0"
+														aria-valuemax="100" style="width: 0%">
+														<span class="sr-only">20% Complete</span>
+													</div>
+												</div>
+										</span> <span class="date"><span class="text-gray-dark">23</span>
+												minutes ago</span>
+									</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="step-pane" id="step2">
+					<h2>Step 2]</h2>
+					Now you are at the 2nd step of this wizard example.<br>
+				</div>
+				<div class="step-pane" id="step3">
+					<h2>Okay</h2>
+					Now you are at the 3rd step of this wizard example.<br>
+				</div>
+				<div class="step-pane" id="step4">
+					<h2>Almost Done.</h2>
+					Now you are at the 4th step of this wizard example. Click 'Next' to
+					finish up.
+				</div>
+				<div class="step-pane" id="step5">
+					<h2>Done!</h2>
+					The wizard is complete. Pretty exciting stuff, eh?. <a href="#"
+						id="btnStep2">Go back to step 2.</a>
+				</div>
+			</div>
+			<br> <input class="btn" id="btnWizardPrev" value="Back"
+				type="button"> <input class="btn btn-primary"
+				id="btnWizardNext" value="Next" type="button"> <br>
+		</div>
+		<!-- /well -->
+
+		<hr>
+
+	</div>
+
+</div>
+{{ end }}

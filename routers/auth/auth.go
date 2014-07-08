@@ -17,14 +17,14 @@
 package auth
 
 import (
-	"strings"
-	"github.com/megamsys/cloudinabox/modules/utils"
+	"fmt"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/megamsys/cloudinabox/modules/auth"
-    "github.com/megamsys/cloudinabox/routers/base"
-    _ "github.com/mattn/go-sqlite3"
-    "net/http"
-    _ "github.com/lib/pq"
-    "fmt"
+	"github.com/megamsys/cloudinabox/modules/utils"
+	"github.com/megamsys/cloudinabox/routers/base"
+	"net/http"
+	"strings"
 )
 
 // LoginRouter serves login page.
@@ -33,16 +33,16 @@ type LoginRouter struct {
 }
 
 // Get implemented login page.
-func (this *LoginRouter) Get() {   
+func (this *LoginRouter) Get() {
 	loginRedirect := strings.TrimSpace(this.GetString("to"))
-    if len(this.Ctx.GetCookie("remember")) > 0 {
-    	this.Data["Username"] = "Megam"
-    	this.Redirect("/index", 302)
-    } else {
-    	this.Data["IsLoginPage"] = true
-    	this.TplNames = "auth/login.html" 
-    	this.Ctx.SetCookie("login_to", loginRedirect, 0, "/")
-    }	
+	if len(this.Ctx.GetCookie("remember")) > 0 {
+		this.Data["Username"] = "Megam"
+		this.Redirect("/index", 302)
+	} else {
+		this.Data["IsLoginPage"] = true
+		this.TplNames = "auth/login.html"
+		this.Ctx.SetCookie("login_to", loginRedirect, 0, "/")
+	}
 }
 
 // Login implemented user login.
@@ -52,9 +52,9 @@ func (this *LoginRouter) Login() {
 	if this.CheckLoginRedirect(false) {
 		return
 	}
-	
-    data := &utils.User{this.GetString("username"), this.GetString("password")}
-    client := utils.NewClient(&http.Client{}, data)
+
+	data := &utils.User{this.GetString("username"), this.GetString("password")}
+	client := utils.NewClient(&http.Client{}, data)
 	_, err := this.Auth(client, data)
 
 	if err != nil {
@@ -65,7 +65,7 @@ func (this *LoginRouter) Login() {
 		this.LoginUser(data, true)
 		this.Redirect("/index", 302)
 	}
-		
+
 }
 
 // Logout implemented user logout page.

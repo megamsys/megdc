@@ -40,3 +40,23 @@ func NewUser(user *utils.User) Users {
         Created:         time.Format(layout),
     }
 }
+
+type Servers struct {
+	Id              int64
+	Name            string
+	Install         bool
+	InstallDate     string
+	UpdateDate      string
+}
+
+func NewServer(serverName string) Servers {
+	time := time.Now()
+	return Servers{
+		Name:   serverName,
+		Install: true,
+		InstallDate: time.Format(layout),
+		UpdateDate: "",
+	}
+}
+
+
