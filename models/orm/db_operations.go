@@ -47,7 +47,7 @@ func InitDB(dbmap *gorp.DbMap) error {
     // add a table, setting the table name to 'posts' and
     // specifying that the Id property is an auto incrementing PK
     dbmap.AddTableWithName(Users{}, "users").SetKeys(true, "Id")
-
+    dbmap.AddTableWithName(Servers{}, "servers").SetKeys(true, "Id")
     // create the table. in a production system you'd generally
     // use a migration tool, or create the tables via scripts
     err := dbmap.CreateTablesIfNotExists()
@@ -62,6 +62,12 @@ func ConnectToTable(dbmap *gorp.DbMap, tablename string, field interface{}) erro
     return nil
 }
 
+func DeleteRowFromServerName(dbmap *gorp.DbMap, serverName string) error {
+	// delete row manually via Exec
+    _, err := dbmap.Exec("delete from servers where Name=?", serverName)
+    CheckErr(err, "Exec failed")
+    return err
+}
 
 func CheckErr(err error, msg string) {
     if err != nil {

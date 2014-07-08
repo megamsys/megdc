@@ -20,10 +20,13 @@ import (
 //	"strings"
 //	"github.com/megamsys/cloudinabox/modules/utils"
     "github.com/megamsys/cloudinabox/routers/base"
+    "github.com/megamsys/cloudinabox/models/orm"
  //   "net/http"
  //   "regexp"
- //  "fmt"
+   "fmt"
 )
+
+var serversList = []string{ "Megam", "Cobbler"}
 
 // PageRouter serves home page.
 type PageRouter struct {
@@ -32,10 +35,45 @@ type PageRouter struct {
 
 // Get implemented dashboard page.
 func (this *PageRouter) Get() {
+	//result := map[string]interface{}{
+	//	"success": true,
+	//}
+
+	//defer func() {
+	///	this.Data["json"] = result
+	//	this.ServeJson()
+	//}()
+	
+	var servers orm.Servers
+	//servers := new(orm.Servers)
 	this.Data["IsLoginPage"] = true
 	this.Data["Username"] = "Megam"
-	this.TplNames = "page/dashboard.html" 
+	this.TplNames = "page/index.html" 
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
 	}
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	n := len(serversList)
+	for i := 0; i < n; i++ {
+       err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])	  
+	   fmt.Println(err)
+	   if servers.Install != true {
+	   	err := this.InstallServers(serversList[i])
+	   	if err != nil {
+	   		
+	   	}
+	   //	if err != nil {
+	  // 		result["success"] = false
+	  //      result["data"] = err
+	  // 	}
+	   }
+    }
 }
+
+
+
+
+
+
+

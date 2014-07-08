@@ -18,18 +18,19 @@
 package base
 
 import (
-	"strings"
-	"net/url"
-    "html/template"
-	"time"
-    "github.com/megamsys/cloudinabox/modules/utils"
-    "github.com/megamsys/cloudinabox/modules/auth"
-    "github.com/megamsys/cloudinabox/models/orm"
-	"github.com/astaxie/beego"
-	"github.com/beego/i18n"
 	"encoding/json"
 	"fmt"
-//	"strconv"
+	"github.com/astaxie/beego"
+	"github.com/beego/i18n"
+	"github.com/megamsys/cloudinabox/models/orm"
+	"github.com/megamsys/cloudinabox/modules/auth"
+	"github.com/megamsys/cloudinabox/modules/utils"
+	"github.com/megamsys/cloudinabox/app"
+	"html/template"
+	"net/url"
+	"strings"
+	"time"
+	//	"strconv"
 	"bytes"
 	"net/http"
 )
@@ -50,7 +51,7 @@ type langType struct {
 type BaseRouter struct {
 	beego.Controller
 	i18n.Locale
-//	User orm.Users
+	//	User orm.Users
 	IsLogin bool
 }
 
@@ -61,7 +62,7 @@ func (this *BaseRouter) Prepare() {
 	this.Data["IsPro"] = IsPro
 
 	this.Data["PageStartTime"] = time.Now()
-  
+
 	//this.StartSession()
 	// check flash redirect, if match url then end, else for redirect return
 	if match, redir := this.CheckFlashRedirect(this.Ctx.Request.RequestURI); redir {
@@ -69,15 +70,15 @@ func (this *BaseRouter) Prepare() {
 	} else if match {
 		this.EndFlashRedirect()
 	}
-     
-    // pass xsrf helper to template context
+
+	// pass xsrf helper to template context
 	xsrfToken := this.XsrfToken()
 	this.Data["xsrf_token"] = xsrfToken
 	this.Data["xsrf_html"] = template.HTML(this.XsrfFormHtml())
-	
+
 	// read flash message
 	beego.ReadFromRequest(&this.Controller)
-	
+
 }
 
 // setLangVer sets site language version.
@@ -148,21 +149,21 @@ func (this *BaseRouter) setLangVer() bool {
 }
 
 func (this *BaseRouter) Auth(client *utils.Client, data *utils.User) (*http.Response, error) {
-	
-//we need to move into a struct
+
+	//we need to move into a struct
 	tmpinp := map[string]string{
-		"email": data.Username,
-		"api_key": data.Api_key,
-		"authority":  "user",
+		"email":     data.Username,
+		"api_key":   data.Api_key,
+		"authority": "user",
 	}
 
-//and this as well. 
+	//and this as well.
 	jsonMsg, err := json.Marshal(tmpinp)
 
 	if err != nil {
 		return nil, err
 	}
-	
+
 	authly, err := utils.NewAuthly("/auth", jsonMsg, data)
 	if err != nil {
 		return nil, err
@@ -172,10 +173,10 @@ func (this *BaseRouter) Auth(client *utils.Client, data *utils.User) (*http.Resp
 	if err != nil {
 		return nil, err
 	}
-	
+
 	fmt.Println("==> " + url)
 	authly.JSONBody = jsonMsg
-	
+
 	err = authly.AuthHeader()
 	if err != nil {
 		return nil, err
@@ -191,10 +192,10 @@ func (this *BaseRouter) Auth(client *utils.Client, data *utils.User) (*http.Resp
 	//if err != nil {
 	////	return err
 	//}
-   // fmt.Println(strconv.Itoa(resp.StatusCode) + " ....code")
+	// fmt.Println(strconv.Itoa(resp.StatusCode) + " ....code")
 	//if resp.StatusCode == http.StatusNoContent {
 	//    fmt.Println("Service successfully updated.")
-		//fmt.Fprintln(ctx.Stdout, "Service successfully updated.")
+	//fmt.Fprintln(ctx.Stdout, "Service successfully updated.")
 	//}
 	return client.Do(request)
 }
@@ -242,8 +243,8 @@ func (this *BaseRouter) CheckLoginRedirect(args ...interface{}) bool {
 	}
 	return false
 }
- 
- // read beego flash message
+
+// read beego flash message
 func (this *BaseRouter) FlashRead(key string) (string, bool) {
 	if data, ok := this.Data["flash"].(map[string]string); ok {
 		value, ok := data[key]
@@ -251,8 +252,8 @@ func (this *BaseRouter) FlashRead(key string) (string, bool) {
 	}
 	return "", false
 }
- 
- // write beego flash error message
+
+// write beego flash error message
 func (this *BaseRouter) FlashErrorWrite(key string, value string) {
 	flash := beego.NewFlash()
 	flash.Error(value)
@@ -263,7 +264,7 @@ func (this *BaseRouter) FlashErrorWrite(key string, value string) {
 // write beego flash message
 func (this *BaseRouter) FlashWrite(key string, value string) {
 	flash := beego.NewFlash()
-//	flash.Notice(value)
+	//	flash.Notice(value)
 	flash.Data[key] = value
 	flash.Store(&this.Controller)
 }
@@ -277,27 +278,26 @@ func (this *BaseRouter) LoginUser(user *utils.User, remember bool) string {
 	}
 	//set cookie remember true
 	this.Ctx.SetCookie("remember", "true")
-	
+
 	// login user
 	auth.LoginUser(user, this.Ctx, remember)
-    
-    // write user details in database    
-    // insert rows - auto increment PKs will be set properly after the insert
-    db := orm.OpenDB()
-    dbmap := orm.GetDBMap(db)
-    newuser := orm.NewUser(user)
-    orm.ConnectToTable(dbmap, "users", newuser)
-    err := dbmap.Insert(&newuser)
-    if err != nil {
-    	fmt.Println("insert error======>")
-    	return ""
-    }
-    defer db.Close()
-    //	this.setLangCookie(i18n.GetLangByIndex(user.Lang))
-    
+
+	// write user details in database
+	// insert rows - auto increment PKs will be set properly after the insert
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	newuser := orm.NewUser(user)
+	orm.ConnectToTable(dbmap, "users", newuser)
+	err := dbmap.Insert(&newuser)
+	if err != nil {
+		fmt.Println("insert error======>")
+		return ""
+	}
+	defer db.Close()
+	//	this.setLangCookie(i18n.GetLangByIndex(user.Lang))
+
 	return loginRedirect
 }
-
 
 // check flash redirect, ensure browser redirect to uri and display flash message.
 func (this *BaseRouter) CheckFlashRedirect(value string) (match bool, redirect bool) {
@@ -368,4 +368,26 @@ func (this *BaseRouter) FlashRedirect(uri string, code int, flag string, args ..
 // clear flash redirect
 func (this *BaseRouter) EndFlashRedirect() {
 	this.DelSession("on_redirect")
+}
+
+func (this *BaseRouter) InstallServers(serverName string) error {
+	var err error
+    switch serverName  {
+    	case "Megam":
+    	  err = app.MegamInstall()
+    	  if err != nil {
+		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Println(err)
+		     return err
+	      }
+        case "Cobbler":
+          err = app.CobblerInstall()  
+          if err != nil {
+		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Println(err)
+		     return err
+	      }
+    }
+    
+	return nil
 }
