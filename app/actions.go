@@ -57,7 +57,7 @@ func CIBExecutor(cib *CIB) (action.Result, error) {
 	var b bytes.Buffer
 	var commandWords []string
 	commandWords = strings.Fields(cib.Command)
-	
+	fmt.Println("CIB entry")
 	fmt.Println(commandWords, len(commandWords))
 
 	if len(commandWords) > 0 {
@@ -279,13 +279,14 @@ var opennebulaPreInstall = action.Action{
 var megamInstall = action.Action{
 	Name: "megamInstall",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
+		fmt.Println("action install entry")
 		var cib CIB
 		cib.Command = megam
 		// write server details in database
 	    // insert rows - auto increment PKs will be set properly after the insert
 	    db := orm.OpenDB()
 	    dbmap := orm.GetDBMap(db)
-	    newserver := orm.NewServer("Megam")
+	    newserver := orm.NewServer("MEGAM")
 	    orm.ConnectToTable(dbmap, "servers", newserver)
 	    err := dbmap.Insert(&newserver)
 	    defer db.Close()
@@ -299,7 +300,7 @@ var megamInstall = action.Action{
 	    //app := ctx.FWResult.(*App)
 	    db := orm.OpenDB()
 	    dbmap := orm.GetDBMap(db)
-	    err := orm.DeleteRowFromServerName(dbmap, "Megam")
+	    err := orm.DeleteRowFromServerName(dbmap, "MEGAM")
 	    if err != nil {
 		fmt.Println("Server delete error")
 		//return &cib, err
@@ -319,7 +320,7 @@ var cobblerInstall = action.Action{
 	    // insert rows - auto increment PKs will be set properly after the insert
 	    db := orm.OpenDB()
 	    dbmap := orm.GetDBMap(db)
-	    newserver := orm.NewServer("Cobbler")
+	    newserver := orm.NewServer("COBBLER")
 	    orm.ConnectToTable(dbmap, "servers", newserver)
 	    err := dbmap.Insert(&newserver)
 	    if err != nil {
@@ -332,7 +333,7 @@ var cobblerInstall = action.Action{
 	//app := ctx.FWResult.(*App)
 	    db := orm.OpenDB()
 	    dbmap := orm.GetDBMap(db)
-	    err := orm.DeleteRowFromServerName(dbmap, "Cobbler")
+	    err := orm.DeleteRowFromServerName(dbmap, "COBBLER")
 	    if err != nil {
 		log.Printf("Server delete error")
 		///return &cib, err

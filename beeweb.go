@@ -54,7 +54,8 @@ func main() {
 	beego.Router("/index", user, "get:Get")
 	server := new(servers.ServerRouter)
 	beego.Router("/servers", server, "get:Get")
-	beego.Router("/servers/1", server, "get:Progress")
+	beego.Router("/servers/:id/log", server, "get:Log")
+	beego.Router("/servers/getlog", server, "get:GetLog")
 	beego.Router("/servers/join", server, "get:Join")
 	
     port, _ := config.GetString("beego:http_port")

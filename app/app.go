@@ -6,6 +6,7 @@ import (
 	"github.com/megamsys/cloudinabox/action"
 	"github.com/megamsys/cloudinabox/app/bind"	
 	"regexp"
+	"fmt"
 )
 
 var (
@@ -157,6 +158,7 @@ func OpennebulaInstall(app *App) error {
 // this executes all actions for megam install
 //
 func MegamInstall() error {
+	fmt.Println("app entry")
 	actions := []*action.Action{&megamInstall}
 	
 	pipeline := action.NewPipeline(actions...)

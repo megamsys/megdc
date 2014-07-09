@@ -25,7 +25,6 @@ import (
 	"github.com/megamsys/cloudinabox/models/orm"
 	"github.com/megamsys/cloudinabox/modules/auth"
 	"github.com/megamsys/cloudinabox/modules/utils"
-	"github.com/megamsys/cloudinabox/app"
 	"html/template"
 	"net/url"
 	"strings"
@@ -370,24 +369,4 @@ func (this *BaseRouter) EndFlashRedirect() {
 	this.DelSession("on_redirect")
 }
 
-func (this *BaseRouter) InstallServers(serverName string) error {
-	var err error
-    switch serverName  {
-    	case "Megam":
-    	  err = app.MegamInstall()
-    	  if err != nil {
-		     fmt.Println("Error: Install error for [%s]", serverName)
-		     fmt.Println(err)
-		     return err
-	      }
-        case "Cobbler":
-          err = app.CobblerInstall()  
-          if err != nil {
-		     fmt.Println("Error: Install error for [%s]", serverName)
-		     fmt.Println(err)
-		     return err
-	      }
-    }
-    
-	return nil
-}
+

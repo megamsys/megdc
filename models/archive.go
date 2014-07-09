@@ -32,8 +32,9 @@ const (
 
 type Event struct {
 	Type      EventType // JOIN, LEAVE, MESSAGE
-	User      string
+	Server      string
 	Timestamp int // Unix timestamp (secs)
+	
 	Content   string
 }
 
