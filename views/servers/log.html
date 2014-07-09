@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>{{template "base/head.html" .}}
+</head>
+<body>
+	<div id="dashboard-page" class="bg-gray-light">
+		<script>
+			var socket;
+			var servers = [ "Megam", "Cobbler" ];
+			$(document).ready(
+					function() {
+						// Create a socket
+						socket = new WebSocket('ws://' + window.location.host
+								+ '/servers/getlog?uname='
+								+ $('#serverspan').text());
+						// Message received on the socket
+						socket.onmessage = function(event) {
+							var data = $.parseJSON(event.data);
+							console.log(data);
+							console.log(parseInt(data.Content));
+							$('#log').append(
+									'<li><span class="author hidden-xs">'
+											+ data.Content + '</span></li>');
+						};
+					});
+		</script>
+
+		<span id="serverspan" style="display: none"> {{.ServerName}} </span>
+
+		<div class="row">
+			<div class="col-sm-2"></div>
+			<div class="col-sm-8">
+				<div
+					class="bg-white p-t-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
+					<div class="iconmelon m-r-10 m-l-30">
+						<svg viewBox="0 0 32 32">
+                <g filter="">
+                  <use xlink:href="#email-mail"></use>
+                </g>
+              </svg>
+					</div>
+
+					<span class="text-gray-dark text-large align-with-button">
+						Logs </span>
+
+					<div class="btn btn-alt pull-right m-r-30">
+						<i class="glyphicon glyphicon-list text-white"></i>
+					</div>
+
+					<hr class="m-b-0">
+					<ul class="unstyled messages" id="log"
+						style="height: 600px; overflow-y: scroll;">
+
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+
+
+

@@ -21,8 +21,10 @@ import (
 //	"github.com/megamsys/cloudinabox/modules/utils"
     "github.com/astaxie/beego"
     "github.com/megamsys/cloudinabox/routers/base"
+    "github.com/megamsys/cloudinabox/modules/servers"
     "github.com/megamsys/cloudinabox/models/orm"
     "github.com/megamsys/cloudinabox/models"
+    "github.com/ActiveState/tail"
     "github.com/gorilla/websocket"
      "net/http"
      "container/list"
@@ -33,7 +35,7 @@ import (
    "fmt"
 )
 
-var serversList = []string{ "Megam", "Cobbler"}
+var serversList = [...]string{ "MEGAM", "COBBLER"}
 
 // PageRouter serves home page.
 type ServerRouter struct {
@@ -70,17 +72,31 @@ func (this *ServerRouter) Get() {
 	
 }
 
-func (this *ServerRouter) Progress() {
-	
-	result := map[string]interface{}{
-		"success": false,
+func (this *ServerRouter) Log() {
+	this.Data["IsLoginPage"] = true
+	this.TplNames = "servers/log.html" 
+	server := this.Ctx.Input.Param(":id")
+	this.Data["ServerName"] = server
+}
+
+func (this *ServerRouter) GetLog() {
+	uname := this.GetString("uname")
+	fmt.Println("Join entry")
+	fmt.Println(uname)
+	// Upgrade from http request to WebSocket.
+	ws, err := websocket.Upgrade(this.Ctx.ResponseWriter, this.Ctx.Request, nil, 1024, 1024)
+	if _, ok := err.(websocket.HandshakeError); ok {
+		http.Error(this.Ctx.ResponseWriter, "Not a websocket handshake", 400)
+		return
+	} else if err != nil {
+		beego.Error("Cannot setup WebSocket connection:", err)
+		return
 	}
 
-	defer func() {
-		this.Data["json"] = result
-		this.ServeJson()
-	}()
-	
+	// Join chat room.
+	Join(uname, ws)
+	publishLog(uname)
+	defer Leave(uname)
 	
 }
 
@@ -118,7 +134,6 @@ func (this *ServerRouter) Join() {
 func broadcastWebSocket(event models.Event) {
 	fmt.Println("broadcast entry")
 	data, err := json.Marshal(event)
-	fmt.Println(data)
 	if err != nil {
 		beego.Error("Fail to marshal event:", err)
 		return
@@ -127,7 +142,6 @@ func broadcastWebSocket(event models.Event) {
 	for sub := subscribers.Front(); sub != nil; sub = sub.Next() {
 		// Immediately send event to WebSocket users.
 		ws := sub.Value.(Subscriber).Conn
-		fmt.Println(websocket.TextMessage)
 		if ws != nil {
 			if ws.WriteMessage(websocket.TextMessage, data) != nil {
 				// User disconnected.
@@ -137,22 +151,77 @@ func broadcastWebSocket(event models.Event) {
 	}
 }
 var i = 0
-func doSomething() { 
-	    i = i + 3
-	    if (i <= 99) {
-	    publish <- newEvent(models.EVENT_MESSAGE, "megam", strconv.Itoa(i))
-        fmt.Printf("doing something: %v", i)
-        } 
-	    //else {
-        //	publish <- newEvent(models.EVENT_MESSAGE, "megam", "completed")
-       // } 
+var oldServerName = ""
+func doSomething(server string) bool { 
+	    if oldServerName == "" {
+	    	oldServerName = server
+	    	i = i + 3
+	    	PublishMessage(server, i)
+	    } else {
+	    	if oldServerName == server {
+	    		 i = i + 3
+	             if (i <= 99) {
+	                PublishMessage(server, i)
+                 } else {
+                 	return false
+                 }
+	             //else {
+                 //	publish <- newEvent(models.EVENT_MESSAGE, "megam", "completed")
+                 // } 
+	    	} else {
+	    		oldServerName = server
+	    		i = 0
+	    		i = i + 3
+	    		PublishMessage(server, i)
+	    	}
+	    }
+	    return true
 } 
+
+func publishLog(server string) {
+	t, _ := tail.TailFile("/var/log/opennebula.log", tail.Config{Follow: true})
+        for line := range t.Lines {
+          fmt.Println(line.Text)
+          publish <- newEvent(models.EVENT_MESSAGE, server, line.Text)
+        //  t.Stop()
+        }
+}
+
+func PublishMessage(server string, i int) {
+	 publish <- newEvent(models.EVENT_MESSAGE, server, strconv.Itoa(i))
+     fmt.Printf("doing something: %v", i)
+}
 
 func startPolling() { 
 	  //  i := 0
-        for _ = range time.Tick(2 * time.Second) { 
-                doSomething() 
-        } 
+/*	  for i := range serversList {
+        for _ = range time.Tick(1 * time.Second) { 
+               if doSomething(serversList[i]) == false {
+               	  break
+               } 
+         } 
+        }*/
+	    db := orm.OpenDB()
+	    dbmap := orm.GetDBMap(db)
+	    var server orm.Servers
+	    fmt.Println("polling entry")
+	    for i := range serversList {
+	    	fmt.Println(serversList[i])
+            err := dbmap.SelectOne(&server, "select * from servers where Name=?", serversList[i])	  
+	        fmt.Println(err)
+	        if server.Install != true {
+	   	       err := servers.InstallServers(serversList[i])
+	   	       if err != nil {
+	   		
+	   	       }
+	        }
+         }
+	    
+//	    t, _ := tail.TailFile("/var/log/syslog", tail.Config{Follow: true})
+ //       for line := range t.Lines {
+ //         fmt.Println(line.Text)
+  //        t.Stop()
+  //      }
 } 
 
 type Subscription struct {
@@ -200,6 +269,7 @@ func chatroom() {
 				beego.Info("New user:", sub.Name, ";WebSocket:", sub.Conn != nil)
 			} else {
 				beego.Info("Old user:", sub.Name, ";WebSocket:", sub.Conn != nil)
+				//oldUserReconnect(subscribers, sub.Name)
 			}
 		case event := <-publish:
 			// Notify waiting list.
@@ -212,7 +282,7 @@ func chatroom() {
 			models.NewArchive(event)
 
 			if event.Type == models.EVENT_MESSAGE {
-				beego.Info("Message from", event.User, ";Content:", event.Content)
+				beego.Info("Message from", event.Server, ";Content:", event.Content)
 			}
 		case unsub := <-unsubscribe:
 			for sub := subscribers.Front(); sub != nil; sub = sub.Next() {
@@ -245,5 +315,20 @@ func isUserExist(subscribers *list.List, user string) bool {
 	return false
 }
 
-
+/*func oldUserReconnect(subscribers *list.List, user string) bool {
+	  for sub := subscribers.Front(); sub != nil; sub = sub.Next() {
+				if sub.Value.(Subscriber).Name == user {
+					subscribers.Remove(sub)
+					// Clone connection.
+					ws := sub.Value.(Subscriber).Conn
+					if ws != nil {
+						ws.Close()
+						beego.Error("WebSocket closed:", unsub)
+					}
+					publish <- newEvent(models.EVENT_LEAVE, unsub, "") // Publish a LEAVE event.
+					return true
+				}
+			}
+	  return false
+}*/
 

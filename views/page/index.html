@@ -43,6 +43,41 @@
 			});
 		});
 	</script>
+	<script>
+		var socket;
+		var servers = ["Megam", "Cobbler"];
+		$(document).ready(
+				function() {
+					// Create a socket
+					socket = new WebSocket('ws://' + window.location.host
+							+ '/servers/join?uname=megam');
+					// Message received on the socket
+					socket.onmessage = function(event) {
+						var data = $.parseJSON(event.data);
+						console.log(data);
+						console.log(parseInt(data.Content));
+						var server = (data.Server).concat("_PROGRESS");  
+						$((".").concat(server)).css('width',
+								parseInt(data.Content) + '%');
+					};
+
+				//	var i = 0, n = servers.length;
+				//	jQuery.each(servers, function(index, server) {
+				//	    socket.send
+				//	});
+					// Send messages.
+					var postConecnt = function() {
+						// var uname = $('#uname').text();
+						// var content = $('#sendbox').val();
+						// socket.send("megam");
+						// $('#sendbox').val("");
+					}
+
+					// $('#sendbtn').click(function () {
+					postConecnt();
+					// });
+				});
+	</script>
 
 	<div class="fuelux">
 		<div class="well wizard-example">
@@ -102,36 +137,55 @@
 								<hr class="m-b-0">
 
 								<ul class="unstyled messages">
-									<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span
-											class="avatar"> <i
-												class="glyphicon glyphicon-star m-r-10 text-orange"></i>
-										</span> <span class="author hidden-xs m-r-1">Megam Gateway</span> <span
-											class="subject">
-												<div class="progress progress-striped">
-													<div class="progress-bar progress-bar-info"
-														role="progressbar" aria-valuenow="20" aria-valuemin="0"
-														aria-valuemax="100" style="width: 0%">
-														<span class="sr-only">20% Complete</span>
+									<li>
+										<div class="row">
+											<div class="col-sm-12">
+												<span class="col-sm-1"></span> <span class="col-sm-1">
+													<i class="glyphicon glyphicon-star m-r-10 text-orange"></i>
+												</span> <span class="col-sm-2">Megam</span> <span class="col-sm-4">
+													<div class="progress progress-striped">
+														<div class="progress-bar progress-bar-info MEGAM_PROGRESS"
+															role="progressbar" aria-valuenow="20" aria-valuemin="0"
+															aria-valuemax="100" style="width: 0%">
+															<span class="sr-only">20% Complete</span>
+														</div>
 													</div>
-												</div>
-										</span> <span class="date"><span class="text-gray-dark">23</span>
-												minutes ago</span>
-									</a></li>
-									<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span
-											class="avatar"> <i
-												class="glyphicon glyphicon-star m-r-10 text-orange"></i>
-										</span> <span class="author hidden-xs m-r-1">cobbler</span> <span
-											class="subject">
-												<div class="progress progress-striped">
-													<div class="progress-bar progress-bar-info"
-														role="progressbar" aria-valuenow="20" aria-valuemin="0"
-														aria-valuemax="100" style="width: 0%">
-														<span class="sr-only">20% Complete</span>
+												</span> <span class="col-sm-2">Installing...</span> <span
+													class="col-sm-2"><a href="/servers/megam/log"
+													class="btn-group pull-right" target="_blank">
+														<div class="btn btn-alt">
+															<i class="glyphicon glyphicon-list text-white"></i>
+														</div>
+														<div class="btn btn-primary">Log</div>
+												</a></span>
+											</div>
+										</div>
+									</li>
+									<li>
+										<div class="row">
+											<div class="col-sm-12">
+												<span class="col-sm-1"></span> <span class="col-sm-1">
+													<i class="glyphicon glyphicon-star m-r-10 text-orange"></i>
+												</span> <span class="col-sm-2">Cobbler</span> <span
+													class="col-sm-4">
+													<div class="progress progress-striped">
+														<div class="progress-bar progress-bar-info COBBLER_PROGRESS"
+															role="progressbar" aria-valuenow="20" aria-valuemin="0"
+															aria-valuemax="100" style="width: 0%">
+															<span class="sr-only">20% Complete</span>
+														</div>
 													</div>
-												</div>
-										</span> <span class="date"><span class="text-gray-dark">23</span>
-												minutes ago</span>
-									</a></li>
+												</span> <span class="col-sm-2">Installing...</span> <span
+													class="col-sm-2"><a href="/servers/cobbler/log"
+													class="btn-group pull-right" target="_blank">
+														<div class="btn btn-alt">
+															<i class="glyphicon glyphicon-list text-white"></i>
+														</div>
+														<div class="btn btn-primary">Log</div>
+												</a></span>
+											</div>
+										</div>
+									</li>
 								</ul>
 							</div>
 						</div>

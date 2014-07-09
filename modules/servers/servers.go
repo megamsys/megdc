@@ -14,48 +14,36 @@
 ** limitations under the License.
  */
 
-package page
+package servers
 
 import (
 //	"strings"
-//	"github.com/megamsys/cloudinabox/modules/utils"
-    "github.com/megamsys/cloudinabox/routers/base"
+	"github.com/megamsys/cloudinabox/app"
  //   "net/http"
  //   "regexp"
- //  "fmt"
+   "fmt"
 )
 
+//var serversList = []string{ "Megam", "Cobbler"}
 
-// PageRouter serves home page.
-type PageRouter struct {
-	base.BaseRouter
+func InstallServers(serverName string) error {
+	var err error
+    switch serverName  {
+    	case "MEGAM":
+    	  err = app.MegamInstall()
+    	  if err != nil {
+		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Println(err)
+		     return err
+	      }
+        case "COBBLER":
+          err = app.CobblerInstall()  
+          if err != nil {
+		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Println(err)
+		     return err
+	      }
+    }
+    
+	return nil
 }
-
-// Get implemented dashboard page.
-func (this *PageRouter) Get() {
-	//result := map[string]interface{}{
-	//	"success": true,
-	//}
-
-	//defer func() {
-	///	this.Data["json"] = result
-	//	this.ServeJson()
-	//}()
-	
-	
-	//servers := new(orm.Servers)
-	this.Data["IsLoginPage"] = true
-	this.Data["Username"] = "Megam"
-	this.TplNames = "page/index.html" 
-	if len(this.Ctx.GetCookie("remember")) == 0 {
-		this.Redirect("/", 302)
-	}
-	
-}
-
-
-
-
-
-
-
