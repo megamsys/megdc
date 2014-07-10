@@ -7,7 +7,7 @@
 
 	<script type='text/javascript'>
 		$(document).ready(function() {
-
+			
 			$('#MyWizard').on('change', function(e, data) {
 				console.log('change');
 				if (data.step === 4 && data.direction === 'next') {
@@ -43,41 +43,73 @@
 			});
 		});
 	</script>
-	<script>
-		var socket;
-		var servers = ["Megam", "Cobbler"];
-		$(document).ready(
-				function() {
-					// Create a socket
-					socket = new WebSocket('ws://' + window.location.host
-							+ '/servers/join?uname=megam');
-					// Message received on the socket
-					socket.onmessage = function(event) {
-						var data = $.parseJSON(event.data);
-						console.log(data);
-						console.log(parseInt(data.Content));
-						var server = (data.Server).concat("_PROGRESS");  
-						$((".").concat(server)).css('width',
-								parseInt(data.Content) + '%');
-					};
-
-				//	var i = 0, n = servers.length;
-				//	jQuery.each(servers, function(index, server) {
-				//	    socket.send
-				//	});
-					// Send messages.
-					var postConecnt = function() {
-						// var uname = $('#uname').text();
-						// var content = $('#sendbox').val();
-						// socket.send("megam");
-						// $('#sendbox').val("");
-					}
-
-					// $('#sendbtn').click(function () {
-					postConecnt();
-					// });
-				});
-	</script>
+	
+	<script type='text/javascript'>
+	$(document).ready(function() {
+		var servers = [ "MEGAM", "COBBLER" ]; 
+		var i = 0;
+		installProcess(i);
+     });
+	
+	function installProcess(i) {
+		var servers = [ "MEGAM", "COBBLER" ]; 
+		serverID = servers[i].concat("_waiting1")
+    	successID = servers[i].concat("_success")
+    	errorID = servers[i].concat("_error")
+    	
+    	
+    //	$('#'+serverID).waiting({ 
+	//	    elements: 6, 
+	//	    auto: true 
+	//	});
+	/*	$('#'+serverID).waiting({ 
+		className: 'waiting-circles', 
+	    elements: 8, 
+	    radius: 20, 
+	    auto: true 
+		});*/
+		
+		$('#'+serverID).waiting({ 
+		    className: 'waiting-blocks', 
+		    elements: 5, 
+		    speed: 200, 
+		    auto: true 
+		});
+		
+//		$('div.demo-container').html('<p>All new content. <em>You bet!</em></p>');
+     $('#'+serverID).show(); 
+     install_text = servers[i].concat("_install_text");
+     $('#'+install_text).show(); 
+     progress = servers[i].concat("_PROGRESS");
+     $("#"+progress).show();
+     $("."+progress).css('width', '50%');
+     
+      $.ajax({ 
+      type: "GET", 
+      url:  "/servers/"+servers[i], 
+      data: servers[i],
+      dataType: "text", 
+      cache : false, 
+//         jsonp : "onJSONPLoad", 
+//         jsonpCallback: "newarticlescallback", 
+//         crossDomain: "true", 
+      success: function(response) { 
+        $('#'+serverID).hide();
+        $('#'+install_text).hide(); 
+        $('#'+successID).show();
+        $("."+progress).css('width', '100%');
+        installProcess(i+1);
+      }, 
+      error: function (xhr, status) {  
+        $('#'+serverID).hide();
+        $('#'+install_text).hide(); 
+        $('#'+errorID).show();
+        $("."+progress).css('width', '100%');
+        $('#change_'+servers[i]).removeClass('progress-bar-info').addClass('progress-bar-danger');
+      }    
+   }); 
+	}
+</script>
 
 	<div class="fuelux">
 		<div class="well wizard-example">
@@ -111,9 +143,8 @@
 							Welcome <span class="text-blue">{{.Username}}</span>
 						</h1>
 						<div class="row">
-							<p class="m-b-30 p-b-30 text-success text-uppercase text-center ">Cloud
-								in a Box set default servers in your box.</p>
-						</div>
+  						   <p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-12 col-lg-offset-2">Step1 automatically starts the install of MEGAM. On successful completion of megam installation COBBLERD install is started. Click log to watch the progress of the install.</p>
+  					   </div>						
 						<div class="row">
 							<div class="col-sm-12">
 								<!-- MESSAGES -->
@@ -143,15 +174,21 @@
 												<span class="col-sm-1"></span> <span class="col-sm-1">
 													<i class="glyphicon glyphicon-star m-r-10 text-orange"></i>
 												</span> <span class="col-sm-2">Megam</span> <span class="col-sm-4">
-													<div class="progress progress-striped">
+													<div class="progress progress-striped" id="MEGAM_PROGRESS" style="display: none">
 														<div class="progress-bar progress-bar-info MEGAM_PROGRESS"
 															role="progressbar" aria-valuenow="20" aria-valuemin="0"
-															aria-valuemax="100" style="width: 0%">
+															aria-valuemax="100" style="width: 0%" id="change_MEGAM">
 															<span class="sr-only">20% Complete</span>
 														</div>
 													</div>
-												</span> <span class="col-sm-2">Installing...</span> <span
-													class="col-sm-2"><a href="/servers/megam/log"
+												</span>
+												<span class="col-sm-1" id="MEGAM_install_text" style="display: none"><p class="text-info">Installing</p></span>
+												<div id="MEGAM_waiting1" class="col-sm-2"></div>
+												<div id="MEGAM_success" class="col-sm-2"
+													style="display: none"><p class="text-success">Done</p></div>
+												<div id="MEGAM_error" class="col-sm-2" style="display: none"><p class="text-danger">Error</p></div>
+												<!--  <span class="col-sm-2">Installing...</span> -->
+												<span class="col-sm-1"><a href="/servers/megam/log"
 													class="btn-group pull-right" target="_blank">
 														<div class="btn btn-alt">
 															<i class="glyphicon glyphicon-list text-white"></i>
@@ -166,17 +203,25 @@
 											<div class="col-sm-12">
 												<span class="col-sm-1"></span> <span class="col-sm-1">
 													<i class="glyphicon glyphicon-star m-r-10 text-orange"></i>
-												</span> <span class="col-sm-2">Cobbler</span> <span
+												</span> <span class="col-sm-2">Cobblerd</span> <span
 													class="col-sm-4">
-													<div class="progress progress-striped">
-														<div class="progress-bar progress-bar-info COBBLER_PROGRESS"
+													<div class="progress progress-striped" id="COBBLER_PROGRESS" style="display: none">
+														<div
+															class="progress-bar progress-bar-info COBBLER_PROGRESS"
 															role="progressbar" aria-valuenow="20" aria-valuemin="0"
-															aria-valuemax="100" style="width: 0%">
+															aria-valuemax="100" style="width: 0%" id="change_COBBLER">
 															<span class="sr-only">20% Complete</span>
 														</div>
 													</div>
-												</span> <span class="col-sm-2">Installing...</span> <span
-													class="col-sm-2"><a href="/servers/cobbler/log"
+												</span>
+												<span class="col-sm-1"  id="COBBLER_install_text" style="display: none"><p class="text-info">Installing</p></span>
+												<div id="COBBLER_waiting1" class="col-sm-2"></div>
+												<div id="COBBLER_success" class="col-sm-2"
+													style="display: none"><p class="text-success">Done</p></div>
+												<div id="COBBLER_error" class="col-sm-2"
+													style="display: none"><p class="text-danger">Error</p></div>
+												<!-- <span class="col-sm-2">Installing...</span> -->
+												<span class="col-sm-1"><a href="/servers/cobbler/log"
 													class="btn-group pull-right" target="_blank">
 														<div class="btn btn-alt">
 															<i class="glyphicon glyphicon-list text-white"></i>
