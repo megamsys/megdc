@@ -72,6 +72,47 @@ func (this *ServerRouter) Get() {
 	
 }
 
+func (this *ServerRouter) Install() {
+	var server orm.Servers
+	result := map[string]interface{}{
+		"success": false,
+	}
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	this.Data["IsLoginPage"] = true
+	this.Data["Username"] = "Megam"
+    servername := this.Ctx.Input.Param(":servername")
+   // fmt.Println("\n=======================================")
+  //  fmt.Printf("%v", this)
+  //  fmt.Println("\n=======================================")
+   // fmt.Println(servername)
+   // fmt.Println("\n=======================================")
+   // fmt.Println(this.Ctx.Input.Params)
+  //  fmt.Println("\n=======================================")
+   // fmt.Println(this.Ctx.Input.RequestBody)
+	if len(this.Ctx.GetCookie("remember")) == 0 {
+		this.Redirect("/", 302)
+	}
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+    err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)	  
+	   fmt.Println(err)
+	    if server.Install != true {
+	   	       err := servers.InstallServers(servername)
+	   	       if err != nil {
+	   		     result["success"] = false
+	   	       } else {
+	   	       	  result["success"] = true
+	   	       }
+	        }
+	result["success"] = true
+	
+}
+
 func (this *ServerRouter) Log() {
 	this.Data["IsLoginPage"] = true
 	this.TplNames = "servers/log.html" 
@@ -117,7 +158,7 @@ func (this *ServerRouter) Join() {
 
 	// Join chat room.
 	Join(uname, ws)
-	startPolling()
+//	startPolling()
 	defer Leave(uname)
 
 	// Message receive loop.
