@@ -25,7 +25,7 @@ import (
 	"github.com/megamsys/cloudinabox/models/orm"
 	"github.com/megamsys/cloudinabox/modules/auth"
 	"github.com/megamsys/cloudinabox/modules/utils"
-	"html/template"
+//	"html/template"
 	"net/url"
 	"strings"
 	"time"
@@ -71,9 +71,9 @@ func (this *BaseRouter) Prepare() {
 	}
 
 	// pass xsrf helper to template context
-	xsrfToken := this.XsrfToken()
-	this.Data["xsrf_token"] = xsrfToken
-	this.Data["xsrf_html"] = template.HTML(this.XsrfFormHtml())
+	//xsrfToken := this.XsrfToken()
+	//this.Data["xsrf_token"] = xsrfToken
+	//this.Data["xsrf_html"] = template.HTML(this.XsrfFormHtml())
 
 	// read flash message
 	beego.ReadFromRequest(&this.Controller)

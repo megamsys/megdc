@@ -342,3 +342,39 @@ var cobblerInstall = action.Action{
 	},
 	MinParams: 1,
 	}
+
+var nebulaInstall = action.Action{
+	Name: "nebulaInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = cobbler
+		// write server details in database
+	    // insert rows - auto increment PKs will be set properly after the insert
+	    db := orm.OpenDB()
+	    dbmap := orm.GetDBMap(db)
+	    newserver := orm.NewServer("OPENNEBULA")
+	    orm.ConnectToTable(dbmap, "servers", newserver)
+	    err := dbmap.Insert(&newserver)
+	    if err != nil {
+		fmt.Println("server insert error======>")
+		return &cib, err
+	    }
+	   return CIBExecutor(&cib)
+	},
+	Backward: func(ctx action.BWContext) {
+	//app := ctx.FWResult.(*App)
+	    db := orm.OpenDB()
+	    dbmap := orm.GetDBMap(db)
+	    err := orm.DeleteRowFromServerName(dbmap, "OPENNEBULA")
+	    if err != nil {
+		log.Printf("Server delete error")
+		///return &cib, err
+	    }
+		log.Printf(" Nothing to recover")
+	},
+	MinParams: 1,
+	}
+
+
+
+
