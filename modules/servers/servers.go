@@ -43,6 +43,13 @@ func InstallServers(serverName string) error {
 		     fmt.Println(err)
 		     return err
 	      }
+          case "OPENNEBULA":
+          err = app.NebulaInstall()  
+          if err != nil {
+		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Println(err)
+		     return err
+	      }
     }
     
 	return nil

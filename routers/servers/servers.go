@@ -141,6 +141,33 @@ func (this *ServerRouter) GetLog() {
 	
 }
 
+func (this *ServerRouter) Verify() {
+	servername := this.Ctx.Input.Param(":name")
+	 var server orm.Servers
+	result := map[string]interface{}{
+		"success": false,
+	}
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	if len(this.Ctx.GetCookie("remember")) == 0 {
+		this.Redirect("/", 302)
+	}
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+    err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)	  
+	   fmt.Println(err)
+	    if server.Install != true {	   	      
+	   	       	  result["success"] = true
+	        } else {
+	        	 result["success"] = false
+	        }
+	result["success"] = true
+}
+
 // Join method handles WebSocket requests for WebSocketController.
 func (this *ServerRouter) Join() {
 	uname := this.GetString("uname")

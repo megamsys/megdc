@@ -183,6 +183,20 @@ func CobblerInstall() error {
 	return nil
 }
 
+//
+// this executes all actions for opennebula install
+//
+func NebulaInstall() error {
+	actions := []*action.Action{&nebulaInstall}
+	
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetEmail returns the email of the app.
 func (app *App) GetEmail() string {
 	return app.Email

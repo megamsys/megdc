@@ -21,3 +21,12 @@
     -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;}
 .waiting-blocks-play-0{ background-color: black; }
 .waiting-blocks-play-1{ background-color: #caddfb; }
+
+
+td.details-control {
+    background: url('../resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('../resources/details_close.png') no-repeat center center;
+}
