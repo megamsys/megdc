@@ -6,6 +6,7 @@ import (
 	"github.com/megamsys/cloudinabox/action"
 	"github.com/megamsys/cloudinabox/app/bind"	
 	"regexp"
+	"fmt"
 )
 
 var (
@@ -30,6 +31,9 @@ type App struct {
    // AppReqs *AppRequests
 }
 
+type CIB struct {
+	Command    string 
+}
 
 // MarshalJSON marshals the app in json format. It returns a JSON object with
 //the following keys: name, framework, teams, units, repository and ip.
@@ -146,6 +150,49 @@ func OpennebulaInstall(app *App) error {
     err := pipeline.Execute(app)
     if err != nil {
 		return &AppLifecycleError{app: app.ClusterName, Err: err}
+	}
+	return nil
+}
+
+//
+// this executes all actions for megam install
+//
+func MegamInstall() error {
+	fmt.Println("app entry")
+	actions := []*action.Action{&megamInstall}
+	
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//
+// this executes all actions for cobbler install
+//
+func CobblerInstall() error {
+	actions := []*action.Action{&cobblerInstall}
+	
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//
+// this executes all actions for opennebula install
+//
+func NebulaInstall() error {
+	actions := []*action.Action{&nebulaInstall}
+	
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
 	}
 	return nil
 }

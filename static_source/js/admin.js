@@ -2,10 +2,10 @@
   $(document).ready(function() {
     var addMessage, animateSidebarChart, data, events, inboxMessages, listItem, listSortable, makeMessageString, makeReplyString, map, sidebarChart, someday, stats_shown, summernote, taskInput, today, tomorrow, uiChart1, uiChart2, uiChart3, uiPieChart, uiPieChart2;
     makeMessageString = function(content) {
-      return "<li class='right'><img src='placeholders/avatars/9.jpg' class='img-circle'><div class='message'>" + content + "</div></li>";
+      return "<li class='right'><img src='/static/placeholders/avatars/9.jpg' class='img-circle'><div class='message'>" + content + "</div></li>";
     };
     makeReplyString = function(content) {
-      return "<li><img src='placeholders/avatars/avatar.jpg' class='img-circle' width='26'><div class='message'>" + content + "</div></li>";
+      return "<li><img src='/static/placeholders/avatars/avatar.jpg' class='img-circle' width='26'><div class='message'>" + content + "</div></li>";
     };
     addMessage = function(content, reply) {
       var message, messages;
@@ -44,7 +44,8 @@
       });
     }
     if ($('#dashboard-page').length > 0) {
-      $.notify("Welcome back John", 'info', {
+      var str = $("#username_hidden").val();	
+      $.notify("Welcome back "+str , 'info', {
         autoHide: true,
         autoHideDelay: 5000,
         arrowShow: false
