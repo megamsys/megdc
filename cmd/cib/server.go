@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/megamsys/cloudinabox/amqp"
-	"github.com/megamsys/cloudinabox/app"
+	"github.com/megamsys/libgo/amqp"
+//	"github.com/megamsys/cloudinabox/app"
 	"log"
 	"os"
 	"os/signal"
-	"strings"
+	//"strings"
 	"regexp"
 	"sync"
 	"syscall"
@@ -15,7 +15,7 @@ import (
 
 const (
 	// queue actions
-	runningApp = "running"	
+	runningApp = "running"
 	startApp   = "start"
 	stopApp    = "stop"
 	buildApp   = "build"
@@ -85,18 +85,19 @@ func handler() amqp.Handler {
 func handle(msg *amqp.Message) {
 	log.Printf("Handling message %v", msg)
 
-	switch strings.ToLower(msg.Action) {
+	/*switch strings.ToLower(msg.Action) {
 	case "ganeti install":
 		if len(msg.Args) < 1 {
 			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
 		}
-		//stick the id from msg.
-		ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}
+		//for now comment it out.
+	  ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}
+
 
 		if err := app.GanetiInstall(&ap); err != nil {
 			log.Printf("Error handling %q: Installation process failed:\n%s.", msg.Action, err)
 			return
-		}		
+		}
 
 		msg.Delete()
 		break
@@ -105,15 +106,15 @@ func handle(msg *amqp.Message) {
 			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
 		}
 		//stick the id from msg.
-		ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}                         
+		ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}
 
 		if err := app.OpennebulaInstall(&ap); err != nil {
 			log.Printf("Error handling %q: Installation process failed:\n%s.", msg.Action, err)
 			return
-		}		
+		}
 
 		msg.Delete()
-		break	
+		break
 	case "remove":
 		if len(msg.Args) < 1 {
 			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
@@ -124,12 +125,13 @@ func handle(msg *amqp.Message) {
 		if err := app.Remove(&ap); err != nil {
 			log.Printf("Error handling %q: Remove process failed:\n%s.", msg.Action, err)
 			return
-		}		
+		}
 		msg.Delete()
-		break	
-		
+		break
+
 	default:
 		log.Printf("Error handling %q: invalid action.", msg.Action)
 		msg.Delete()
 	}
+	*/
 }

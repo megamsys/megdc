@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"github.com/megamsys/cloudinabox/cmd"
-	"github.com/megamsys/cloudinabox/cmd/testing"
+	"github.com/megamsys/libgo/cmd"
+	"github.com/megamsys/libgo/cmd/testing"
 //	"io/ioutil"
 	"launchpad.net/gocheck"
 	"net/http"

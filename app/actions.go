@@ -4,10 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/megamsys/cloudinabox/action"
-	"github.com/megamsys/cloudinabox/exec"
+	"github.com/megamsys/libgo/exec"
+	"github.com/megamsys/libgo/action"
 	"github.com/megamsys/cloudinabox/models/orm"
-//	"bitbucket.org/kardianos/osext"
 	"log"
 	"strings"
 )
@@ -25,7 +24,7 @@ const (
 	opennebulapostinstall = "bash conf/opennebula/one_postinstall.sh"
 	opennebulainstall = "bash conf/opennebula/one_install.sh"
 	rootPath  = "/tmp"
-	defaultEnvPath = "conf/env.sh"	
+	defaultEnvPath = "conf/env.sh"
 	drbd_mnt = "/drbd_mnt"
 	megam = "bash conf/cib/megam.sh"
 	cobbler = "bash conf/cib/cobbler.sh"
@@ -38,16 +37,16 @@ func CommandExecutor(app *App) (action.Result, error) {
 	var b bytes.Buffer
 	var commandWords []string
 	commandWords = strings.Fields(app.Command)
-	
+
 	fmt.Println(commandWords, len(commandWords))
 
 	if len(commandWords) > 0 {
 		if err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b); err != nil {
-			log.Printf("stderr:%s", b)		
+			log.Printf("stderr:%s", b)
 			return nil, err
 		}
 	}
-   
+
 	log.Printf("%s", b)
 	return &app, nil
 }
@@ -62,11 +61,11 @@ func CIBExecutor(cib *CIB) (action.Result, error) {
 
 	if len(commandWords) > 0 {
 		if err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b); err != nil {
-			log.Printf("stderr:%s", b)		
+			log.Printf("stderr:%s", b)
 			return nil, err
 		}
 	}
-   
+
 	log.Printf("%s", b)
 	return &b, nil
 }
@@ -84,11 +83,11 @@ var remove = action.Action{
 		default:
 			return nil, errors.New("First parameter must be App or *App.")
 		}
-		
+
 		return CommandExecutor(&app)
 	},
 	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)	
+		app := ctx.FWResult.(*App)
 		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
 	},
 	MinParams: 1,
@@ -129,14 +128,14 @@ var ganetiInstall = action.Action{
 		default:
 			return nil, errors.New("First parameter must be App or *App.")
 		}
-		
+
 		log.Printf("Installation %s", app.ClusterName)
 		app.Command = ganetiinstall
 	   return CommandExecutor(&app)
 	},
 	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)		
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)		
+		app := ctx.FWResult.(*App)
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
 	},
 	MinParams: 1,
 }
@@ -157,7 +156,7 @@ var ganetiPreInstall = action.Action{
 	   return CommandExecutor(&app)
 	},
 	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)		
+		app := ctx.FWResult.(*App)
 		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
 	},
 	MinParams: 1,
@@ -184,7 +183,7 @@ var ganetiPreInstall = action.Action{
 	},
 	MinParams: 1,
 	}
-	
+
 	var opennebulaVerify = action.Action{
 	Name: "opennebulaVerify",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
@@ -220,14 +219,14 @@ var opennebulaInstall = action.Action{
 		default:
 			return nil, errors.New("First parameter must be App or *App.")
 		}
-		
+
 		log.Printf("Installation %s", app.ClusterName)
 		app.Command = opennebulainstall
 	   return CommandExecutor(&app)
 	},
 	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)		
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)		
+		app := ctx.FWResult.(*App)
+		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
 	},
 	MinParams: 1,
 }
@@ -248,7 +247,7 @@ var opennebulaPreInstall = action.Action{
 	   return CommandExecutor(&app)
 	},
 	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)		
+		app := ctx.FWResult.(*App)
 		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
 	},
 	MinParams: 1,
@@ -374,7 +373,3 @@ var nebulaInstall = action.Action{
 	},
 	MinParams: 1,
 	}
-
-
-
-

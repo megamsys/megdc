@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/megamsys/cloudinabox/cmd"
+	"github.com/megamsys/libgo/cmd"
 	"launchpad.net/gocheck"
 )
 
@@ -38,4 +38,3 @@ If you use the '--bark' flag gulpd will notify daemon status.
 	command := GulpStop{}
 	c.Assert(command.Info(), gocheck.DeepEquals, expected)
 }
-

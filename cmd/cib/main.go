@@ -17,12 +17,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/megamsys/cloudinabox/cmd"
+	"github.com/megamsys/libgo/cmd"
 	"github.com/tsuru/config"
 //	"strconv"
 	"log"
 	"os"
-	"path/filepath"        
+	"path/filepath"
 )
 
 const (
@@ -63,8 +63,8 @@ func main() {
 	log.Println(fmt.Errorf("Conf: %s", p))
 	config.ReadConfigFile(defaultConfigPath)
 	name := cmd.ExtractProgramName(os.Args[0])
-	manager := buildManager(name) 
-	manager.Run(os.Args[1:])        
+	manager := buildManager(name)
+	manager.Run(os.Args[1:])
 }
 
 
