@@ -8839,6 +8839,7 @@ a:focus {
 .table > tfoot > tr > th.active {
   background: rgba(44, 192, 213, 0.2);
 }
+
 .table > thead > tr > td.success,
 .table > tbody > tr > td.success,
 .table > tfoot > tr > td.success,
@@ -8864,6 +8865,19 @@ a:focus {
   background: rgba(255, 27, 25, 0.2);
 }
 
+.table > thead > tr.megam_color1 > td, .table > thead > tr.megam_color1 > th,
+.table > tbody > tr.megam_color1 > td,
+.table > tbody > tr.megam_color1 > th,
+.table > tfoot > tr.megam_color1 > td,
+.table > tfoot > tr.megam_color1 > th,
+.table > thead > tr.megam_color1 > td,
+.table > thead > tr.megam_color1 > th,
+.table > tbody > tr.megam_color1 > td,
+.table > tbody > tr.megam_color1 > th,
+.table > tfoot > tr.megam_color1 > td,
+.table > tfoot > tr.megam_color1 > th {
+  background: rgba(103, 58, 183, 0.2);
+}
 .table > thead > tr.active > td, .table > thead > tr.active > th,
 .table > tbody > tr.active > td,
 .table > tbody > tr.active > th,

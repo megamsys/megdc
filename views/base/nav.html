@@ -8,7 +8,7 @@
 	  	<div id="top-nav">
 	  		<div class="navbar-dropdown navbar-right navbar-avatar">
 	  			<a href="#" data-target="#topavatar-toggle" class="hover-no-underline dropdown-toggle m-lr-30 mm-lr-10" data-toggle="dropdown">
-						<img src="/static/placeholders/avatars/avatar.jpg" class="img-circle" width=25>
+						<!-- <img src="/static/placeholders/avatars/avatar.jpg" class="img-circle" width=25> -->
 						<span class="text-gray-light hidden-sm hidden-xs">{{.Username}} </span>
 						<span class="caret text-white hidden-sm hidden-xs"></span>
 					</a>
@@ -16,6 +16,7 @@
 	          <li><a href="settings.html">Settings</a></li>
 	          <li><a href="/logout">Signout</a></li>
 	        </ul>
-	  		</div>	  		
+	  		</div>	 
+	  		<input type="hidden" id="username_hidden" value={{.Username}}> 		
 	  	</div>
 		</nav>

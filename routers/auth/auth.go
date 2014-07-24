@@ -36,7 +36,7 @@ type LoginRouter struct {
 func (this *LoginRouter) Get() {
 	loginRedirect := strings.TrimSpace(this.GetString("to"))
 	if len(this.Ctx.GetCookie("remember")) > 0 {
-		this.Data["Username"] = "Megam"
+		this.Data["Username"] = this.Ctx.GetCookie("user_name")
 		this.Redirect("/index", 302)
 	} else {
 		this.Data["IsLoginPage"] = true
@@ -55,16 +55,31 @@ func (this *LoginRouter) Login() {
 
 	data := &utils.User{this.GetString("username"), this.GetString("password")}
 	client := utils.NewClient(&http.Client{}, data)
-	_, err := this.Auth(client, data)
-
-	if err != nil {
-		this.FlashWrite("Email and password was wrong. Please re-entry the fields.", "true")
-		this.Redirect("/", 302)
-		fmt.Println(err)
-	} else {
+	response, _ := this.Auth(client, data)
+    fmt.Println(response)
+    if response != nil {
+    	if response.StatusCode > 399 && response.StatusCode < 498 {
+		   this.FlashWrite("LoginError", "true")
+		   this.Redirect("/", 302)
+	   } else if response.StatusCode > 499 {
+		   this.FlashWrite("ServerError", "true")
+		   this.Redirect("/", 302)
+	   } else {
 		this.LoginUser(data, true)
 		this.Redirect("/index", 302)
-	}
+	  }
+    } else {
+    	this.FlashWrite("ServerError", "true")
+		this.Redirect("/", 302)
+    }
+
+//	if err != nil {
+//		this.FlashWrite("LoginError", "true")
+//		this.Redirect("/", 302)
+//	} else {
+//		this.LoginUser(data, true)
+//		this.Redirect("/index", 302)
+//	}
 
 }
 

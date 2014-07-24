@@ -47,9 +47,14 @@
                             <p>login4</p>
                         </div>
                         {{end}}
-		     	        {{if .flash.Error}}
+		     	        {{if .flash.LoginError}}
                             <div class="alert alert-danger alert-dismissable">
                               <p>Email and password was wrong. Please re-entry the fields.</p>                               
+                            </div>
+                        {{end}}
+                         {{if .flash.ServerError}}
+                            <div class="alert alert-danger alert-dismissable">
+                              <p>Failed to connect to api server.</p>                               
                             </div>
                         {{end}}
 			<form id="User" method="POST" action="/signin">

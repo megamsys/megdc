@@ -1796,6 +1796,19 @@ table th[class*="col-"] {
   background-color: #e8e8e8;
 }
 
+.table > thead > tr > td.megam_color1,
+.table > thead > tr > th.megam_color1, .table > thead > tr.megam_color1 > td, .table > thead > tr.megam_color1 > th,
+.table > tbody > tr > td.megam_color1,
+.table > tbody > tr > th.megam_color1,
+.table > tbody > tr.megam_color1 > td,
+.table > tbody > tr.megam_color1 > th,
+.table > tfoot > tr > td.megam_color1,
+.table > tfoot > tr > th.megam_color1,
+.table > tfoot > tr.megam_color1 > td,
+.table > tfoot > tr.megam_color1 > th {
+  background-color: #8d6e63;
+}
+
 .table > thead > tr > td.success,
 .table > thead > tr > th.success, .table > thead > tr.success > td, .table > thead > tr.success > th,
 .table > tbody > tr > td.success,
