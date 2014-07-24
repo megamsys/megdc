@@ -62,7 +62,7 @@ func main() {
 	
     port, _ := config.GetString("beego:http_port")
 	if port == "" {
-		port = "8085"
+		port = "8086"
 	}
 	http_port, _ := strconv.Atoi(port)
     beego.HttpPort = http_port
