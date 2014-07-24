@@ -102,14 +102,14 @@ _go_test:
 	@go test ./...
 
 _gulpd_dry:
-	@go build -o beeweb beeweb.go
-	@sudo ./beeweb --config ./conf/cib.conf
-	@rm -f beeweb
+	@go build -o cib cib.go
+	@sudo ./cib --config ./conf/cib.conf
+	@rm -f cib
 
 test: _go_test _gulpd_dry
 
 
 client:
-	@go build -o beeweb beeweb.go
+	@go build -o cib cib.go
 	@echo "Done."
 
