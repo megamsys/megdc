@@ -1,10 +1,8 @@
 package main
 
 import (
-	//"bytes"
-	//	"encoding/json"
 	"fmt"
-	"github.com/megamsys/cloudinabox/cmd"
+	"github.com/megamsys/libgo/cmd"
 	//	"io/ioutil"
 	"launchpad.net/gnuflag"
 	//"log"
@@ -43,7 +41,7 @@ func (AppStart) Run(context *cmd.Context,client *cmd.Client) error {
 	}
 	*/
 	fmt.Fprintf(context.Stdout, "App %q is being started!\n", appName)
-	fmt.Fprintln(context.Stdout, "Use appreqs list to check the status of the app.")	
+	fmt.Fprintln(context.Stdout, "Use appreqs list to check the status of the app.")
 	return nil
 }
 
@@ -74,7 +72,7 @@ If you don't provide the app name, megam will try to guess it.`,
 
 func (c *AppStop) Run(context *cmd.Context, client *cmd.Client) error {
 	appName := context.Args[0]
-	
+
 	var answer string
 	if !c.yes {
 		fmt.Fprintf(context.Stdout, `Are you sure you want to remove app "%s"? (y/n) `, appName)

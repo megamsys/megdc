@@ -59,5 +59,3 @@ type Binder interface {
 	// UnbindUnit makes the unbind between the binder and an unit.
 	UnbindUnit(Unit) error
 }
-
-

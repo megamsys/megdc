@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/megamsys/cloudinabox/cmd"
+	"github.com/megamsys/libgo/cmd"
 	"launchpad.net/gocheck"
 )
 

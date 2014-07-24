@@ -2,9 +2,9 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/megamsys/cloudinabox/fs"	
-	"github.com/megamsys/cloudinabox/action"
-	"github.com/megamsys/cloudinabox/app/bind"	
+	"github.com/megamsys/libgo/fs"
+	"github.com/megamsys/libgo/action"
+	"github.com/megamsys/cloudinabox/app/bind"
 	"regexp"
 	"fmt"
 )
@@ -22,7 +22,7 @@ type App struct {
     Email              string `json:"email"`
 	ApiKey             string `json:"api_key"`
 	InstallPackage     string `json:"install_package"`
-	NeedMegam          string `json:"need_megam"`	
+	NeedMegam          string `json:"need_megam"`
 	ClusterName        string `json:"cluster_name"`
 	NodeIp             string `json:"node_ip"`
 	NodeName           string `json:"node_name"`
@@ -32,7 +32,7 @@ type App struct {
 }
 
 type CIB struct {
-	Command    string 
+	Command    string
 }
 
 // MarshalJSON marshals the app in json format. It returns a JSON object with
@@ -65,7 +65,7 @@ func (a *App) UnmarshalJSON(b []byte) error {
     a.NodeIp   =  m["node_ip"].(string)
     a.NodeName  = m["node_name"].(string)
     a.Action  =  m["action"].(string)
-	
+
     return nil
 }
 
@@ -87,20 +87,20 @@ func filesystem() fs.Fs {
 log.Printf("Get message %v", reqId)
 	if app.Type != "addon" {
 	conn, err := db.Conn("appreqs")
-	if err != nil {	
+	if err != nil {
 		return err
-	}	
+	}
 	appout := &AppRequests{}
-	conn.FetchStruct(reqId, appout)	
+	conn.FetchStruct(reqId, appout)
 	app.AppReqs = appout
 	defer conn.Close()
 	} else {
 	  conn, err := db.Conn("addonconfigs")
-	if err != nil {	
+	if err != nil {
 		return err
-	}	
+	}
 	appout := &AppConfigurations{}
-	conn.FetchStruct(reqId, appout)	
+	conn.FetchStruct(reqId, appout)
 	app.AppConf = appout
 	log.Printf("Get message from riak  %v", appout)
 	defer conn.Close()
@@ -126,12 +126,12 @@ func Remove(app *App) error {
 }
 
 
-// 
+//
 // this executes all actions for ganeti install
-// 
+//
 func GanetiInstall(app *App) error {
-    actions := []*action.Action{&ganetiVerify, &ganetiPreInstall, &ganetiInstall, &ganetiPostInstall}  
- 
+    actions := []*action.Action{&ganetiVerify, &ganetiPreInstall, &ganetiInstall, &ganetiPostInstall}
+
     pipeline := action.NewPipeline(actions...)
     err := pipeline.Execute(app)
     if err != nil {
@@ -140,12 +140,12 @@ func GanetiInstall(app *App) error {
 	return nil
 }
 
-// 
+//
 // this executes all actions for opennebula install
-// 
+//
 func OpennebulaInstall(app *App) error {
-    actions := []*action.Action{&opennebulaVerify, &opennebulaPreInstall, &opennebulaInstall, &opennebulaPostInstall}  
- 
+    actions := []*action.Action{&opennebulaVerify, &opennebulaPreInstall, &opennebulaInstall, &opennebulaPostInstall}
+
     pipeline := action.NewPipeline(actions...)
     err := pipeline.Execute(app)
     if err != nil {
@@ -160,7 +160,7 @@ func OpennebulaInstall(app *App) error {
 func MegamInstall() error {
 	fmt.Println("app entry")
 	actions := []*action.Action{&megamInstall}
-	
+
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -174,7 +174,7 @@ func MegamInstall() error {
 //
 func CobblerInstall() error {
 	actions := []*action.Action{&cobblerInstall}
-	
+
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -188,7 +188,7 @@ func CobblerInstall() error {
 //
 func NebulaInstall() error {
 	actions := []*action.Action{&nebulaInstall}
-	
+
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -232,10 +232,8 @@ func (app *App) GetNodeIp() string {
 
 func (app *App) GetNodeName() string {
     return app.NodeName
-}    
+}
 
 func (app *App) GetAction() string {
     return app.Action
-}    
-
-
+}
