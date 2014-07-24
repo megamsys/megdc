@@ -1,32 +1,32 @@
 $(document).ready(function() {
-			var i = 0;
-			installProcess(i);
-			
-			$('#OPENNEBULA_install_button').click(function (event){ 
-			     event.preventDefault(); 
-			     installProcess(2);
-			     return false; //for good measure
-			});
-			
-			$("#ha_selection input:radio").on("ifClicked", function() {
-		           if($(this).attr("value") == "yes"){
-				       $("#ha_note").show();
-				    } else {
-				    	$("#ha_note").hide();
-				    }
-		           
-		        });		
-			
-			$("#storage_selection input:radio").on("ifClicked", function() {
-		           if($(this).attr("value") == "yes"){
-				       $("#storage_note").show();
-				    } else {
-				    	$("#storage_note").hide();
-				    }
-		           
-		        });	
-			
-		});
+	var i = 0;
+	installProcess(i);
+
+	$('#OPENNEBULA_install_button').click(function(event) {
+		event.preventDefault();
+		installProcess(2);
+		return false; // for good measure
+	});
+
+	$("#ha_selection input:radio").on("ifClicked", function() {
+		if ($(this).attr("value") == "yes") {
+			$("#ha_note").show();
+		} else {
+			$("#ha_note").hide();
+		}
+
+	});
+
+	$("#storage_selection input:radio").on("ifClicked", function() {
+		if ($(this).attr("value") == "yes") {
+			$("#storage_note").show();
+		} else {
+			$("#storage_note").hide();
+		}
+
+	});
+
+});
 
 function installProcess(i) {
 	var servers = [ "MEGAM", "COBBLER", "OPENNEBULA" ];
@@ -49,11 +49,17 @@ function installProcess(i) {
 		$("#OPENNEBULA_install_button").hide();
 	} else {
 		$('#' + serverID).waiting({
-			className : 'waiting-blocks',
-			elements : 5,
-			speed : 200,
+			className : 'waiting-circles',
+			elements : 8,
+			radius : 20,
 			auto : true
 		});
+		// $('#' + serverID).waiting({
+		// className : 'waiting-blocks',
+		// elements : 5,
+		// speed : 200,
+		// auto : true
+		// });
 		progress = servers[i].concat("_PROGRESS");
 		$("#" + progress).show();
 		$("." + progress).css('width', '50%');
@@ -84,9 +90,9 @@ function installProcess(i) {
 				if (i < 2) {
 					$("." + progress).css('width', '100%');
 				}
-				if (i == 0) {					
+				if (i == 0) {
 					installProcess(i + 1);
-				}				
+				}
 				if (i == 1) {
 					$("#wzdButtons").show();
 				}
@@ -132,25 +138,25 @@ function opennebula_install_check() {
 				$("#OPENNEBULA_install_button").hide();
 				$('#OPENNEBULA_waiting1').hide();
 				$('#OPENNEBULA_install_text').hide();
-				$('#OPENNEBULA_success').show();				
+				$('#OPENNEBULA_success').show();
 			} else {
 				$('#OPENNEBULA_waiting1').hide();
 				$('#OPENNEBULA_install_text').hide();
-				$('#OPENNEBULA_error').hide();	
+				$('#OPENNEBULA_error').hide();
 				$("#OPENNEBULA_install_button").show();
 			}
 		},
 		error : function(xhr, status) {
 			$('#OPENNEBULA_waiting1').hide();
 			$('#OPENNEBULA_install_text').hide();
-			$('#OPENNEBULA_error').hide();			
+			$('#OPENNEBULA_error').hide();
 			$("#OPENNEBULA_install_button").show();
 		}
 	});
 	return false;
 }
 
-//function opennebula_install() {
-///	installProcess(2);
+// function opennebula_install() {
+// / installProcess(2);
 
-//}
+// }

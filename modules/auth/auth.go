@@ -60,6 +60,7 @@ func GetUserFromSession(sess session.SessionStore) bool {
 func DeleteRememberCookie(ctx *context.Context) {
 	ctx.SetCookie(setting.CookieUserName, "", -1)
 	ctx.SetCookie(setting.CookieRememberName, "", -1)
+	ctx.SetCookie("remember", "", -1)
 }
 
 func LoginUserFromRememberCookie(user *utils.User, ctx *context.Context) (success bool) {
@@ -93,7 +94,8 @@ func LoginUser(user *utils.User, ctx *context.Context, remember bool) {
 	ctx.Input.CruSession.SessionRelease(ctx.ResponseWriter)
 	ctx.Input.CruSession = beego.GlobalSessions.SessionRegenerateId(ctx.ResponseWriter, ctx.Request)
 	ctx.Input.CruSession.Set("auth_user_name", user.Username)
-    
+	days := 86400 * setting.LoginRememberDays
+    ctx.SetCookie("user_name", user.Username, days)
 	if remember {
 		WriteRememberCookie(user, ctx)
 	}

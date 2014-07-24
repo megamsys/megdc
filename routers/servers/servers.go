@@ -55,7 +55,7 @@ func (this *ServerRouter) Get() {
 	}()
 	
 	this.Data["IsLoginPage"] = true
-	this.Data["Username"] = "Megam"
+	this.Data["Username"] = this.GetUser()
 	this.TplNames = "servers/servers.html" 
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
@@ -84,7 +84,7 @@ func (this *ServerRouter) Install() {
 	}()
 	
 	this.Data["IsLoginPage"] = true
-	this.Data["Username"] = "Megam"
+	this.Data["Username"] = this.GetUser()
     servername := this.Ctx.Input.Param(":servername")
    // fmt.Println("\n=======================================")
   //  fmt.Printf("%v", this)
@@ -101,7 +101,7 @@ func (this *ServerRouter) Install() {
 	dbmap := orm.GetDBMap(db)
     err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)	  
 	   fmt.Println(err)
-	    if server.Install != true {
+	    if server.Install != true  {
 	   	       err := servers.InstallServers(servername)
 	   	       if err != nil {
 	   		     result["success"] = false
@@ -143,6 +143,7 @@ func (this *ServerRouter) GetLog() {
 
 func (this *ServerRouter) Verify() {
 	servername := this.Ctx.Input.Param(":name")
+	fmt.Println(servername)
 	 var server orm.Servers
 	result := map[string]interface{}{
 		"success": false,
@@ -160,12 +161,13 @@ func (this *ServerRouter) Verify() {
 	dbmap := orm.GetDBMap(db)
     err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)	  
 	   fmt.Println(err)
-	    if server.Install != true {	   	      
-	   	       	  result["success"] = true
+	   fmt.Println(server.Install)
+	    if !server.Install {	   	      
+	   	       	  result["success"] = false
 	        } else {
-	        	 result["success"] = false
+	        	 result["success"] = true
 	        }
-	result["success"] = true
+	//result["success"] = false
 }
 
 // Join method handles WebSocket requests for WebSocketController.

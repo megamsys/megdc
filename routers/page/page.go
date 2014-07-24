@@ -45,7 +45,7 @@ func (this *PageRouter) Get() {
 	
 	//servers := new(orm.Servers)
 	this.Data["IsLoginPage"] = true
-	this.Data["Username"] = "Megam"
+	this.Data["Username"] = this.GetUser()
 	this.TplNames = "page/index.html" 
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
@@ -54,7 +54,10 @@ func (this *PageRouter) Get() {
 }
 
 
-
+func (this *PageRouter) Dash() {
+	this.Data["Username"] = this.GetUser()
+	this.TplNames = "page/dash.html"
+}
 
 
 

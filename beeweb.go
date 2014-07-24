@@ -52,6 +52,7 @@ func main() {
 	beego.Router("/logout", login, "get:Logout")
 	user := new(page.PageRouter)
 	beego.Router("/index", user, "get:Get")
+	beego.Router("/dash", user, "get:Dash")
 	server := new(servers.ServerRouter)
 	beego.Router("/servers", server, "get:Get")
 	beego.Router("/servers/:id/log", server, "get:Log")

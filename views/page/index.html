@@ -11,7 +11,10 @@
 			$('#MyWizard').on('change', function(e, data) {
 				console.log('change');
 				if (data.step === 4 && data.direction === 'next') {
-					$('#btnWizardNext').attr('value', 'Done');
+					//$('#btnWizardNext').attr('value', 'Done');
+					//$('#btnWizardNext1').text('Done');
+					$('#btnWizardNext').hide();
+					$('#btnWizardDone').show();
 				}
 
 				var item = $('#MyWizard').wizard('selectedItem');
@@ -20,7 +23,10 @@
 				}
 
 				if (data.direction === 'previous') {
-					$('#btnWizardNext').attr('value', 'Next');
+				//	$('#btnWizardNext').attr('value', 'Next');
+				//	$('#btnWizardNext1').text('Next');
+					$('#btnWizardNext').show();
+					$('#btnWizardDone').hide();
 				}
 			});
 			$('#MyWizard').on('changed', function(e, data) {
@@ -41,7 +47,10 @@
 			});
 			$('#MyWizard').on('stepclick', function(e, data) {
 				console.log('step' + data.step + ' clicked');
-				$('#btnWizardNext').attr('value', 'Next');
+				//$('#btnWizardNext').attr('value', 'Next');
+				//$('#btnWizardNext1').text('Next');
+				$('#btnWizardNext').show();
+				$('#btnWizardDone').hide();
 				if (data.step === 1) {
 					// return e.preventDefault();
 				}
@@ -150,7 +159,7 @@
 															<div class="btn btn-primary">Log</div>
 													</a></span></td>
 											</tr>
-											<tr class="danger">
+											<tr class="megam_color2">
 												<td>2</td>
 												<td>Cobblerd</td>
 												<td><div class="progress progress-striped"
@@ -226,8 +235,8 @@
 										<div class="col-sm-5 text-center">
 											<div class="p-10 brad">
 												<a href="http://opennebula.org/"> <img
-													src="/static_source/images/opennebula.png" alt="" class="img-circle"
-													width="115">
+													src="/static_source/images/opennebula.png" alt=""
+													class="img-circle" width="115">
 												</a>
 
 												<div>
@@ -240,12 +249,16 @@
 											</div>
 										</div>
 										<div class="col-sm-7">
-											<h4>Version</h4>
-											<p class="text-gray-alt">01.07.2014 1:34pm</p>
-											<hr>
-											<a href="" class="btn btn-primary btn-lg m-t-10"
-												id="OPENNEBULA_install_button">Install</a>
-											<!-- 	onclick='opennebula_install()' id="OPENNEBULA_install_button">Install</a> -->
+											<div class="col-sm-12">
+												<div>
+													<h4>Version</h4>
+													<p class="text-gray-alt">4.6</p>
+												</div>
+												<hr>
+												<a href="" class="btn btn-primary btn-lg m-t-10"
+													id="OPENNEBULA_install_button">Install</a>
+												<!-- 	onclick='opennebula_install()' id="OPENNEBULA_install_button">Install</a> -->
+											</div>
 											<div class="col-sm-12">
 												<div class="col-sm-6">
 													<div id="OPENNEBULA_install_text" style="display: none">
@@ -256,10 +269,10 @@
 													<div id="OPENNEBULA_waiting1"></div>
 												</div>
 												<div id="OPENNEBULA_success" style="display: none">
-													<p class="text-success">Done</p>
+													<p class="text-success text-bold megam_font_size">Done</p>
 												</div>
 												<div id="OPENNEBULA_error" style="display: none">
-													<p class="text-danger">Error</p>
+													<p class="text-danger text-bold megam_font_size">Error</p>
 												</div>
 											</div>
 										</div>
@@ -322,7 +335,9 @@
 								<div class="col-sm-8  text-center">
 									<span
 										class="text-gray-dark text-large align-with-button pos-abs">
-										Do you want to enable <p class="text-info text-bold">HIGH AVAILABLITY</p> </span>
+										Do you want to enable
+										<p class="text-info text-bold">HIGH AVAILABLITY</p>
+									</span>
 								</div>
 								<div class="col-sm-2">
 									<div class="m-b-10">
@@ -340,19 +355,82 @@
 							<hr>
 							<div class="row" id="storage_note" style="display: none">
 								<div class="col-sm-12  text-center">
-									<p class="lead text-warning text-bold">Please network the server to this LAN
-										and perform network. when you see a ready prompt click
-										install.</p>
+									<p class="lead text-warning text-bold">Please network the
+										server to this LAN and network boot it. when your server is
+										ready click install.</p>
 								</div>
 								<div class="col-sm-12 text-center">
-							  <a href="" class="btn btn-primary btn-lg m-t-10">Install</a>
+									<a href="" class="btn btn-primary btn-lg m-t-10">Install</a>
+								</div>
 							</div>
-							</div>
-							
+
 						</div>
 					</div>
 				</div>
 				<div class="step-pane" id="step4">
+					<div class="tab-pane active fade in p-30" id="dashboard">
+
+						<h1 class="text-center font-w-100">
+							Welcome <span class="text-blue">{{.Username}}</span>
+						</h1>
+						<div class="row">
+							<p
+								class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
+								Step4 install Nodes.</p>
+						</div>
+
+						<div class="row">
+							<div class="col-sm-12">
+								<div
+									class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+									<div class="row">
+										<div class="col-sm-5 text-center">
+											<div class="p-10 brad">
+												<i class="glyphicon glyphicon-tasks m-10 text-large"></i>
+												<div>
+													<div>
+														<div>
+															<h3 class="m-b-0">NODES</h3>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-7">
+											<div class="col-sm-12">
+												<div>
+													<h4>About</h4>
+													<p class="text-gray-alt"></p>
+												</div>
+												<hr>
+												<a href="" class="btn btn-primary btn-lg m-t-10"
+													id="OPENNEBULA_install_button">Install</a>
+												<!-- 	onclick='opennebula_install()' id="OPENNEBULA_install_button">Install</a> -->
+											</div>
+											<div class="col-sm-12">
+												<div class="col-sm-6">
+													<div id="OPENNEBULA_install_text" style="display: none">
+														<p class="text-info">Installing</p>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div id="OPENNEBULA_waiting1"></div>
+												</div>
+												<div id="OPENNEBULA_success" style="display: none">
+													<p class="text-success text-bold megam_font_size">Done</p>
+												</div>
+												<div id="OPENNEBULA_error" style="display: none">
+													<p class="text-danger text-bold megam_font_size">Error</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="step-pane" id="step5">
 					<div class="tab-pane active fade in p-30" id="dashboard">
 
 						<h1 class="text-center font-w-100">
@@ -363,8 +441,11 @@
 
 							<div class="row" id="ha_selection">
 								<div class="col-sm-8  text-center">
-									<span class="text-gray-dark text-large align-with-button pos-abs">
-										Do you want to install <p class="text-info text-bold">STORAGE</p> </span>
+									<span
+										class="text-gray-dark text-large align-with-button pos-abs">
+										Do you want to install
+										<p class="text-info text-bold">STORAGE</p>
+									</span>
 								</div>
 								<div class="col-sm-2">
 									<div class="m-b-10">
@@ -382,29 +463,27 @@
 							<hr>
 							<div class="row" id="ha_note" style="display: none">
 								<div class="col-sm-12  text-center">
-									<p class="lead text-warning text-bold">Please network the server to this LAN
-										and perform network. when you see a ready prompt click
-										install.</p>
+									<p class="lead text-warning text-bold">Please network the
+										server to this LAN and network boot it. when your server is
+										ready click install.</p>
 								</div>
 								<div class="col-sm-12 text-center">
-							  <a href="" class="btn btn-primary btn-lg m-t-10">Install</a>
+									<a href="" class="btn btn-primary btn-lg m-t-10">Install</a>
+								</div>
 							</div>
-							</div>
-							
+
 						</div>
 					</div>
 				</div>
-				<div class="step-pane" id="step5">
-					<h2>Done!</h2>
-					The wizard is complete. Pretty exciting stuff, eh?. <a href="#"
-						id="btnStep2">Go back to step 2.</a>
-				</div>
 			</div>
 			<br>
-			<div style="float: right; display: none" id="wzdButtons">
-				<input class="btn" id="btnWizardPrev" value="Back" type="button">
-				<input class="btn btn-primary" id="btnWizardNext" value="Next"
-					type="button">
+			<div class="main-container">
+				<div class="fixer-container" style="display: none" id="wzdButtons">
+					<input class="btn" id="btnWizardPrev" value="Back" type="button">
+					<a href="/dash" class="btn btn-primary" id="btnWizardDone" style="display: none">Done</a>
+					<input class="btn btn-primary" id="btnWizardNext" value="Next"
+						type="button">
+				</div>
 			</div>
 			<br>
 		</div>
@@ -416,3 +495,4 @@
 
 </div>
 {{ end }}
+

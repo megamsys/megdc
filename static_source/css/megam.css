@@ -1,0 +1,29 @@
+.main-container {
+    float:left;
+    position:relative;
+    left:50%;
+   /*overflow:hidden;*/
+}
+
+.fixer-container {
+    float:left;
+    position:relative;
+    left:-50%;
+}
+
+.megam_color1 {
+  background: #B1938B;
+}
+
+.megam_color2 {
+  background: #DCD0C0;
+}
+
+.megam_text_color1 {
+	color: #422833;
+	
+}
+
+.megam_font_size {
+	font-size:250%;
+}

@@ -1,13 +1,13 @@
 package utils
 
 import (
-	"crypto/x509"
+//	"crypto/x509"
 	"errors"
 	"fmt"
 //	"github.com/tsuru/config"
 	"io/ioutil"
 	"net/http"
-	"net/url"
+//	"net/url"
 	"strconv"
 	"strings"
 )
@@ -53,17 +53,19 @@ context := &Context{data.Username, data.Api_key}
 }
 
 func (c *Client) detectClientError(err error) error {
-	urlErr, ok := err.(*url.Error)
-	if !ok {
-		return err
-	}
-	switch urlErr.Err.(type) {
-	case x509.UnknownAuthorityError:
+//	urlErr, _ := err.(*url.Error)	
+	//if !ok {
+	//	fmt.Println("=================>7===============")
+	//	fmt.Println(err)
+	//	return err
+	//}
+	//switch urlErr.Err.(type) {
+	//case x509.UnknownAuthorityError:
 		//target, _ := config.GetString("api:server")
-		return fmt.Errorf("Failed to connect to api server (%s): %s", target, urlErr.Err)
-	}
+	//	return fmt.Errorf("Failed to connect to api server (%s): %s", target, urlErr.Err)
+	//}
 	//target, _ := config.GetString("api:server")
-	return fmt.Errorf("Failed to connect to api server (%s): %s.", target, urlErr.Err)
+	return fmt.Errorf("Failed to connect to api server.")
 }
 
 func (c *Client) Do(request *http.Request) (*http.Response, error) {
@@ -73,7 +75,8 @@ func (c *Client) Do(request *http.Request) (*http.Response, error) {
 
 	request.Close = true
 	response, err := c.HTTPClient.Do(request)
-	err = c.detectClientError(err)
+	
+	//err = c.detectClientError(err)
 	if err != nil {
 		return nil, err
 	}

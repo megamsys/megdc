@@ -43,6 +43,8 @@ endef
 
 all: check-path get test
 
+build: check-path get
+
 # It does not support GOPATH with multiple paths.
 check-path:
 ifndef GOPATH

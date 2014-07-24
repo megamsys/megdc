@@ -298,6 +298,10 @@ func (this *BaseRouter) LoginUser(user *utils.User, remember bool) string {
 	return loginRedirect
 }
 
+func (this *BaseRouter) GetUser() string {
+	return this.Ctx.GetCookie("user_name")
+}
+
 // check flash redirect, ensure browser redirect to uri and display flash message.
 func (this *BaseRouter) CheckFlashRedirect(value string) (match bool, redirect bool) {
 	v := this.GetSession("on_redirect")

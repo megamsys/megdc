@@ -44,7 +44,8 @@
       });
     }
     if ($('#dashboard-page').length > 0) {
-      $.notify("Welcome back John", 'info', {
+      var str = $("#username_hidden").val();	
+      $.notify("Welcome back "+str , 'info', {
         autoHide: true,
         autoHideDelay: 5000,
         arrowShow: false
