@@ -57,6 +57,9 @@ func (this *PageRouter) Get() {
 func (this *PageRouter) Dash() {
 	this.Data["Username"] = this.GetUser()
 	this.TplNames = "page/dash.html"
+	if len(this.Ctx.GetCookie("remember")) == 0 {
+		this.Redirect("/", 302)
+	}
 }
 
 
