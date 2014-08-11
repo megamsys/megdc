@@ -17,7 +17,8 @@
 ###############################################################################
                             
 
-CIBCODE_HOME = $(HOME)/code/megam/workspace/cloudinabox
+#CIBCODE_HOME = $(HOME)/code/megam/workspace/cloudinabox
+CIBCODE_HOME = ../../../../cloudinabox
 
 export GOPATH=$(CIBCODE_HOME)
 
