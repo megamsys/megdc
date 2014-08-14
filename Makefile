@@ -18,8 +18,12 @@
                             
 
 #CIBCODE_HOME = $(HOME)/code/megam/workspace/cloudinabox
-CIBCODE_HOME = $(CLOUDINABOX_DEB)
-#CIBCODE_HOME = ../../../../cloudinabox
+dirname = $(shell pwd)
+dir = $(shell ${dirname%/*/*/*/*})
+
+A := $(shell echo $(dir))
+$(info $(A))
+CIBCODE_HOME = dir
 
 export GOPATH=$(CIBCODE_HOME)
 
