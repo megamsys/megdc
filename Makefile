@@ -18,13 +18,15 @@
                             
 
 #CIBCODE_HOME = $(HOME)/code/megam/workspace/cloudinabox
-dirname = $(shell pwd)
-dir = $(shell ${dirname%/*/*/*/*})
 
-A := $(shell echo $(dir))
-$(info $(A))
-CIBCODE_HOME = dir
+#ROOT_DIR := $(shell x=dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+#ROOT_DIR = $(shell pwd)
+#$(info $(ROOT_DIR))
+#DIR := $(shell ${ROOT_DIR%/*/*/*/*})
+#$(info $(DIR))
+#CIBCODE_HOME = $(DIR)
 
+CIBCODE_HOME = $(CLOUDINABOX_DEB)
 export GOPATH=$(CIBCODE_HOME)
 
 define HG_ERROR
