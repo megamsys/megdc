@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Cloud In a Box</title>
-    <meta charset="utf-8"> 
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="/static_source/css/admin.css">
@@ -26,7 +26,7 @@
 				<img src="https://s3-ap-southeast-1.amazonaws.com/megampub/images/logo-megam160x43w.png">
         <h2 class="text-white font-w-100">Cloud In a Box</h2>
 			</div>
-			
+
 			          {{if .flash.ResetSuccess}}
                         <div class="alert alert-success">
                             <p>login1</p>
@@ -49,12 +49,12 @@
                         {{end}}
 		     	        {{if .flash.LoginError}}
                             <div class="alert alert-danger alert-dismissable">
-                              <p>Email and password was wrong. Please re-entry the fields.</p>                               
+                              <p>Email and password was wrong. Please re-entry the fields.</p>
                             </div>
                         {{end}}
                          {{if .flash.ServerError}}
                             <div class="alert alert-danger alert-dismissable">
-                              <p>Failed to connect to api server.</p>                               
+                              <p>Failed to connect to api server.</p>
                             </div>
                         {{end}}
 			<form id="User" method="POST" action="/signin">
@@ -66,7 +66,7 @@
 			  </div>
 			  <button type="submit" class="btn btn-primary btn-block btn-lg">Sign in</button>
 			</form>
-			<a href="https://www.megam.co" class="text-white hover-opacity-change hover-white-opacity-text m-t-10 d-block">Don't have an account yet?</a>
+			<a href="https://www.megam.co" class="text-white hover-opacity-change hover-white-opacity-text m-t-10 d-block" target="_blank">Don't have an account yet?</a>
 
 		</div>
 
@@ -75,7 +75,7 @@
 
     <script>
       $(".backstretch").backstretch([
-        "/static/backgrounds/wg_blurred_backgrounds_11.jpg", 
+        "/static/backgrounds/wg_blurred_backgrounds_11.jpg",
       ], {
         duration: 3000,
         fade: 'slow'
