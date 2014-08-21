@@ -7,4 +7,4 @@ apt-get update
 
 apt-get upgrade
 
-sudo apt-get install opennebula opennebula-sunstone
+sudo apt-get -y install opennebula opennebula-sunstone

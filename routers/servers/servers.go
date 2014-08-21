@@ -35,8 +35,9 @@ import (
    "fmt"
 )
 
-var serversList = [...]string{ "MEGAM", "COBBLER"}
-
+var serversList = [...]string{ "MEGAM", "COBBLER", "OPENNEBULA"}
+//var servers_output = [...]string{}
+var servers_output []string
 // PageRouter serves home page.
 type ServerRouter struct {
 	base.BaseRouter
@@ -56,7 +57,7 @@ func (this *ServerRouter) Get() {
 	
 	this.Data["IsLoginPage"] = true
 	this.Data["Username"] = this.GetUser()
-	this.TplNames = "servers/servers.html" 
+	//this.TplNames = "servers/servers.html" 
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
 	}
@@ -66,9 +67,17 @@ func (this *ServerRouter) Get() {
 	for i := 0; i < n; i++ {
        err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])	  
 	   fmt.Println(err)
+	   if err != nil {
+	   	tmpserver := &orm.Servers{0, serversList[i], false, "", ""}
+	   	jsonMsg, _ := json.Marshal(tmpserver)
+	    servers_output = append(servers_output, string(jsonMsg))
+	   } else {   
+	      jsonMsg, _ := json.Marshal(servers)
+	       servers_output = append(servers_output, string(jsonMsg))
+	   }
     }
 	result["success"] = true
-	result["data"] = servers
+	result["data"] = servers_output
 	
 }
 
