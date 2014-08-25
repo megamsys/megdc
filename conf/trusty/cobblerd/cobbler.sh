@@ -97,15 +97,15 @@ help() {
 #--------------------------------------------------------------------------
 install_cobbler() {
   cecho "Installing cobblerd.." $yellow
-  apt-get -y install cobbler cobbler-common cobbler-web dhcp3-server  >> /var/log/cobbler.log
-  apt-get -y debmirror >> /var/log/cobbler.log
-  cobbler get-loaders >> /var/log/cobbler.log
-  cobbler check >> /var/log/cobbler.log
+  apt-get -y install cobbler cobbler-common cobbler-web dhcp3-server  >> /var/log/megam/cobbler.log
+  apt-get -y debmirror >> /var/log/megam/cobbler.log
+  cobbler get-loaders >> /var/log/megam/cobbler.log
+  cobbler check >> /var/log/megam/cobbler.log
   #If any errors just fix as it says.
   #on success --> No configuration problems found.  All systems go.
   cobbler sync
 
-  dpkg-reconfigure cobbler >> /var/log/cobbler.log
+  dpkg-reconfigure cobbler >> /var/log/megam/cobbler.log
   configure_cobbler 
 }
 #--------------------------------------------------------------------------
@@ -122,7 +122,7 @@ configure_cobbler() {
   cobbler sync
   echo "manage_dhcp:1 => dhcp managed by cobbler.."
 
-  apt-get install xinetd tftpd tftp >> /var/log/cobbler.log
+  apt-get install xinetd tftpd tftp >> /var/log/megam/cobbler.log
 
   sed -i 's/^[ \t]*option routers.*/option routers 192.168.2.3;/' /etc/cobbler/dhcp.template
   echo "route:192.168.2.3 => route is your cobblerd machine.."
@@ -200,14 +200,14 @@ uninstall_cobbler() {
   cecho "Uninstalling cobblerd.." $yellow
 
 
-  apt-get -y remove cobbler cobbler-common cobbler-web dhcp3-server >> /var/log/cobbler.log
-  apt-get -y remove debmirror >> /var/log/cobbler.log
+  apt-get -y remove cobbler cobbler-common cobbler-web dhcp3-server >> /var/log/megam/cobbler.log
+  apt-get -y remove debmirror >> /var/log/megam/cobbler.log
 
-  apt-get -y purge cobbler cobbler-common cobbler-web dhcp3-server >> /var/log/cobbler.log
-  apt-get -y purge debmirror >> /var/log/cobbler.log
+  apt-get -y purge cobbler cobbler-common cobbler-web dhcp3-server >> /var/log/megam/cobbler.log
+  apt-get -y purge debmirror >> /var/log/megam/cobbler.log
 
-  apt-get -y remove xinetd tftpd tftp >> /var/log/cobbler.log
-  apt-get -y purge xinetd tftpd tftp >> /var/log/cobbler.log
+  apt-get -y remove xinetd tftpd tftp >> /var/log/megam/cobbler.log
+  apt-get -y purge xinetd tftpd tftp >> /var/log/megam/cobbler.log
   cecho "##################################################" $green
   cecho "Uninstall complete.." $yellow
 }
