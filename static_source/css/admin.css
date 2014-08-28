@@ -8,6 +8,8 @@ html {
 
 body {
   margin: 0;
+  width: 100%;
+  height: 100%;
 }
 
 article,
@@ -644,7 +646,7 @@ ol ol {
 }
 
 .list-unstyled, .list-inline {
-  padding-left: 0;
+  padding-left: 10;
   list-style: none;
 }
 
@@ -7094,7 +7096,7 @@ button.close {
 
 .unstyled {
   list-style: none;
-  padding: 0;
+  padding: 10;
 }
 
 .inline li {

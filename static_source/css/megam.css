@@ -11,12 +11,8 @@
     left:-50%;
 }
 
-.megam_color1 {
-  background: #B1938B;
-}
-
-.megam_color2 {
-  background: #DCD0C0;
+.megam_color {
+  background: #E8E8E8;
 }
 
 .megam_text_color1 {
@@ -27,3 +23,4 @@
 .megam_font_size {
 	font-size:250%;
 }
+

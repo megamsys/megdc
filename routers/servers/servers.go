@@ -19,7 +19,6 @@ package servers
 import (
 	"container/list"
 	"encoding/json"
-	"fmt"
 	"github.com/ActiveState/tail"
 	"github.com/astaxie/beego"
 	"github.com/gorilla/websocket"
@@ -27,6 +26,7 @@ import (
 	"github.com/megamsys/cloudinabox/models/orm"
 	"github.com/megamsys/cloudinabox/modules/servers"
 	"github.com/megamsys/cloudinabox/routers/base"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -121,6 +121,7 @@ func (this *ServerRouter) Install() {
 }
 
 func (this *ServerRouter) Log() {
+	fmt.Println("Join entry LOG()============> ")
 	this.Data["IsLoginPage"] = true
 	this.TplNames = "servers/log.html"
 	server := this.Ctx.Input.Param(":id")
@@ -129,7 +130,7 @@ func (this *ServerRouter) Log() {
 
 func (this *ServerRouter) GetLog() {
 	uname := this.GetString("uname")
-	fmt.Println("Join entry")
+	fmt.Println("Join entry ============> ")
 	fmt.Println(uname)
 	// Upgrade from http request to WebSocket.
 	ws, err := websocket.Upgrade(this.Ctx.ResponseWriter, this.Ctx.Request, nil, 1024, 1024)
@@ -180,7 +181,7 @@ func (this *ServerRouter) Verify() {
 // Join method handles WebSocket requests for WebSocketController.
 func (this *ServerRouter) Join() {
 	uname := this.GetString("uname")
-	fmt.Println("Join entry")
+	fmt.Println("Join entry ===================>  ")
 	fmt.Println(uname)
 	// Upgrade from http request to WebSocket.
 	ws, err := websocket.Upgrade(this.Ctx.ResponseWriter, this.Ctx.Request, nil, 1024, 1024)
@@ -209,7 +210,7 @@ func (this *ServerRouter) Join() {
 
 // broadcastWebSocket broadcasts messages to WebSocket users.
 func broadcastWebSocket(event models.Event) {
-	fmt.Println("broadcast entry")
+	fmt.Println("broadcast entry ========> ")
 	data, err := json.Marshal(event)
 	if err != nil {
 		beego.Error("Fail to marshal event:", err)
@@ -258,7 +259,11 @@ func doSomething(server string) bool {
 }
 
 func publishLog(server string) {
-	t, _ := tail.TailFile("/var/log/opennebula.log", tail.Config{Follow: true})
+	fmt.Printf("LOG FILE NAME ===========> : %s", server)
+	t, err := tail.TailFile("/var/log/megam/"+server+".log", tail.Config{Follow: true})
+	if err != nil {
+		log.Printf("ERROR LOG READ ==> : %s", err.Error())
+	}
 	for line := range t.Lines {
 		fmt.Println(line.Text)
 		publish <- newEvent(models.EVENT_MESSAGE, server, line.Text)

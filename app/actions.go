@@ -272,9 +272,15 @@ var opennebulaPostInstall = action.Action{
 var megamInstall = action.Action{
 	Name: "megamInstall",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
-		fmt.Println("action install entry")
+		fmt.Println("Megam install entry ====> ")
 		var cib CIB
 		cib.Command = megam
+		exec, err1 := CIBExecutor(&cib)
+		fmt.Println("Megam after install ======> ")
+		if err1 != nil {
+			fmt.Println("server insert error")
+			return &cib, err1
+		}
 		// write server details in database
 		// insert rows - auto increment PKs will be set properly after the insert
 		db := orm.OpenDB()
@@ -287,7 +293,7 @@ var megamInstall = action.Action{
 			fmt.Println("server insert error")
 			return &cib, err
 		}
-		return CIBExecutor(&cib)
+		return exec, err1
 	},
 	Backward: func(ctx action.BWContext) {
 		//app := ctx.FWResult.(*App)
@@ -309,6 +315,7 @@ var cobblerInstall = action.Action{
 	Forward: func(ctx action.FWContext) (action.Result, error) {
 		var cib CIB
 		cib.Command = cobbler
+		exec, err1 := CIBExecutor(&cib)
 		// write server details in database
 		// insert rows - auto increment PKs will be set properly after the insert
 		db := orm.OpenDB()
@@ -320,7 +327,8 @@ var cobblerInstall = action.Action{
 			fmt.Println("server insert error======>")
 			return &cib, err
 		}
-		return CIBExecutor(&cib)
+		return exec, err1
+
 	},
 	Backward: func(ctx action.BWContext) {
 		//app := ctx.FWResult.(*App)
@@ -341,7 +349,9 @@ var nebulaInstall = action.Action{
 	Forward: func(ctx action.FWContext) (action.Result, error) {
 		var cib CIB
 		cib.Command = cobbler
+		exec, err1 := CIBExecutor(&cib)
 		// write server details in database
+
 		// insert rows - auto increment PKs will be set properly after the insert
 		db := orm.OpenDB()
 		dbmap := orm.GetDBMap(db)
@@ -352,7 +362,8 @@ var nebulaInstall = action.Action{
 			fmt.Println("server insert error======>")
 			return &cib, err
 		}
-		return CIBExecutor(&cib)
+		return exec, err1
+
 	},
 	Backward: func(ctx action.BWContext) {
 		//app := ctx.FWResult.(*App)
