@@ -614,7 +614,7 @@ ol ol {
 }
 
 .list-unstyled, .list-inline {
-  padding-left: 0;
+  padding-left: 10;
   list-style: none;
 }
 

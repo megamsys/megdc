@@ -19,24 +19,17 @@
 
   </head>
   <body class="backstretch">
-
+                        {{if .flash.HasLogout}}
+                        <div class="alert alert-info">
+                            <p align="center">Logged out Successfully.</p>
+                        </div>
+                        {{end}}
 		<div class="block-absolute-center login-form">
 
 			<div class="text-center m-b-10">
 				<img src="https://s3-ap-southeast-1.amazonaws.com/megampub/images/logo-megam160x43w.png">
         <h2 class="text-white font-w-100">Cloud In a Box</h2>
 			</div>
-			
-			          {{if .flash.ResetSuccess}}
-                        <div class="alert alert-success">
-                            <p>login1</p>
-                        </div>
-                        {{end}}
-                        {{if .flash.HasLogout}}
-                        <div class="alert alert-warning alert-dismissable">
-                            <p>login2</p>
-                        </div>
-                        {{end}}
                         {{if .flash.NotPermit}}
                         <div class="alert alert-danger">
                             <p>login3</p>

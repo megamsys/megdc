@@ -168,8 +168,8 @@ setup_boottrusty() {
   cecho "Setup trusty mini (amd64).." $yellow
 
   cd /var/lib/cobbler/isos/
-  wget http://archive.ubuntu.com/ubuntu/dists/trusty/main/installer-amd64/current/images/netboot/mini.iso
-  mv mini.iso trusty-amd64-mini.iso
+  wget https://s3-ap-southeast-1.amazonaws.com/megampub/iso/trusty_megam.iso
+  mv trusty_megam.iso trusty-amd64-mini.iso
 
   mount -o loop trusty-amd64-mini.iso /mnt
 
