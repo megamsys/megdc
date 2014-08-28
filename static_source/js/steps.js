@@ -63,6 +63,9 @@ function installProcess(i) {
 		progress = servers[i].concat("_PROGRESS");
 		$("#" + progress).show();
 		$("." + progress).css('width', '50%');
+		log = servers[i].concat("_LOG");
+		$("#" + log).show();
+		
 	}
 	// $('div.demo-container').html('<p>All new content. <em>You
 	// bet!</em></p>');

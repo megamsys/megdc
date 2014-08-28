@@ -11,8 +11,7 @@
 					function() {
 						// Create a socket
 						socket = new WebSocket('ws://' + window.location.host
-								+ '/servers/getlog?uname='
-								+ $('#serverspan').text());
+								+ '/servers/getlog?uname='+$('#serverspan').text());
 						// Message received on the socket
 						socket.onmessage = function(event) {
 							var data = $.parseJSON(event.data);
@@ -25,7 +24,7 @@
 					});
 		</script>
 
-		<span id="serverspan" style="display: none"> {{.ServerName}} </span>
+		<span id="serverspan" style="display: none">{{.ServerName}}</span>
 
 		<div class="row">
 			<div class="col-sm-2"></div>

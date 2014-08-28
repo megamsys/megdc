@@ -123,7 +123,7 @@
 										<col width="250">
 										<col width="60">
 										<tbody>
-											<tr class="success">
+											<tr class="megam_color">
 												<td>1</td>
 												<td>Megam</td>
 												<td><div class="progress progress-striped"
@@ -151,7 +151,7 @@
 															<p class="text-danger">Error</p>
 														</div>
 												</td>
-												<td><span><a href="/servers/megam/log"
+												<td><span style="display: none" id="MEGAM_LOG"><a href="/servers/megam/log"
 														class="btn-group pull-right" target="_blank">
 															<div class="btn btn-alt">
 																<i class="glyphicon glyphicon-list text-white"></i>
@@ -159,7 +159,7 @@
 															<div class="btn btn-primary">Log</div>
 													</a></span></td>
 											</tr>
-											<tr class="megam_color2">
+											<tr class="megam_color">
 												<td>2</td>
 												<td>Cobblerd</td>
 												<td><div class="progress progress-striped"
@@ -189,7 +189,7 @@
 														</div>
 													</div>
 												</td>
-												<td><span><a href="/servers/cobbler/log"
+												<td><span style="display: none" id="COBBLER_LOG"><a href="/servers/cobbler/log"
 														class="btn-group pull-right" target="_blank">
 															<div class="btn btn-alt">
 																<i class="glyphicon glyphicon-list text-white"></i>
@@ -476,20 +476,19 @@
 					</div>
 				</div>
 			</div>
-			<br>
-			<div class="main-container">
+			<div class="main-container"style="position: absolute; bottom: 10px;">
 				<div class="fixer-container" style="display: none" id="wzdButtons">
 					<input class="btn" id="btnWizardPrev" value="Back" type="button">
 					<a href="/dash" class="btn btn-primary" id="btnWizardDone" style="display: none">Done</a>
 					<input class="btn btn-primary" id="btnWizardNext" value="Next"
 						type="button">
 				</div>
+                                <hr>
 			</div>
-			<br>
 		</div>
 		<!-- /well -->
 
-		<hr>
+		
 
 	</div>
 
