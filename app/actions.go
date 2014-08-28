@@ -281,11 +281,11 @@ var megamInstall = action.Action{
 		fmt.Println("Megam install entry ====> ")
 		var cib CIB
 		cib.Command = megam
-                exec, err := CIBExecutor(&cib)
+                exec, err1 := CIBExecutor(&cib)
 		fmt.Println("Megam after install ======> ")
-                if err != nil {
+                if err1 != nil {
 		fmt.Println("server insert error")
-		return &cib, err
+		return &cib, err1
 	        }
 		// write server details in database
 	    // insert rows - auto increment PKs will be set properly after the insert

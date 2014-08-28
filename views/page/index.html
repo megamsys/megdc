@@ -1,6 +1,6 @@
 {{template "base/base.html" .}} {{ define "body" }}
 
-<div id="dashboard-page" class="bg-gray-light">
+<body id="dashboard-page" class="bg-gray-light">
 	{{ template "base/nav.html" .}}
 
 	<!-- JavaScript jQuery code from Bootply.com editor  -->
@@ -96,115 +96,153 @@
 			</div>
 			<div class="step-content">
 				<div class="step-pane active" id="step1">
-					<div class="tab-pane active fade in p-30" id="dashboard">
+                    <div class="tab-pane active fade in p-30" id="dashboard">
 
-						<h1 class="text-center font-w-100">
-							Welcome <span class="text-blue">{{.Username}}</span>
-						</h1>
-						<div class="row">
-							<p
-								class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
-								Step1 automatically starts the install of <a
-									href="http://www.gomegam.com/" target="_blank">MEGAM</a>. On
-								successful completion of megam installation <a
-									href="http://www.cobblerd.org/" target="_blank">COBBLERD</a>
-								install is started. Click log to watch the progress of the
-								install.
-							</p>
-						</div>
+                        <h1 class="text-center font-w-100">
+                            Welcome <span class="text-blue">{{.Username}}</span>
+                        </h1>
+                        <div class="row">
+                            <p
+                                class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
+                                Step1 automatically starts the install of <a
+                                    href="http://www.gomegam.com/" target="_blank">MEGAM</a>. On
+                                successful completion of megam installation <a
+                                    href="http://www.cobblerd.org/" target="_blank">COBBLERD</a>
+                                install is started. Click log to watch the progress of the
+                                install.
+                            </p>
+                        </div>
 
-						<div class="row">
-							<div class="col-sm-12">
-								<div class="table-responsive">
-									<table class="table table-condensed">
-										<col width="20">
-										<col width="80">
-										<col width="180">
-										<col width="250">
-										<col width="60">
-										<tbody>
-											<tr class="megam_color">
-												<td>1</td>
-												<td>Megam</td>
-												<td><div class="progress progress-striped"
-														id="MEGAM_PROGRESS" style="display: none">
-														<div class="progress-bar progress-bar-info MEGAM_PROGRESS"
-															role="progressbar" aria-valuenow="20" aria-valuemin="0"
-															aria-valuemax="100" style="width: 0%" id="change_MEGAM">
-															<span class="sr-only">20% Complete</span>
-														</div>
-													</div></td>
-												<td>
-													<div class="col-sm-12">
-														<div class="col-sm-6">
-															<div id="MEGAM_install_text" style="display: none">
-																<p class="text-info">Installing</p>
-															</div>
-														</div>
-														<div class="col-sm-6">
-															<div id="MEGAM_waiting1"></div>
-														</div>
-														<div id="MEGAM_success" style="display: none">
-															<p class="text-success">Done</p>
-														</div>
-														<div id="MEGAM_error" style="display: none">
-															<p class="text-danger">Error</p>
-														</div>
-												</td>
-												<td><span style="display: none" id="MEGAM_LOG"><a href="/servers/megam/log"
-														class="btn-group pull-right" target="_blank">
-															<div class="btn btn-alt">
-																<i class="glyphicon glyphicon-list text-white"></i>
-															</div>
-															<div class="btn btn-primary">Log</div>
-													</a></span></td>
-											</tr>
-											<tr class="megam_color">
-												<td>2</td>
-												<td>Cobblerd</td>
-												<td><div class="progress progress-striped"
-														id="COBBLER_PROGRESS" style="display: none">
-														<div
-															class="progress-bar progress-bar-info COBBLER_PROGRESS"
-															role="progressbar" aria-valuenow="20" aria-valuemin="0"
-															aria-valuemax="100" style="width: 0%" id="change_COBBLER">
-															<span class="sr-only">20% Complete</span>
-														</div>
-													</div></td>
-												<td>
-													<div class="col-sm-12">
-														<div class="col-sm-6">
-															<div id="COBBLER_install_text" style="display: none">
-																<p class="text-info">Installing</p>
-															</div>
-														</div>
-														<div class="col-sm-6">
-															<div id="COBBLER_waiting1"></div>
-														</div>
-														<div id="COBBLER_success" style="display: none">
-															<p class="text-success">Done</p>
-														</div>
-														<div id="COBBLER_error" style="display: none">
-															<p class="text-danger">Error</p>
-														</div>
-													</div>
-												</td>
-												<td><span style="display: none" id="COBBLER_LOG"><a href="/servers/cobbler/log"
-														class="btn-group pull-right" target="_blank">
-															<div class="btn btn-alt">
-																<i class="glyphicon glyphicon-list text-white"></i>
-															</div>
-															<div class="btn btn-primary">Log</div>
-													</a></span></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div
+                                    class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+                                    <div class="row">
+                                        <div class="col-sm-2 text-center">
+                                            <div class="p-10 brad">
+                                                <a href="http://www.gomegam.com/"> <img
+src="/static_source/images/megam.png" alt="">
+                                                </a>
 
-					</div>
-				</div>
+                                                <div>
+                                                    <div>
+                                                        <div>
+                                                            <h3 class="m-b-0">MEGAM</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-10">
+                                            <div class="col-sm-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-condensed">
+                                                        <col width="80">
+                                                        <col width="180">
+                                                        <col width="230">
+                                                        <col width="80">
+<tbody>
+<tr>
+<td>Megam</td>
+<td><div class="progress progress-striped"
+    id="MEGAM_PROGRESS" style="display: none">
+    <div
+        class="progress-bar progress-bar-info MEGAM_PROGRESS"
+        role="progressbar" aria-valuenow="20"
+        aria-valuemin="0" aria-valuemax="100"
+        style="width: 0%" id="change_MEGAM">
+        <span class="sr-only">20% Complete</span>
+    </div>
+</div></td>
+<td>
+<div class="col-sm-12">
+    <div class="col-sm-6">
+        <div id="MEGAM_install_text" style="display: none">
+            <p class="text-info">Installing</p>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div id="MEGAM_waiting1"></div>
+    </div>
+    <div id="MEGAM_success" style="display: none">
+        <p class="text-success">Done</p>
+    </div>
+    <div id="MEGAM_error" style="display: none">
+        <p class="text-danger">Error</p>
+    </div>
+</td>
+<td><span style="display: none" id="MEGAM_LOG"><a href="/servers/megam/log" class="btn-group pull-right" target="_blank">
+        <div class="btn btn-alt">
+            <i class="glyphicon glyphicon-list text-white"></i>
+        </div>
+        <div class="btn btn-primary">Log</div>
+</a></span></td>
+</tr>
+</tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <br/>
+                                            <hr />
+                                            <br/>
+                                            <div class="col-sm-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-condensed">
+                                                        <col width="80">
+                                                        <col width="180">
+                                                        <col width="230">
+                                                        <col width="80">
+<tbody>
+<tr>
+<td>Cobblerd</td>
+<td><div class="progress progress-striped"
+    id="COBBLER_PROGRESS" style="display: none">
+    <div
+        class="progress-bar progress-bar-info COBBLER_PROGRESS"
+        role="progressbar" aria-valuenow="20"
+        aria-valuemin="0" aria-valuemax="100"
+        style="width: 0%" id="change_COBBLER">
+        <span class="sr-only">20% Complete</span>
+    </div>
+</div></td>
+<td>
+<div class="col-sm-12">
+    <div class="col-sm-6">
+        <div id="COBBLER_install_text" style="display: none">
+            <p class="text-info">Installing</p>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div id="COBBLER_waiting1"></div>
+    </div>
+    <div id="COBBLER_success" style="display: none">
+        <p class="text-success">Done</p>
+    </div>
+    <div id="COBBLER_error" style="display: none">
+        <p class="text-danger">Error</p>
+    </div>
+</div>
+</td>
+<td><span style="display: none" id="COBBLER_LOG"><a href="/servers/cobbler/log" class="btn-group pull-right" target="_blank">
+        <div class="btn btn-alt">
+            <i class="glyphicon glyphicon-list text-white"></i>
+        </div>
+        <div class="btn btn-primary">Log</div>
+</a></span></td>
+</tr>
+</tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div> 
 				<div class="step-pane" id="step2">
 					<div class="tab-pane active fade in p-30" id="dashboard">
 
@@ -229,8 +267,7 @@
 										</div>
 									</div>-->
 							<div class="col-sm-12">
-								<div
-									class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+								<div class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
 									<div class="row">
 										<div class="col-sm-5 text-center">
 											<div class="p-10 brad">
@@ -476,22 +513,23 @@
 					</div>
 				</div>
 			</div>
-			<div class="main-container"style="position: absolute; bottom: 10px;">
+			<br/>
+			<div class="main-container">
 				<div class="fixer-container" style="display: none" id="wzdButtons">
 					<input class="btn" id="btnWizardPrev" value="Back" type="button">
 					<a href="/dash" class="btn btn-primary" id="btnWizardDone" style="display: none">Done</a>
 					<input class="btn btn-primary" id="btnWizardNext" value="Next"
 						type="button">
 				</div>
-                                <hr>
 			</div>
+			<br/><br/><br/>
 		</div>
 		<!-- /well -->
 
-		
+		<hr/>
 
 	</div>
 
-</div>
+</body>
 {{ end }}
 
