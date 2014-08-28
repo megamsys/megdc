@@ -17,33 +17,28 @@
 ###############################################################################
                             
 
-#CIBCODE_HOME = $(HOME)/code/megam/workspace/cloudinabox
+CIBCODE_HOME = $(shell pwd)/../../../../
 
-#ROOT_DIR := $(shell x=dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-#ROOT_DIR = $(shell pwd)
-#$(info $(ROOT_DIR))
-#DIR := $(shell ${ROOT_DIR%/*/*/*/*})
-#$(info $(DIR))
-#CIBCODE_HOME = $(DIR)
-
-CIBCODE_HOME = $(CLOUDINABOX_DEB)
 export GOPATH=$(CIBCODE_HOME)
+
 
 define HG_ERROR
 
-FATAL: you need mercurial (hg) to download gulp dependencies.
+FATAL: you need mercurial (hg) to download cib dependencies.
        Check README.md for details
+       
+       
 endef
 
 define GIT_ERROR
 
-FATAL: you need git to download gulp dependencies.
+FATAL: you need git to download cib dependencies.
        Check README.md for details
 endef
 
 define BZR_ERROR
 
-FATAL: you need bazaar (bzr) to download gulp dependencies.
+FATAL: you need bazaar (bzr) to download cib dependencies.
        Check README.md for details
 endef
 
@@ -61,12 +56,6 @@ ifndef GOPATH
 	@echo "       http://golang.org/cmd/go/#GOPATH_environment_variable"
 	@exit 1
 endif
-#ifneq ($(subst ~,$(HOME),$(GOPATH))/src/github.com/*/megam_bee, $(PWD))
-#	@echo "FATAL: you must clone gulp inside your GOPATH To do so,"
-#	@echo "       you can run go get github.com/megamsys/cloudinabox/..."
-#	@echo "       or clone it manually to the dir $(GOPATH)/src/github.com/megamsys/cloudinabox"
-#	@exit 1
-#endif
 
 clean:
 	@/bin/rm -f -r $(CIBCODE_HOME)/pkg	
@@ -109,12 +98,12 @@ _go_test:
 	@go test -i ./...
 	@go test ./...
 
-_gulpd_dry:
+_cibd_dry:
 	@go build -o cib cib.go
 	@sudo ./cib --config ./conf/cib.conf
 	@rm -f cib
 
-test: _go_test _gulpd_dry
+test: _go_test _cibd_dry
 
 
 client:

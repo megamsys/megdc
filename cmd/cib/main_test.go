@@ -14,17 +14,3 @@ func (s *S) TestCommandsFromBaseManagerAreRegistered(c *gocheck.C) {
 		c.Assert(command, gocheck.FitsTypeOf, instance)
 	}
 }
-
-func (s *S) TestAppStartIsRegistered(c *gocheck.C) {
-	manager := buildManager("megam")
-	create, ok := manager.Commands["startapp"]
-	c.Assert(ok, gocheck.Equals, true)
-	c.Assert(create, gocheck.FitsTypeOf, &AppStart{})
-}
-
-func (s *S) TestAppStopIsRegistered(c *gocheck.C) {
-	manager := buildManager("megam")
-	remove, ok := manager.Commands["stopapp"]
-	c.Assert(ok, gocheck.Equals, true)
-	c.Assert(remove, gocheck.FitsTypeOf, &AppStop{})
-}

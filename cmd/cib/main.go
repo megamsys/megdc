@@ -19,15 +19,14 @@ import (
 	"fmt"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/tsuru/config"
-//	"strconv"
 	"log"
 	"os"
 	"path/filepath"
 )
 
 const (
-	version = "0.3.0"
-	header  = "Supported-Gulp"
+	version = "0.5.0"
+	header  = "Supported-CIB"
 )
 
 const defaultConfigPath = "conf/cib.conf"
@@ -37,24 +36,6 @@ func buildManager(name string) *cmd.Manager {
 	m.Register(&GulpStart{m, nil, false}) //start the gulpd daemon
 	m.Register(&GulpStop{})               //stop  the gulpd daemon
 	m.Register(&GulpUpdate{})             //stop  the gulpd daemon
-	m.Register(&AppStart{})               //sudo service <appname> start
-	m.Register(&AppStop{})                //sudo service <appname> stop
-	/*m.Register(&AppRestart{}) //sudo service <apppname> restart
-	m.Register(&AppBuild{})   //git fetch -q
-	m.Register(&gulp.AppMaintain{})//sudo service nginx maintain ?
-	m.Register(&gulp.SSLAdd{})     //download node_name.pub, crt from S3, mk ssl_template, cp to sites_available, ln to sites_enabled. && AppRestart
-	m.Register(&gulp.SSLRemove{})  //rm node_name.pub, crt, mk regular non_ssl_template, cp to sites_available, ln to sites_enabled. && AppRestart
-	m.Register(&gulp.MeterStop{})  //sudo service gmond start
-	m.Register(&gulp.MeterStart{}) //sudo service gmond stop
-	m.Register(&gulp.LogStart{})   //sudo service beaver start
-	m.Register(&gulp.LogStop{})    //sudo service beaver stop
-	m.Register(&gulp.EnvGet{})     //ENV['JMP_UP_PATH'] '~/sofware/kangaroo'
-	m.Register(&gulp.EnvSet{})     //ENV['JMP_UP_PATH'] = '~/software/kangaroo'
-	m.Register(&gulp.EnvUnset{})   //ENV['JMP_UP_PATH'] = blank
-	m.Register(&KeyAdd{})          //add the id_rsa/pub
-	m.Register(&KeyRemove{})       //remove the id_rsa/pub
-	m.Register(gulp.ServiceList{}) //ps -ef
-	*/
 	return m
 }
 
