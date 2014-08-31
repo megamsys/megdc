@@ -1,0 +1,65 @@
+{
+	"ImportPath": "github.com/megamsys/cloudinabox",
+	"GoVersion": "go1.3.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/ActiveState/tail",
+			"Rev": "fd3ba4e64ca930fe21edc4c8a8bd1a075ef7f4ac"
+		},
+		{
+			"ImportPath": "github.com/Unknwon/goconfig",
+			"Rev": "c0cc0d3a97a4153a8b064acd5c9d7bab9d6d5f3f"
+		},
+		{
+			"ImportPath": "github.com/astaxie/beego",
+			"Comment": "v1.4.0-7-g7f977a0",
+			"Rev": "7f977a0c8ccdbc21e84f928046cb8778f24a67e0"
+		},
+		{
+			"ImportPath": "github.com/beego/i18n",
+			"Rev": "e87155e8f0c05bf323d0b13470e1b97af0cb5652"
+		},
+		{
+			"ImportPath": "github.com/coopernurse/gorp",
+			"Comment": "v1.6.1",
+			"Rev": "31a7c02fabe8965c887cd243e381ce08328f3741"
+		},
+		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Rev": "4292df70df546334d4174bcd77271253c9b7835c"
+		},
+		{
+			"ImportPath": "github.com/howeyc/fsnotify",
+			"Comment": "v0.9.0-11-g6b1ef89",
+			"Rev": "6b1ef893dc11e0447abda6da20a5203481878dda"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Rev": "b021d0ef20de4f7ed239e2cbe3b95648d8e41e95"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-sqlite3",
+			"Rev": "abd3d9caef4548682a279b60c859c197a1b32a47"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/action",
+			"Rev": "0735104659eccccc98ee22c938d984f601eebb9e"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/exec",
+			"Rev": "0735104659eccccc98ee22c938d984f601eebb9e"
+		},
+		{
+			"ImportPath": "github.com/tsuru/config",
+			"Rev": "ec7b78d45eab5959f4e31a4a092431fa6948e9a6"
+		},
+		{
+			"ImportPath": "gopkg.in/tomb.v1",
+			"Rev": "c131134a1947e9afd9cecfe11f4c6dff0732ae58"
+		},
+		{
+			"ImportPath": "gopkg.in/v1/yaml",
+			"Rev": "feb4ca79644e8e7e39c06095246ee54b1282c118"
+		}
+	]
+}
