@@ -17,14 +17,10 @@
 package servers
 
 import (
-//	"strings"
 	"github.com/megamsys/cloudinabox/app"
- //   "net/http"
- //   "regexp"
    "fmt"
 )
 
-//var serversList = []string{ "Megam", "Cobbler"}
 
 func InstallServers(serverName string) error {
 	var err error

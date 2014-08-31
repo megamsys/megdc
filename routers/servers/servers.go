@@ -17,28 +17,26 @@
 package servers
 
 import (
-//	"strings"
-//	"github.com/megamsys/cloudinabox/modules/utils"
-    "github.com/astaxie/beego"
-    "github.com/megamsys/cloudinabox/routers/base"
-    "github.com/megamsys/cloudinabox/modules/servers"
-    "github.com/megamsys/cloudinabox/models/orm"
-    "github.com/megamsys/cloudinabox/models"
-    "github.com/ActiveState/tail"
-    "github.com/gorilla/websocket"
-     "net/http"
-    "log"
-     "container/list"
-     "encoding/json"
-	"time"
+	"container/list"
+	"encoding/json"
+	"github.com/ActiveState/tail"
+	"github.com/astaxie/beego"
+	"github.com/gorilla/websocket"
+	"github.com/megamsys/cloudinabox/models"
+	"github.com/megamsys/cloudinabox/models/orm"
+	"github.com/megamsys/cloudinabox/modules/servers"
+	"github.com/megamsys/cloudinabox/routers/base"
+	"log"
+	"net/http"
 	"strconv"
- //   "regexp"
-   "fmt"
+	"time"
 )
 
-var serversList = [...]string{ "MEGAM", "COBBLER", "OPENNEBULA"}
+var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA"}
+
 //var servers_output = [...]string{}
 var servers_output []string
+
 // PageRouter serves home page.
 type ServerRouter struct {
 	base.BaseRouter
@@ -55,10 +53,9 @@ func (this *ServerRouter) Get() {
 		this.Data["json"] = result
 		this.ServeJson()
 	}()
-	
+
 	this.Data["IsLoginPage"] = true
 	this.Data["Username"] = this.GetUser()
-	//this.TplNames = "servers/servers.html" 
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
 	}
@@ -66,20 +63,20 @@ func (this *ServerRouter) Get() {
 	dbmap := orm.GetDBMap(db)
 	n := len(serversList)
 	for i := 0; i < n; i++ {
-       err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])	  
-	   fmt.Println(err)
-	   if err != nil {
-	   	tmpserver := &orm.Servers{0, serversList[i], false, "", ""}
-	   	jsonMsg, _ := json.Marshal(tmpserver)
-	    servers_output = append(servers_output, string(jsonMsg))
-	   } else {   
-	      jsonMsg, _ := json.Marshal(servers)
-	       servers_output = append(servers_output, string(jsonMsg))
-	   }
-    }
+		err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])
+		fmt.Println(err)
+		if err != nil {
+			tmpserver := &orm.Servers{0, serversList[i], false, "", ""}
+			jsonMsg, _ := json.Marshal(tmpserver)
+			servers_output = append(servers_output, string(jsonMsg))
+		} else {
+			jsonMsg, _ := json.Marshal(servers)
+			servers_output = append(servers_output, string(jsonMsg))
+		}
+	}
 	result["success"] = true
 	result["data"] = servers_output
-	
+
 }
 
 func (this *ServerRouter) Install() {
@@ -92,41 +89,41 @@ func (this *ServerRouter) Install() {
 		this.Data["json"] = result
 		this.ServeJson()
 	}()
-	
+
 	this.Data["IsLoginPage"] = true
 	this.Data["Username"] = this.GetUser()
-    servername := this.Ctx.Input.Param(":servername")
-   // fmt.Println("\n=======================================")
-  //  fmt.Printf("%v", this)
-  //  fmt.Println("\n=======================================")
-   // fmt.Println(servername)
-   // fmt.Println("\n=======================================")
-   // fmt.Println(this.Ctx.Input.Params)
-  //  fmt.Println("\n=======================================")
-   // fmt.Println(this.Ctx.Input.RequestBody)
+	servername := this.Ctx.Input.Param(":servername")
+	// fmt.Println("\n=======================================")
+	//  fmt.Printf("%v", this)
+	//  fmt.Println("\n=======================================")
+	// fmt.Println(servername)
+	// fmt.Println("\n=======================================")
+	// fmt.Println(this.Ctx.Input.Params)
+	//  fmt.Println("\n=======================================")
+	// fmt.Println(this.Ctx.Input.RequestBody)
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
 	}
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
-    err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)	  
-	   fmt.Println(err)
-	    if server.Install != true  {
-	   	       err := servers.InstallServers(servername)
-	   	       if err != nil {
-	   		     result["success"] = false
-	   	       } else {
-	   	       	  result["success"] = true
-	   	       }
-	        }
+	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
+	fmt.Println(err)
+	if server.Install != true {
+		err := servers.InstallServers(servername)
+		if err != nil {
+			result["success"] = false
+		} else {
+			result["success"] = true
+		}
+	}
 	result["success"] = true
-	
+
 }
 
 func (this *ServerRouter) Log() {
-        fmt.Println("Join entry LOG()============> ")
+	fmt.Println("Join entry LOG()============> ")
 	this.Data["IsLoginPage"] = true
-	this.TplNames = "servers/log.html" 
+	this.TplNames = "servers/log.html"
 	server := this.Ctx.Input.Param(":id")
 	this.Data["ServerName"] = server
 }
@@ -149,13 +146,13 @@ func (this *ServerRouter) GetLog() {
 	Join(uname, ws)
 	publishLog(uname)
 	defer Leave(uname)
-	
+
 }
 
 func (this *ServerRouter) Verify() {
 	servername := this.Ctx.Input.Param(":name")
 	fmt.Println(servername)
-	 var server orm.Servers
+	var server orm.Servers
 	result := map[string]interface{}{
 		"success": false,
 	}
@@ -164,20 +161,20 @@ func (this *ServerRouter) Verify() {
 		this.Data["json"] = result
 		this.ServeJson()
 	}()
-	
+
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
 	}
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
-    err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)	  
-	   fmt.Println(err)
-	   fmt.Println(server.Install)
-	    if !server.Install {	   	      
-	   	       	  result["success"] = false
-	        } else {
-	        	 result["success"] = true
-	        }
+	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
+	fmt.Println(err)
+	fmt.Println(server.Install)
+	if !server.Install {
+		result["success"] = false
+	} else {
+		result["success"] = true
+	}
 	//result["success"] = false
 }
 
@@ -198,7 +195,7 @@ func (this *ServerRouter) Join() {
 
 	// Join chat room.
 	Join(uname, ws)
-//	startPolling()
+	//	startPolling()
 	defer Leave(uname)
 
 	// Message receive loop.
@@ -231,83 +228,71 @@ func broadcastWebSocket(event models.Event) {
 		}
 	}
 }
+
 var i = 0
 var oldServerName = ""
-func doSomething(server string) bool { 
-	    if oldServerName == "" {
-	    	oldServerName = server
-	    	i = i + 3
-	    	PublishMessage(server, i)
-	    } else {
-	    	if oldServerName == server {
-	    		 i = i + 3
-	             if (i <= 99) {
-	                PublishMessage(server, i)
-                 } else {
-                 	return false
-                 }
-	             //else {
-                 //	publish <- newEvent(models.EVENT_MESSAGE, "megam", "completed")
-                 // } 
-	    	} else {
-	    		oldServerName = server
-	    		i = 0
-	    		i = i + 3
-	    		PublishMessage(server, i)
-	    	}
-	    }
-	    return true
-} 
+
+func doSomething(server string) bool {
+	if oldServerName == "" {
+		oldServerName = server
+		i = i + 3
+		PublishMessage(server, i)
+	} else {
+		if oldServerName == server {
+			i = i + 3
+			if i <= 99 {
+				PublishMessage(server, i)
+			} else {
+				return false
+			}
+			//else {
+			//	publish <- newEvent(models.EVENT_MESSAGE, "megam", "completed")
+			// }
+		} else {
+			oldServerName = server
+			i = 0
+			i = i + 3
+			PublishMessage(server, i)
+		}
+	}
+	return true
+}
 
 func publishLog(server string) {
-        fmt.Printf("LOG FILE NAME ===========> : %s", server)
+	fmt.Printf("LOG FILE NAME ===========> : %s", server)
 	t, err := tail.TailFile("/var/log/megam/"+server+".log", tail.Config{Follow: true})
-        if err != nil{
-        log.Printf("ERROR LOG READ ==> : %s", err.Error())
-        }
-        for line := range t.Lines {
-          fmt.Println(line.Text)
-          publish <- newEvent(models.EVENT_MESSAGE, server, line.Text)
-        //  t.Stop()
-        }
+	if err != nil {
+		log.Printf("ERROR LOG READ ==> : %s", err.Error())
+	}
+	for line := range t.Lines {
+		fmt.Println(line.Text)
+		publish <- newEvent(models.EVENT_MESSAGE, server, line.Text)
+		//  t.Stop()
+	}
 }
 
 func PublishMessage(server string, i int) {
-	 publish <- newEvent(models.EVENT_MESSAGE, server, strconv.Itoa(i))
-     fmt.Printf("doing something: %v", i)
+	publish <- newEvent(models.EVENT_MESSAGE, server, strconv.Itoa(i))
+	fmt.Printf("doing something: %v", i)
 }
 
-func startPolling() { 
-	  //  i := 0
-/*	  for i := range serversList {
-        for _ = range time.Tick(1 * time.Second) { 
-               if doSomething(serversList[i]) == false {
-               	  break
-               } 
-         } 
-        }*/
-	    db := orm.OpenDB()
-	    dbmap := orm.GetDBMap(db)
-	    var server orm.Servers
-	    fmt.Println("polling entry")
-	    for i := range serversList {
-	    	fmt.Println(serversList[i])
-            err := dbmap.SelectOne(&server, "select * from servers where Name=?", serversList[i])	  
-	        fmt.Println(err)
-	        if server.Install != true {
-	   	       err := servers.InstallServers(serversList[i])
-	   	       if err != nil {
-	   		
-	   	       }
-	        }
-         }
-	    
-//	    t, _ := tail.TailFile("/var/log/syslog", tail.Config{Follow: true})
- //       for line := range t.Lines {
- //         fmt.Println(line.Text)
-  //        t.Stop()
-  //      }
-} 
+func startPolling() {
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	var server orm.Servers
+	fmt.Println("polling entry")
+	for i := range serversList {
+		fmt.Println(serversList[i])
+		err := dbmap.SelectOne(&server, "select * from servers where Name=?", serversList[i])
+		fmt.Println(err)
+		if server.Install != true {
+			err := servers.InstallServers(serversList[i])
+			if err != nil {
+
+			}
+		}
+	}
+}
 
 type Subscription struct {
 	Archive []models.Event      // All the events from the archive.
@@ -354,7 +339,6 @@ func chatroom() {
 				beego.Info("New user:", sub.Name, ";WebSocket:", sub.Conn != nil)
 			} else {
 				beego.Info("Old user:", sub.Name, ";WebSocket:", sub.Conn != nil)
-				//oldUserReconnect(subscribers, sub.Name)
 			}
 		case event := <-publish:
 			// Notify waiting list.
@@ -399,21 +383,3 @@ func isUserExist(subscribers *list.List, user string) bool {
 	}
 	return false
 }
-
-/*func oldUserReconnect(subscribers *list.List, user string) bool {
-	  for sub := subscribers.Front(); sub != nil; sub = sub.Next() {
-				if sub.Value.(Subscriber).Name == user {
-					subscribers.Remove(sub)
-					// Clone connection.
-					ws := sub.Value.(Subscriber).Conn
-					if ws != nil {
-						ws.Close()
-						beego.Error("WebSocket closed:", unsub)
-					}
-					publish <- newEvent(models.EVENT_LEAVE, unsub, "") // Publish a LEAVE event.
-					return true
-				}
-			}
-	  return false
-}*/
-

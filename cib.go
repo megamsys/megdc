@@ -34,7 +34,6 @@ const (
 const defaultConfigPath = "conf/cib.conf"
 
 func main() {
-	//setting.LoadConfig()
 	
 	// set db 	
     db := orm.OpenDB()

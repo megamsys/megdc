@@ -17,41 +17,34 @@
 ###############################################################################
                             
 
-#CIBCODE_HOME = $(HOME)/code/megam/workspace/cloudinabox
+CIBCODE_HOME = $(shell pwd)/../../../../
 
-#ROOT_DIR := $(shell x=dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-#ROOT_DIR = $(shell pwd)
-#$(info $(ROOT_DIR))
-#DIR := $(shell ${ROOT_DIR%/*/*/*/*})
-#$(info $(DIR))
-#CIBCODE_HOME = $(DIR)
-
-CIBCODE_HOME = $(CLOUDINABOX_DEB)
 export GOPATH=$(CIBCODE_HOME)
+
 
 define HG_ERROR
 
-FATAL: you need mercurial (hg) to download gulp dependencies.
+FATAL: you need mercurial (hg) to download cib dependencies.
        Check README.md for details
+       
+       
 endef
 
 define GIT_ERROR
 
-FATAL: you need git to download gulp dependencies.
+FATAL: you need git to download cib dependencies.
        Check README.md for details
 endef
 
 define BZR_ERROR
 
-FATAL: you need bazaar (bzr) to download gulp dependencies.
+FATAL: you need bazaar (bzr) to download cib dependencies.
        Check README.md for details
 endef
 
 .PHONY: all check-path get hg git bzr get-test get-prod test client
 
 all: check-path get test
-
-build: check-path get
 
 # It does not support GOPATH with multiple paths.
 check-path:
@@ -61,24 +54,8 @@ ifndef GOPATH
 	@echo "       http://golang.org/cmd/go/#GOPATH_environment_variable"
 	@exit 1
 endif
-#ifneq ($(subst ~,$(HOME),$(GOPATH))/src/github.com/*/megam_bee, $(PWD))
-#	@echo "FATAL: you must clone gulp inside your GOPATH To do so,"
-#	@echo "       you can run go get github.com/megamsys/cloudinabox/..."
-#	@echo "       or clone it manually to the dir $(GOPATH)/src/github.com/megamsys/cloudinabox"
-#	@exit 1
-#endif
 
-clean:
-	@/bin/rm -f -r $(CIBCODE_HOME)/pkg	
-	@go list -f '{{range .TestImports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
-		sort | uniq | xargs -I{} rm -f -r $(CIBCODE_HOME)/src/{}	
-	@go list -f '{{range .Imports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
-		sort | uniq | xargs -I{} rm -f -r $(CIBCODE_HOME)/src/{} 
-	@/bin/echo "Clean ...ok"
-
-get: hg git bzr get-test get-prod
+get: hg git bzr get-code godep
 
 hg:
 	$(if $(shell hg), , $(error $(HG_ERROR)))
@@ -88,36 +65,33 @@ git:
 
 bzr:
 	$(if $(shell bzr), , $(error $(BZR_ERROR)))
+	
+get-code:
+	go get $(GO_EXTRAFLAGS) -u -d -t ./...
 
-get-test:
-	@/bin/echo -n "Installing test dependencies... "
-	@go list -f '{{range .TestImports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
-		sort | uniq | xargs go get -u >/tmp/.get-test 2>&1 || (cat /tmp/.get-test && exit 1)	
-	@/bin/echo "ok"
-	@rm -f /tmp/.get-test
-
-get-prod:
-	@/bin/echo -n "Installing production dependencies... "
-	@go list -f '{{range .Imports}}{{.}} {{end}}' ./... | tr ' ' '\n' |\
-		grep '^.*\..*/.*$$' | grep -v 'github.com/megamsys/cloudinabox' |\
-		sort | uniq | xargs go get -u >/tmp/.get-prod 2>&1 || (cat /tmp/.get-prod && exit 1)
-	@/bin/echo "ok"
-	@rm -f /tmp/.get-prod
+godep:
+	go get $(GO_EXTRAFLAGS) github.com/tools/godep
+	godep restore ./...
 
 _go_test:
-	@go test -i ./...
-	@go test ./...
+	go clean $(GO_EXTRAFLAGS) ./...
+	go test $(GO_EXTRAFLAGS) ./...
 
-_gulpd_dry:
-	@go build -o cib cib.go
-	@sudo ./cib --config ./conf/cib.conf
-	@rm -f cib
-
-test: _go_test _gulpd_dry
+_cib_dry:
+	go build $(GO_EXTRAFLAGS) -o cib cib.go
+	sudo ./cib --config ./conf/cib.conf
+	rm -f cib
 
 
-client:
-	@go build -o cib cib.go
-	@echo "Done."
+_sh_tests:
+	@conf/trusty/megam/megam_test.sh
 
+test: _go_test _cib_dry
+
+_install_deadcode: git
+	go get $(GO_EXTRAFLAGS) github.com/remyoudompheng/go-misc/deadcode
+
+deadcode: _install_deadcode
+	@go list ./... | sed -e 's;github.com/megamsys/cloudinabox/;;' | xargs deadcode
+
+deadc0de: deadcode
