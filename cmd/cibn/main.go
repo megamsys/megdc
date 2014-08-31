@@ -34,7 +34,7 @@ const defaultConfigPath = "conf/cib.conf"
 
 func buildManager(name string) *cmd.Manager {
 	m := cmd.BuildBaseManager(name, version, header)
-	m.Register(&CIBStart{}) //start the cib daemon
+	m.Register(&CIBNodeStart{})          //stop  the cib node daemon
 	return m
 }
 

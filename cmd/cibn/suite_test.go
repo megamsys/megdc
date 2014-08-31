@@ -14,11 +14,12 @@ type S struct {
 
 
 var _ = gocheck.Suite(&S{})
+
 var manager *cmd.Manager
 
 func Test(t *testing.T) { gocheck.TestingT(t) }
 
 func (s *S) SetUpTest(c *gocheck.C) {
 	var stdout, stderr bytes.Buffer
-	manager = cmd.NewManager("cib", version, header, &stdout, &stderr, os.Stdin)
+	manager = cmd.NewManager("cibn", version, header, &stdout, &stderr, os.Stdin)
 }

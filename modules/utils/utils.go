@@ -19,7 +19,7 @@ const (
 	X_Megam_APIKEY      = "X-Megam-APIKEY"
 	X_Megam_DATE        = "X-Megam-DATE"
 	X_Megam_HMAC        = "X-Megam-HMAC"
-	API_GATEWAY_VERSION = "/v1"
+	API_GATEWAY_VERSION = "/v2"
 	Content_Type               = "Content-Type"
 	application_json           = "application/json"
 	Accept                     = "Accept"

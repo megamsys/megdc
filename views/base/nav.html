@@ -1,22 +1,31 @@
-<nav class="navbar navbar-fixed-top not-collapse bg-g-ln-gray" role="navigation">
-  		<div class="navbar-header">
-		    <a class="navbar-brand" href="#" class="hover-white-shade-bg">
-		    	Cloud In a Box
-		    	<small class="font-w-100 text-gray-alt hidden-xs hidden-sm">Megam Systems</small>
-		    </a>
-		  </div>
-	  	<div id="top-nav">
-	  		<div class="navbar-dropdown navbar-right navbar-avatar">
-	  			<a href="#" data-target="#topavatar-toggle" class="hover-no-underline dropdown-toggle m-lr-30 mm-lr-10" data-toggle="dropdown">
-						<!-- <img src="/static/placeholders/avatars/avatar.jpg" class="img-circle" width=25> -->
-						<span class="text-gray-light hidden-sm hidden-xs">{{.Username}} </span>
-						<span class="caret text-white hidden-sm hidden-xs"></span>
-					</a>
-					<ul id="topavatar-toggle" class="dropdown-menu avatar-dropdown">
-	          <li><a href="settings.html">Settings</a></li>
-	          <li><a href="/logout">Sigut</a></li>
-	        </ul>
-	  		</div>	 
-	  		<input type="hidden" id="username_hidden" value={{.Username}}> 		
-	  	</div>
-		</nav>
+<nav class="navbar navbar-fixed-top not-collapse bg-g-ln-gray"
+	role="navigation">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="#" class="hover-white-shade-bg">
+			Cloud In a Box <small
+			class="font-w-100 text-gray-alt hidden-xs hidden-sm">Megam
+				Systems</small>
+		</a>
+	</div>
+	<div id="top-nav">
+		<a href="/support"
+			type="button"
+			class="btn btn-default navbar-btn navbar-right btn-primary m-r-30 mm-r-10">Submit a ticket</a>
+		<div class="navbar-dropdown navbar-right navbar-avatar">
+			<a href="#" data-target="#topavatar-toggle"
+				class="hover-no-underline dropdown-toggle m-lr-30 mm-lr-10"
+				data-toggle="dropdown"> <span
+				class="text-gray-light hidden-sm hidden-xs">{{.Username}} </span> <span
+				class="caret text-white hidden-sm hidden-xs"></span>
+			</a>
+
+			<ul id="topavatar-toggle" class="dropdown-menu avatar-dropdown">
+				<li><a href="/logout">Sign out</a></li>
+			</ul>
+		</div>
+		<input type="hidden" id="username_hidden" value={{.Username}}>
+		<a href="http://bit.ly/megamcib" target="_blank"
+			type="button"
+			class="btn btn-bordered text-white btn-lg navbar-btn navbar-right m-r-30 mm-r-10">Docs</a>
+	</div>
+</nav>

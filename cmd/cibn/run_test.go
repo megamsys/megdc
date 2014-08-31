@@ -5,17 +5,17 @@ import (
 	"launchpad.net/gocheck"
 )
 
-func (s *S) TestCIBStartInfo(c *gocheck.C) {
-	desc := `starts the cib base web daemon.
-	
-	
-	`
+func (s *S) TestCIBNodeStart(c *gocheck.C) {
+	desc := `starts the cib node daemon.
+
+
+`
 	expected := &cmd.Info{
-		Name:    "start",
-		Usage:   `start`,
+		Name:    "startnode",
+		Usage:   `startnode`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
-	command := CIBStart{}
+	command := CIBNodeStart{}
 	c.Assert(command.Info(), gocheck.DeepEquals, expected)
 }

@@ -5,36 +5,36 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-type CIBStart struct {
+/////// Server node
+
+type CIBNodeStart struct {
 	fs *gnuflag.FlagSet
 }
 
-func (g *CIBStart) Info() *cmd.Info {
-	desc := `starts the cib base web daemon.
-	
-	
-	`
+func (g *CIBNodeStart) Info() *cmd.Info {
+	desc := `starts the cib node daemon.
+
+
+`
 	return &cmd.Info{
-		Name:    "start",
-		Usage:   `start`,
+		Name:    "startnode",
+		Usage:   `startnode`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
 }
 
-func (c *CIBStart) Run(context *cmd.Context, client *cmd.Client) error {
-	RunWeb()
+func (c *CIBNodeStart) Run(context *cmd.Context, client *cmd.Client) error {
+	RunNode()
 	return nil
 }
 
-func (c *CIBStart) Flags() *gnuflag.FlagSet {
+func (c *CIBNodeStart) Flags() *gnuflag.FlagSet {
 	if c.fs == nil {
 		c.fs = gnuflag.NewFlagSet("cib", gnuflag.ExitOnError)
 	}
 	return c.fs
 }
-
-
 
 /*
 
