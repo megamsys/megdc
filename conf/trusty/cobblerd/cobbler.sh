@@ -13,9 +13,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 ###############################################################################
-# A Jumpstart linux script which sets up cobblerd and a DHCP using dnsmasq.
-# The default dhcp range is 192.168.2.20 - 200.
-# Make sure that the cobblerd machine i/p is 192.168.2.3
+# A cobbler linux script which sets up cobblerd and a DHCP using dnsmasq.
+# The dhcp range used by cobbler is 192.168.2.20 - 200.
+# The i/p address of the cobbler is 192.168.2.3
 # This script currently supports ubuntu 14.04 trusty.
 ###############################################################################
 
@@ -30,6 +30,8 @@ white='\033[37m'
 
 alias Reset="tput sgr0"      #  Reset text attributes to normal
 # without clearing screen.
+
+COBBLER_LOG="/var/log/megam/megamcib/cobbler.log"
 
 #--------------------------------------------------------------------------
 #colored echo
@@ -87,7 +89,7 @@ parseParameters()   {
 #prints the help to out file.
 #--------------------------------------------------------------------------
 help() {
-  cecho  "Usage    : jumpstart_linux.sh [Options]" $green
+  cecho  "Usage    : cobbler.sh [Options]" $green
   cecho  "help     : prints the help message." $blue
   cecho  "install  : setup cobblerd which network boots on dhcp 192.168.2.x" $blue
   cecho  "uninstall: uninstalls cobblerd and remove the setup" $blue
@@ -96,17 +98,27 @@ help() {
 # Install cobbler in trusty or debian
 #--------------------------------------------------------------------------
 install_cobbler() {
+  ping -c 1 us.archive.ubuntu.com &> /dev/null
+
+  if [ $? -ne 0 ]; then
+    echo "`date`: check your network connection. us.archive.ubuntu.com is not reachable!" >> $COBBLER_LOG
+    exit 1
+  fi
+
   cecho "Installing cobblerd.." $yellow
-  apt-get -y install cobbler cobbler-common cobbler-web dhcp3-server  >> /var/log/megam/cobbler.log
-  apt-get -y debmirror >> /var/log/megam/cobbler.log
-  cobbler get-loaders >> /var/log/megam/cobbler.log
-  cobbler check >> /var/log/megam/cobbler.log
+  apt-get -y install cobbler cobbler-common dhcp3-server  >> $COBBLER_LOG
+  apt-get -y debmirror >> $COBBLER_LOG
+  cobbler get-loaders >> $COBBLER_LOG
+  cobbler check >> $COBBLER_LOG
+   
   #If any errors just fix as it says.
   #on success --> No configuration problems found.  All systems go.
   cobbler sync
 
-  dpkg-reconfigure cobbler >> /var/log/megam/cobbler.log
-  configure_cobbler 
+  #this can't be done't here as we are in a background mode now.
+  dpkg-reconfigure cobbler $COBBLER_LOG
+
+  configure_cobbler
 }
 #--------------------------------------------------------------------------
 #Configures cobbler with the dhcp range 192.168.2.20-200.
@@ -115,14 +127,20 @@ install_cobbler() {
 #--------------------------------------------------------------------------
 configure_cobbler() {
   cecho "Configuring cobblerd.." $yellow
+  
+  echo 'base_megamreporting_enabled: 1' >> /etc/cobbler/settings
 
   sed -i 's/manage_dhcp: 0/manage_dhcp: 1/g' /etc/cobbler/settings
 
+  cp install_post_cibnode.py /usr/lib/python2.7/cobbler/modules
+
   service cobbler restart
+
   cobbler sync
+
   echo "manage_dhcp:1 => dhcp managed by cobbler.."
 
-  apt-get install xinetd tftpd tftp >> /var/log/megam/cobbler.log
+  apt-get install xinetd tftpd tftp >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*option routers.*/option routers 192.168.2.3;/' /etc/cobbler/dhcp.template
   echo "route:192.168.2.3 => route is your cobblerd machine.."
@@ -156,30 +174,41 @@ configure_cobbler() {
   sed -i 's/^[ \t]*server_args.*/server_args             = -v -s /var/lib/tftpboot/' /etc/cobbler/tftpd.template
 
   service xinetd restart
+
   service dnsmasq restart
+
   service cobbler restart
+
   cobbler sync
+
   setup_boottrusty
 }
 #--------------------------------------------------------------------------
 #Download and setup trusty amd64 mini
 #--------------------------------------------------------------------------
 setup_boottrusty() {
-  cecho "Setup trusty mini (amd64).." $yellow
+  cecho "Setup trusty megam node.." $yellow
 
   cd /var/lib/cobbler/isos/
-  wget https://s3-ap-southeast-1.amazonaws.com/megampub/iso/trusty_megam.iso
-  mv trusty_megam.iso trusty-amd64-mini.iso
 
-  mount -o loop trusty-amd64-mini.iso /mnt
+  wget --tries=3 -c https://s3-ap-southeast-1.amazonaws.com/megampub/iso/trusty_megamnode.iso
 
-  cobbler import --name=ubuntu-server-trusty-mini --path=/mnt --breed=ubuntu --arch x86_64
+  mv trusty_megamnode.iso trusty-amd64-megamnode.iso
 
+  mount -o loop trusty-amd64-megamnode.iso /mnt
+
+  cobbler import --name=ubuntu-server-trusty-megamnode --path=/mnt --breed=ubuntu --arch x86_64
+
+  # Do you have to unmount the /mnt directory ?  after you are done importing ?
 
   service xinetd restart
+
   service dnsmasq restart
+
   service cobbler restart
+
   cobbler sync
+
   install_complete
 }
 #--------------------------------------------------------------------------
@@ -187,10 +216,10 @@ setup_boottrusty() {
 #--------------------------------------------------------------------------
 install_complete() {
   cecho "##################################################" $green
-  cecho "Installation complete.." $yellow
-  cecho "The default ip address of cobblerd is 192.168.2.3"
-  cecho "The subnet dhcp range is 192.168.2.20 - 200"
-  cecho "Refer www.gomegam.com/docs for more information." $yellow
+  cecho "Step 1: cobbler installed successfully." $yellow
+  cecho "        The ip address of cobblerd is 192.168.2.3"
+  cecho "        The  subnet   dhcp range   is [192.168.2.20 .. 200]"
+  cecho "Refer http://bit.ly/megamcib for more information." $yellow
   cecho "##################################################" $green
 }
 #--------------------------------------------------------------------------
@@ -200,15 +229,20 @@ uninstall_cobbler() {
   cecho "Uninstalling cobblerd.." $yellow
 
 
-  apt-get -y remove cobbler cobbler-common cobbler-web dhcp3-server >> /var/log/megam/cobbler.log
-  apt-get -y remove debmirror >> /var/log/megam/cobbler.log
+  apt-get -y remove cobbler cobbler-common cobbler-web dhcp3-server >> $COBBLER_LOG
 
-  apt-get -y purge cobbler cobbler-common cobbler-web dhcp3-server >> /var/log/megam/cobbler.log
-  apt-get -y purge debmirror >> /var/log/megam/cobbler.log
+  apt-get -y remove debmirror >> $COBBLER_LOG
 
-  apt-get -y remove xinetd tftpd tftp >> /var/log/megam/cobbler.log
-  apt-get -y purge xinetd tftpd tftp >> /var/log/megam/cobbler.log
+  apt-get -y purge cobbler cobbler-common cobbler-web dhcp3-server >> $COBBLER_LOG
+
+  apt-get -y purge debmirror >> $COBBLER_LOG
+
+  apt-get -y remove xinetd tftpd tftp >> $COBBLER_LOG
+
+  apt-get -y purge xinetd tftpd tftp >> $COBBLER_LOG
+
   cecho "##################################################" $green
+
   cecho "Uninstall complete.." $yellow
 }
 #--------------------------------------------------------------------------

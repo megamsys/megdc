@@ -42,7 +42,7 @@
                         {{end}}
 		     	        {{if .flash.LoginError}}
                             <div class="alert alert-danger alert-dismissable">
-                              <p>Email and password was wrong. Please re-entry the fields.</p>
+                              <p>Email (or) password was wrong. Please re-enter the fields.</p>
                             </div>
                         {{end}}
                          {{if .flash.ServerError}}
@@ -52,7 +52,7 @@
                         {{end}}
 			<form id="User" method="POST" action="/signin">
 			  <div class="form-group">
-			    <input type="user" class="form-control input-glass" name="username" id="email" placeholder="Username">
+			    <input type="user" class="form-control input-glass" name="username" id="email" placeholder="Email">
 			  </div>
 			  <div class="form-group">
 			    <input type="password" class="form-control input-glass" name="password" id="pass" placeholder="Password">
@@ -63,12 +63,12 @@
 
 		</div>
 
-    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="/static_source/js/jquery-1.11.1.min.js"></script>
     <script src="/static_source/js/lib/backstretch.js"></script>
 
     <script>
       $(".backstretch").backstretch([
-        "/static/backgrounds/wg_blurred_backgrounds_11.jpg",
+        "/static_source/images/background.jpg",
       ], {
         duration: 3000,
         fade: 'slow'

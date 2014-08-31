@@ -1,5 +1,5 @@
 /*
-** Copyright [2012-2013] [Megam Systems]
+** Copyright [2012-2014] [Megam Systems]
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package servers
 import (
 	"container/list"
 	"encoding/json"
+	"fmt"
 	"github.com/ActiveState/tail"
 	"github.com/astaxie/beego"
 	"github.com/gorilla/websocket"
@@ -64,7 +65,6 @@ func (this *ServerRouter) Get() {
 	n := len(serversList)
 	for i := 0; i < n; i++ {
 		err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])
-		fmt.Println(err)
 		if err != nil {
 			tmpserver := &orm.Servers{0, serversList[i], false, "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
@@ -93,14 +93,8 @@ func (this *ServerRouter) Install() {
 	this.Data["IsLoginPage"] = true
 	this.Data["Username"] = this.GetUser()
 	servername := this.Ctx.Input.Param(":servername")
-	// fmt.Println("\n=======================================")
-	//  fmt.Printf("%v", this)
-	//  fmt.Println("\n=======================================")
-	// fmt.Println(servername)
-	// fmt.Println("\n=======================================")
-	// fmt.Println(this.Ctx.Input.Params)
-	//  fmt.Println("\n=======================================")
-	// fmt.Println(this.Ctx.Input.RequestBody)
+	fmt.Println(servername)
+
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
 	}
@@ -110,13 +104,13 @@ func (this *ServerRouter) Install() {
 	fmt.Println(err)
 	if server.Install != true {
 		err := servers.InstallServers(servername)
+		fmt.Printf("%s", err)
 		if err != nil {
 			result["success"] = false
 		} else {
 			result["success"] = true
 		}
 	}
-	result["success"] = true
 
 }
 
@@ -168,14 +162,16 @@ func (this *ServerRouter) Verify() {
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
 	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
-	fmt.Println(err)
-	fmt.Println(server.Install)
+
+	if err != nil {
+		result["failure_message"] = err.Error()
+	}
+
 	if !server.Install {
 		result["success"] = false
 	} else {
 		result["success"] = true
 	}
-	//result["success"] = false
 }
 
 // Join method handles WebSocket requests for WebSocketController.
@@ -260,7 +256,7 @@ func doSomething(server string) bool {
 
 func publishLog(server string) {
 	fmt.Printf("LOG FILE NAME ===========> : %s", server)
-	t, err := tail.TailFile("/var/log/megam/"+server+".log", tail.Config{Follow: true})
+	t, err := tail.TailFile("/var/log/megam/megamcib/"+server+".log", tail.Config{Follow: true})
 	if err != nil {
 		log.Printf("ERROR LOG READ ==> : %s", err.Error())
 	}
@@ -273,7 +269,6 @@ func publishLog(server string) {
 
 func PublishMessage(server string, i int) {
 	publish <- newEvent(models.EVENT_MESSAGE, server, strconv.Itoa(i))
-	fmt.Printf("doing something: %v", i)
 }
 
 func startPolling() {

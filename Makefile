@@ -15,12 +15,6 @@
 # Makefile to compile cib.
 # lists all the dependencies for test, prod and we can run a go build aftermath.
 ###############################################################################
-                            
-
-CIBCODE_HOME = $(shell pwd)/../../../../
-
-export GOPATH=$(CIBCODE_HOME)
-
 
 define HG_ERROR
 
@@ -42,7 +36,7 @@ FATAL: you need bazaar (bzr) to download cib dependencies.
        Check README.md for details
 endef
 
-.PHONY: all check-path get hg git bzr get-test get-prod test client
+.PHONY: all check-path get hg git bzr get-code test
 
 all: check-path get test
 
@@ -54,7 +48,8 @@ ifndef GOPATH
 	@echo "       http://golang.org/cmd/go/#GOPATH_environment_variable"
 	@exit 1
 endif
-
+	@exit 0
+	
 get: hg git bzr get-code godep
 
 hg:
@@ -77,16 +72,17 @@ _go_test:
 	go clean $(GO_EXTRAFLAGS) ./...
 	go test $(GO_EXTRAFLAGS) ./...
 
-_cib_dry:
-	go build $(GO_EXTRAFLAGS) -o cib cib.go
-	sudo ./cib --config ./conf/cib.conf
-	rm -f cib
+_cibd:
+	go build $(GO_EXTRAFLAGS) -o cibd ./cmd/cib
+	go build $(GO_EXTRAFLAGS) -o cibnd ./cmd/cibn
+	sudo ./cibd start
+	rm -f cibd
 
 
 _sh_tests:
 	@conf/trusty/megam/megam_test.sh
 
-test: _go_test _cib_dry
+test: _go_test _cibd
 
 _install_deadcode: git
 	go get $(GO_EXTRAFLAGS) github.com/remyoudompheng/go-misc/deadcode

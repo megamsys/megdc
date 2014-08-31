@@ -11,9 +11,9 @@
     border: solid 1px #f4f4f4;
     width: 10px; height: 10px; display: inline-block; 
     -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px;}
-.waiting-circles-play-0{ background-color: #9EC45F; }
-.waiting-circles-play-1{ background-color: #aEd46F; }
-.waiting-circles-play-2{ background-color: #bEe47F; }
+.waiting-circles-play-0{ background-color: #000000; }
+.waiting-circles-play-1{ background-color: #1a1a1a; }
+.waiting-circles-play-2{ background-color: #4d4d4d; }
 
 .waiting-blocks{ padding: 0; display: inline-block; }
 .waiting-blocks-element{ background-color: #caddfb; border: solid 1px #c9ccdb;
