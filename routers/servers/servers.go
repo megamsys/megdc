@@ -123,6 +123,7 @@ func (this *ServerRouter) Install() {
 }
 
 func (this *ServerRouter) Log() {
+	fmt.Println("Join entry++++++++++++++++++++++++++++++++++++++++++")
 	this.Data["IsLoginPage"] = true
 	this.TplNames = "servers/log.html" 
 	server := this.Ctx.Input.Param(":id")
@@ -258,7 +259,7 @@ func doSomething(server string) bool {
 } 
 
 func publishLog(server string) {
-	t, _ := tail.TailFile("/var/log/opennebula.log", tail.Config{Follow: true})
+	t, _ := tail.TailFile("/var/log/"+server+".log", tail.Config{Follow: true})
         for line := range t.Lines {
           fmt.Println(line.Text)
           publish <- newEvent(models.EVENT_MESSAGE, server, line.Text)
