@@ -16,12 +16,15 @@
 # lists all the dependencies for test, prod and we can run a go build aftermath.
 ###############################################################################
 
+GOPATH  := $(GOPATH):$(shell pwd)/../../../../
+
+
 define HG_ERROR
 
 FATAL: you need mercurial (hg) to download cib dependencies.
        Check README.md for details
-       
-       
+
+
 endef
 
 define GIT_ERROR
@@ -49,7 +52,7 @@ ifndef GOPATH
 	@exit 1
 endif
 	@exit 0
-	
+
 get: hg git bzr get-code godep
 
 hg:
@@ -60,7 +63,7 @@ git:
 
 bzr:
 	$(if $(shell bzr), , $(error $(BZR_ERROR)))
-	
+
 get-code:
 	go get $(GO_EXTRAFLAGS) -u -d -t ./...
 
