@@ -1,5 +1,5 @@
 /*
-** Copyright [2012-2013] [Megam Systems]
+** Copyright [2012-2014] [Megam Systems]
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -17,14 +17,10 @@
 package servers
 
 import (
-//	"strings"
 	"github.com/megamsys/cloudinabox/app"
- //   "net/http"
- //   "regexp"
    "fmt"
 )
 
-//var serversList = []string{ "Megam", "Cobbler"}
 
 func InstallServers(serverName string) error {
 	var err error
@@ -32,21 +28,21 @@ func InstallServers(serverName string) error {
     	case "MEGAM":
     	  err = app.MegamInstall()
     	  if err != nil {
-		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Printf("Error: Install error for [%s]", serverName)
 		     fmt.Println(err)
 		     return err
 	      }
         case "COBBLER":
           err = app.CobblerInstall()  
           if err != nil {
-		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Printf("Error: Install error for [%s]", serverName)
 		     fmt.Println(err)
 		     return err
 	      }
           case "OPENNEBULA":
           err = app.NebulaInstall()  
           if err != nil {
-		     fmt.Println("Error: Install error for [%s]", serverName)
+		     fmt.Printf("Error: Install error for [%s]", serverName)
 		     fmt.Println(err)
 		     return err
 	      }

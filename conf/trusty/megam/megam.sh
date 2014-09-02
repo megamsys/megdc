@@ -1,14 +1,23 @@
 #!/bin/bash
 
-echo "--------------------megam install----------------"
+MEGAM_LOG="/var/log/megam/megamcib/megam.log"
+
+ping -c 1 get.megam.co &> /dev/null
+
+if [ $? -ne 0 ]; then
+	echo "`date`: check your network connection. get.megam.co is down or not reachable!" >> $MEGAM_LOG
+  exit 1
+fi
 
 
-apt-get -y install megamnilavu >> /var/log/megam.log
+echo "Installing megam.."
 
-apt-get -y install megamgateway >> /var/log/megam.log
+apt-get -y install megamnilavu >> $MEGAM_LOG
 
-apt-get -y install megamd >> /var/log/megam.log
+apt-get -y install megamgateway >> $MEGAM_LOG
 
-apt-get -y install megamanalytics >> /var/log/megam.log
+apt-get -y install megamd >> $MEGAM_LOG
 
+apt-get -y install megamanalytics >> $MEGAM_LOG
 
+echo "`date`: Step1: megam installed successfully." >> $MEGAM_LOG

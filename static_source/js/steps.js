@@ -34,10 +34,7 @@ function installProcess(i) {
 	successID = servers[i].concat("_success")
 	errorID = servers[i].concat("_error")
 
-	// $('#'+serverID).waiting({
-	// elements: 6,
-	// auto: true
-	// });
+	
 	if (i > 1) {
 		console.log("opennebula entry");
 		$('#' + serverID).waiting({
@@ -63,9 +60,15 @@ function installProcess(i) {
 		progress = servers[i].concat("_PROGRESS");
 		$("#" + progress).show();
 		$("." + progress).css('width', '50%');
+		log = servers[i].concat("_LOG");
+		console.log("log is " + log);
+
+		alert("log is " + log);
+
+		$("#" + log).show();
+		
 	}
-	// $('div.demo-container').html('<p>All new content. <em>You
-	// bet!</em></p>');
+	
 	$('#' + serverID).show();
 	install_text = servers[i].concat("_install_text");
 	$('#' + install_text).show();
@@ -155,8 +158,3 @@ function opennebula_install_check() {
 	});
 	return false;
 }
-
-// function opennebula_install() {
-// / installProcess(2);
-
-// }

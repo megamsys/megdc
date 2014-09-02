@@ -1,11 +1,13 @@
 #!/bin/bash
 
-#Verify if kvm exists
-kvm=`kvm-ok  | grep "KVM acceleration can be used"`
-echo "$kvm" >> verify_out
+ONE_VERIFY_LOG="/var/log/megam/megamcib/one_verify.log"
 
-if [ "$kvm" != "KVM acceleration can be used" ]; # Did the command work?
+kvm=`kvm-ok  | grep "KVM acceleration can be used"`
+
+echo "$kvm" >> $ONE_VERIFY_LOG
+
+if [ "$kvm" != "KVM acceleration can be used" ];
 then # Fail
-     echo "An error occured. Error: KVM doesn't exist"
-     exit 1
+     echo "KVM isn't capable of running hw accelerate KVM virtual machines." >> $ONE_VERIFY_LOG
+     exit 2
 fi

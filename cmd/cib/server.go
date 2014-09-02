@@ -1,137 +1,55 @@
 package main
 
 import (
-	"github.com/megamsys/libgo/amqp"
-//	"github.com/megamsys/cloudinabox/app"
+	"github.com/astaxie/beego"
+	"github.com/megamsys/cloudinabox/models/orm"
+	"github.com/megamsys/cloudinabox/routers/auth"
+	"github.com/megamsys/cloudinabox/routers/page"
+	"github.com/megamsys/cloudinabox/routers/servers"
+	"github.com/tsuru/config"
 	"log"
-	"os"
-	"os/signal"
-	//"strings"
-	"regexp"
-	"sync"
-	"syscall"
+	"strconv"
 	"time"
 )
 
-const (
-	// queue actions
-	runningApp = "running"
-	startApp   = "start"
-	stopApp    = "stop"
-	buildApp   = "build"
-	restartApp = "restart"
-	addonApp   = "addon"
-	queueName  = "gulpd-app"
-)
 
-var (
-	qfactory      amqp.QFactory
-	_queue        amqp.Q
-	_handler      amqp.Handler
-	o             sync.Once
-	signalChannel chan<- os.Signal
-	nameRegexp    = regexp.MustCompile(`^[a-z][a-z0-9-]{0,62}$`)
-)
-
-func RunServer(dry bool) {
-	log.Printf("Gulpd starting at %s", time.Now())
-	signalChannel := make(chan os.Signal, 1)
-	signal.Notify(signalChannel, syscall.SIGINT)
-	handler().Start()
-	log.Printf("Gulpd at your service.")
-	<-signalChannel
-	log.Println("Gulpd killed |_|.")
+func RunWeb() {
+	log.Printf("cib starting at %s", time.Now())
+	handlerWeb()
+	log.Println("cib killed |_|.")
 }
 
-func StopServer(bark bool) {
-	log.Printf("Gulpd stopping at %s", time.Now())
-	handler().Stop()
-	close(signalChannel)
-	log.Println("Gulpd finished |-|.")
-}
 
-func setQueue() {
-	var err error
-	qfactory, err = amqp.Factory()
 
-	if err != nil {
-		log.Fatalf("Failed to get the queue instance: %s", err)
+func handlerWeb() {
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	orm.InitDB(dbmap)
+	defer db.Close()
+
+	beego.SessionOn = true
+	beego.SetStaticPath("/static_source", "static_source")
+	beego.DirectoryIndex = true
+	login := new(auth.LoginRouter)
+	beego.Router("/", login, "get:Get")
+	beego.Router("/signin", login, "post:Login")
+	beego.Router("/logout", login, "get:Logout")
+	user := new(page.PageRouter)
+	beego.Router("/index", user, "get:Get")
+	beego.Router("/dash", user, "get:Dash")
+	server := new(servers.ServerRouter)
+	beego.Router("/servers", server, "get:Get")
+	beego.Router("/servers/:id/log", server, "get:Log")
+	beego.Router("/servers/getlog", server, "get:GetLog")
+	beego.Router("/servers/verify/:name", server, "get:Verify")
+	beego.Router("/servers/:servername", server, "get:Install")
+
+	port, _ := config.GetString("beego:http_port")
+	if port == "" {
+		port = "8086"
 	}
-	_handler, err = qfactory.Handler(handle, queueName)
-	if err != nil {
-		log.Fatalf("Failed to create the queue handler: %s", err)
-	}
+	http_port, _ := strconv.Atoi(port)
+	beego.HttpPort = http_port
+	beego.Run()
 
-	_queue, err = qfactory.Get(queueName)
-
-	if err != nil {
-		log.Fatalf("Failed to get the queue instance: %s", err)
-	}
-}
-
-func aqueue() amqp.Q {
-	o.Do(setQueue)
-	return _queue
-}
-
-func handler() amqp.Handler {
-	o.Do(setQueue)
-	return _handler
-}
-
-
-// handle is the function called by the queue handler on each message.
-//This is getting bulky. We need to move it out to apps and others.
-func handle(msg *amqp.Message) {
-	log.Printf("Handling message %v", msg)
-
-	/*switch strings.ToLower(msg.Action) {
-	case "ganeti install":
-		if len(msg.Args) < 1 {
-			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
-		}
-		//for now comment it out.
-	  ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}
-
-
-		if err := app.GanetiInstall(&ap); err != nil {
-			log.Printf("Error handling %q: Installation process failed:\n%s.", msg.Action, err)
-			return
-		}
-
-		msg.Delete()
-		break
-	case "opennebula install":
-		if len(msg.Args) < 1 {
-			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
-		}
-		//stick the id from msg.
-		ap := app.App{Email: msg.Email, ApiKey: msg.ApiKey, InstallPackage: msg.InstallPackage, NeedMegam: msg.NeedMegam, ClusterName: msg.ClusterName, NodeIp: msg.NodeIp, NodeName: msg.NodeName, Action: msg.Action}
-
-		if err := app.OpennebulaInstall(&ap); err != nil {
-			log.Printf("Error handling %q: Installation process failed:\n%s.", msg.Action, err)
-			return
-		}
-
-		msg.Delete()
-		break
-	case "remove":
-		if len(msg.Args) < 1 {
-			log.Printf("Error handling %q: this action requires at least 1 argument.", msg.Action)
-		}
-		//stick the id from msg.
-		ap := app.App{Email: "myapp", ApiKey: "RIPAB"}
-
-		if err := app.Remove(&ap); err != nil {
-			log.Printf("Error handling %q: Remove process failed:\n%s.", msg.Action, err)
-			return
-		}
-		msg.Delete()
-		break
-
-	default:
-		log.Printf("Error handling %q: invalid action.", msg.Action)
-		msg.Delete()
-	}
-	*/
 }

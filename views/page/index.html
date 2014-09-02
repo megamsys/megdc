@@ -3,16 +3,12 @@
 <body id="dashboard-page" class="bg-gray-light">
 	{{ template "base/nav.html" .}}
 
-	<!-- JavaScript jQuery code from Bootply.com editor  -->
-
 	<script type='text/javascript'>
 		$(document).ready(function() {
 
 			$('#MyWizard').on('change', function(e, data) {
 				console.log('change');
 				if (data.step === 4 && data.direction === 'next') {
-					//$('#btnWizardNext').attr('value', 'Done');
-					//$('#btnWizardNext1').text('Done');
 					$('#btnWizardNext').hide();
 					$('#btnWizardDone').show();
 				}
@@ -23,8 +19,7 @@
 				}
 
 				if (data.direction === 'previous') {
-					//	$('#btnWizardNext').attr('value', 'Next');
-					//	$('#btnWizardNext1').text('Next');
+
 					$('#btnWizardNext').show();
 					$('#btnWizardDone').hide();
 				}
@@ -47,8 +42,6 @@
 			});
 			$('#MyWizard').on('stepclick', function(e, data) {
 				console.log('step' + data.step + ' clicked');
-				//$('#btnWizardNext').attr('value', 'Next');
-				//$('#btnWizardNext1').text('Next');
 				$('#btnWizardNext').show();
 				$('#btnWizardDone').hide();
 				if (data.step === 1) {
@@ -61,13 +54,6 @@
 				$('[data-target=#step2]').trigger("click");
 			});
 		});
-	</script>
-
-	<script type='text/javascript'>
-		//	$(document).ready(function() {
-		//	var i = 0;
-		//	installProcess(i);
-		//});
 	</script>
 
 	<div class="fuelux">
@@ -85,14 +71,7 @@
 					<li data-target="#step5"><span class="badge">5</span>Step 5<span
 						class="chevron"></span></li>
 				</ul>
-				<!-- <div class="actions fi-icons">
-					<button class="btn btn-mini btn-prev">
-						<i class="glyphicon glyphicon-chevron-left"></i>Prev
-					</button>
-					<button class="btn btn-mini btn-next" data-last="Finish">
-						Next<i class="glyphicon glyphicon-chevron-right"></i>
-					</button>
-				</div> -->
+
 			</div>
 			<div class="step-content">
 				<div class="step-pane active" id="step1">
@@ -104,11 +83,12 @@
 						<div class="row">
 							<p
 								class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
-								Step1 automatically starts the install of <a
+
+								Automatically starts the install of <a
 									href="http://www.gomegam.com/" target="_blank">MEGAM</a>. On
 								successful completion of megam installation <a
 									href="http://www.cobblerd.org/" target="_blank">COBBLERD</a>
-								install is started. Click log to watch the progress of the
+								install is started. Click Log to watch the progress of the
 								install.
 							</p>
 						</div>
@@ -118,23 +98,22 @@
 								<div
 									class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
 									<div class="row">
-										<div class="col-sm-5 text-center">
+										<div class="col-sm-2 text-center">
 											<div class="p-10 brad">
-												<a href="http://opennebula.org/"> <img
-													src="/static_source/images/opennebula.png" alt=""
-													class="img-circle" width="115">
+												<a href="http://www.gomegam.com/"> <img
+													src="/static_source/images/megam.png" alt="">
 												</a>
 
 												<div>
 													<div>
 														<div>
-															<h3 class="m-b-0">OPENNEBULA</h3>
+															<h3 class="m-b-0">MEGAM</h3>
 														</div>
 													</div>
 												</div>
 											</div>
 										</div>
-										<div class="col-sm-7">
+									<div class="col-sm-10">
 											<div class="col-sm-12">
 												<div class="table-responsive">
 													<table class="table table-condensed">
@@ -159,21 +138,33 @@
 																	<div class="col-sm-12">
 																		<div class="col-sm-6">
 																			<div id="MEGAM_install_text" style="display: none">
-																				<p class="text-info">Installing</p>
+																				<p class="text-info">Installing...</p>
 																			</div>
 																		</div>
 																		<div class="col-sm-6">
 																			<div id="MEGAM_waiting1"></div>
 																		</div>
 																		<div id="MEGAM_success" style="display: none">
-																			<p class="text-success">Done</p>
+																			<p class="text-success">
+																			<div class="fi-icon">
+																				<i class="fi-check m-10 text-large"></i>
+																			</div>
+																			Installed successfully.
+																			</p>
+																			</ul>
 																		</div>
 																		<div id="MEGAM_error" style="display: none">
-																			<p class="text-danger">Error</p>
+																			<p class="text-danger">
+																			<div class="fi-icon">
+																				<i class="fi-alert m-10 text-large"></i>
+																			</div>
+																			Install failure.
+																			</p>
 																		</div>
 																</td>
-																<td><span id><a href="/servers/megam/log"
-																		class="btn-group pull-right" target="_blank">
+																<td><span style="display: none" id="MEGAM_LOG"><a
+																		href="/servers/megam/log" class="btn-group pull-right"
+																		target="_blank">
 																			<div class="btn btn-alt">
 																				<i class="glyphicon glyphicon-list text-white"></i>
 																			</div>
@@ -184,9 +175,9 @@
 													</table>
 												</div>
 											</div>
-											<br/>
+											<br />
 											<hr />
-											<br/>
+											<br />
 											<div class="col-sm-12">
 												<div class="table-responsive">
 													<table class="table table-condensed">
@@ -211,21 +202,23 @@
 																	<div class="col-sm-12">
 																		<div class="col-sm-6">
 																			<div id="COBBLER_install_text" style="display: none">
-																				<p class="text-info">Installing</p>
+																	<p class="text-info">Installing...</p>
 																			</div>
 																		</div>
 																		<div class="col-sm-6">
 																			<div id="COBBLER_waiting1"></div>
 																		</div>
 																		<div id="COBBLER_success" style="display: none">
-																			<p class="text-success">Done</p>
+
+																			<p class="text-success">Installed successfully.</p>
 																		</div>
 																		<div id="COBBLER_error" style="display: none">
-																			<p class="text-danger">Error</p>
+																			<p class="text-danger">Install failure.</p>
 																		</div>
 																	</div>
 																</td>
-																<td><span><a href="/servers/cobbler/log"
+																<td><span style="display: none" id="COBBLER_LOG"><a
+																		href="/servers/cobbler/log"
 																		class="btn-group pull-right" target="_blank">
 																			<div class="btn btn-alt">
 																				<i class="glyphicon glyphicon-list text-white"></i>
@@ -240,7 +233,6 @@
 										</div>
 									</div>
 								</div>
-								
 							</div>
 						</div>
 
@@ -303,17 +295,19 @@
 											<div class="col-sm-12">
 												<div class="col-sm-6">
 													<div id="OPENNEBULA_install_text" style="display: none">
-														<p class="text-info">Installing</p>
+														<p class="text-info">Installing...</p>
 													</div>
 												</div>
 												<div class="col-sm-6">
 													<div id="OPENNEBULA_waiting1"></div>
 												</div>
 												<div id="OPENNEBULA_success" style="display: none">
-													<p class="text-success text-bold megam_font_size">Done</p>
+													<p class="text-success text-bold megam_font_size">Installed
+														successfully.</p>
 												</div>
 												<div id="OPENNEBULA_error" style="display: none">
-													<p class="text-danger text-bold megam_font_size">Error</p>
+													<p class="text-danger text-bold megam_font_size">Install
+														failure.</p>
 												</div>
 											</div>
 										</div>
@@ -451,17 +445,19 @@
 											<div class="col-sm-12">
 												<div class="col-sm-6">
 													<div id="OPENNEBULA_install_text" style="display: none">
-														<p class="text-info">Installing</p>
+														<p class="text-info">Installing...</p>
 													</div>
 												</div>
 												<div class="col-sm-6">
 													<div id="OPENNEBULA_waiting1"></div>
 												</div>
 												<div id="OPENNEBULA_success" style="display: none">
-													<p class="text-success text-bold megam_font_size">Done</p>
+													<p class="text-success text-bold megam_font_size">Installed
+														successfully.</p>
 												</div>
 												<div id="OPENNEBULA_error" style="display: none">
-													<p class="text-danger text-bold megam_font_size">Error</p>
+													<p class="text-danger text-bold megam_font_size">Install
+														failure.</p>
 												</div>
 											</div>
 										</div>
@@ -517,7 +513,7 @@
 					</div>
 				</div>
 			</div>
-			<br>
+			<br />
 			<div class="main-container">
 				<div class="fixer-container" style="display: none" id="wzdButtons">
 					<input class="btn" id="btnWizardPrev" value="Back" type="button">
@@ -526,14 +522,16 @@
 						id="btnWizardNext" value="Next" type="button">
 				</div>
 			</div>
-			<br>
+			<br /> <br /> <br />
 		</div>
 		<!-- /well -->
 
-
+		<hr />
 
 	</div>
-
+	<div class="preloader">
+		<div class="timer"></div>
+	</div>
 </body>
 {{ end }}
 
