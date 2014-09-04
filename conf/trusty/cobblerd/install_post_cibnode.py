@@ -22,7 +22,7 @@ def register():
    return "/var/lib/cobbler/triggers/install/post/*"
 
 def run(api, args, logger):
-    
+
     settings = api.settings()
 
     # go no further if this feature is turned off
@@ -56,14 +56,10 @@ def run(api, args, logger):
     if logger is not None:
 	logger.warning("[post install] %s -> boxip is %s", target, boxip)
 
-    with open('/var/log/megam/megamcib/boxips', 'a') as f:
+    with open('/var/lib/megam/megamcib/boxips', 'a') as f:
 	f.write(name + "=" + boxip)
-    
+
     if logger is not None:
 	logger.warning("[post install] %s wrote \"%s\" to boxips file", target, boxip)
-    
+
     return 0
-
-
-
-
