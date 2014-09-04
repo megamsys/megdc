@@ -62,34 +62,6 @@ func (a *App) UnmarshalJSON(b []byte) error {
 
 
 //
-// this executes all actions for ganeti install
-//
-func GanetiInstall(app *App) error {
-    actions := []*action.Action{&ganetiVerify, &ganetiPreInstall, &ganetiInstall, &ganetiPostInstall}
-
-    pipeline := action.NewPipeline(actions...)
-    err := pipeline.Execute(app)
-    if err != nil {
-		return &AppLifecycleError{app: app.ClusterName, Err: err}
-	}
-	return nil
-}
-
-//
-// this executes all actions for opennebula install
-//
-func OpennebulaInstall(app *App) error {
-    actions := []*action.Action{&opennebulaVerify, &opennebulaPreInstall, &opennebulaInstall, &opennebulaPostInstall}
-
-    pipeline := action.NewPipeline(actions...)
-    err := pipeline.Execute(app)
-    if err != nil {
-		return &AppLifecycleError{app: app.ClusterName, Err: err}
-	}
-	return nil
-}
-
-//
 // this executes all actions for megam install
 //
 func MegamInstall() error {
@@ -122,8 +94,21 @@ func CobblerInstall() error {
 // this executes all actions for opennebula install
 //
 func NebulaInstall() error {
-	actions := []*action.Action{&nebulaInstall}
+	actions := []*action.Action{&opennebulaVerify, &opennebulaPreInstall, &opennebulaInstall, &opennebulaPostInstall}
+    //actions := []*action.Action{&nebulaInstall}
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
+//
+// this executes all actions for opennebula install
+//
+func OpenNebulaHostInstall() error {
+	actions := []*action.Action{&opennebulaHostVerify, &opennebulaHostInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {

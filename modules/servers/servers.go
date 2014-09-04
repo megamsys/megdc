@@ -18,7 +18,9 @@ package servers
 
 import (
 	"github.com/megamsys/cloudinabox/app"
+	"github.com/megamsys/cloudinabox/models/orm"
    "fmt"
+   "net/http"
 )
 
 
@@ -39,14 +41,32 @@ func InstallServers(serverName string) error {
 		     fmt.Println(err)
 		     return err
 	      }
-          case "OPENNEBULA":
+       case "OPENNEBULA":
           err = app.NebulaInstall()  
           if err != nil {
 		     fmt.Printf("Error: Install error for [%s]", serverName)
 		     fmt.Println(err)
 		     return err
 	      }
+       case "OPENNEBULAHOST":
+          err = app.OpenNebulaHostInstall()  
+          if err != nil {
+		     fmt.Printf("Error: Install error for [%s]", serverName)
+		     fmt.Println(err)
+		     return err
+	      }   
     }
     
 	return nil
 }
+
+func InstallNode(server *orm.Servers) error {
+	url := "http://"+server.IP+":8086/servernodes/nodes/"+server.Name
+//	url := "http://localhost:8078/servernodes/nodes/"+server.Name
+    res, err := http.Get(url)
+	fmt.Println(res)
+	fmt.Println(err)
+	return err
+}
+
+

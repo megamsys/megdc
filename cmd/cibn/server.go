@@ -22,10 +22,13 @@ func handlerNode() {
 	beego.SessionOn = true
 	beego.DirectoryIndex = true
 	server := new(servers.ServerRouter)
+	beego.Router("/servernodes", server, "get:Get")
 	beego.Router("/servernodes/:id/log", server, "get:Log")
-	beego.Router("/servernodes/streamlog", server, "get:StreamLog")
+	beego.Router("/servernodes/getlog", server, "get:GetLog")
 	beego.Router("/servernodes/verify/:name", server, "get:Verify")
-	beego.Router("/servernodes/:servername", server, "get:Install")
+	beego.Router("/servernodes/nodes/:nodename", server, "get:NodeInstall")
+	//	beego.Router("/servernodes/streamlog", server, "get:StreamLog")
+
 
 	port, _ := config.GetString("beego:http_port")
 	if port == "" {
