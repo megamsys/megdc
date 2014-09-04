@@ -29,8 +29,10 @@ import (
 	"github.com/megamsys/cloudinabox/routers/base"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
+    "os/exec"
 )
 
 var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA"}
@@ -66,7 +68,7 @@ func (this *ServerRouter) Get() {
 	for i := 0; i < n; i++ {
 		err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])
 		if err != nil {
-			tmpserver := &orm.Servers{0, serversList[i], false, "", ""}
+			tmpserver := &orm.Servers{0, serversList[i], false, "", "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
 			servers_output = append(servers_output, string(jsonMsg))
 		} else {
@@ -79,7 +81,7 @@ func (this *ServerRouter) Get() {
 
 }
 
-func (this *ServerRouter) Install() {
+func (this *ServerRouter) MasterInstall() {
 	var server orm.Servers
 	result := map[string]interface{}{
 		"success": false,
@@ -103,6 +105,15 @@ func (this *ServerRouter) Install() {
 	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
 	fmt.Println(err)
 	if server.Install != true {
+		if len(server.IP) > 0 {
+			node_err := servers.InstallNode(&server)
+			fmt.Printf("%s", node_err)
+		    if node_err != nil {
+			   result["success"] = false
+		    } else {
+		    	result["success"] = true
+		    }
+		} else {
 		err := servers.InstallServers(servername)
 		fmt.Printf("%s", err)
 		if err != nil {
@@ -110,9 +121,38 @@ func (this *ServerRouter) Install() {
 		} else {
 			result["success"] = true
 		}
+	  }
+	} else {
+		result["success"] = true
+	}
+}
+
+
+func (this *ServerRouter) NodeInstall() {
+	result := map[string]interface{}{
+		"success": false,
 	}
 
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+
+	this.Data["IsLoginPage"] = true
+	this.Data["Username"] = this.GetUser()
+	servername := this.Ctx.Input.Param(":nodename")
+	fmt.Println(servername)
+
+		err := servers.InstallServers(servername)
+		fmt.Printf("%s", err)
+		if err != nil {
+			result["success"] = false
+		} else {
+			result["success"] = true
+		}	 
+	
 }
+
 
 func (this *ServerRouter) Log() {
 	fmt.Println("Join entry LOG()============> ")
@@ -166,12 +206,91 @@ func (this *ServerRouter) Verify() {
 	if err != nil {
 		result["failure_message"] = err.Error()
 	}
-
+    fmt.Println(server.Install)
 	if !server.Install {
 		result["success"] = false
 	} else {
 		result["success"] = true
 	}
+}
+
+func (this *ServerRouter) NodesInstall() {
+	var server orm.Servers
+	nodename := this.Ctx.Input.Param(":nodename")
+	filePath := "/usr/local/lib/megam/NODES.log"
+	
+	 db := orm.OpenDB()
+	 dbmap := orm.GetDBMap(db)
+	 
+	result := map[string]interface{}{
+		"success": false,
+	}
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	if verify_NODES(nodename) {
+		fmt.Println("+++++++++++++++++++++++++++++++++true")
+		result["ip"] = true
+	} else {
+		fmt.Println("+++++++++++++++++++++++++++++++++false")
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+        fmt.Printf("no such file or directory: %s", filePath)
+         // open output file
+         _, err := os.Create(filePath)
+         if err != nil { panic(err) }
+    }
+	
+	t, err := tail.TailFile(filePath, tail.Config{Follow: true, MustExist: true})
+	if err != nil {
+		log.Printf("ERROR LOG READ ==> : %s", err.Error())
+	}
+		
+	for line := range t.Lines {
+		fmt.Println(line.Text)
+		err1 := dbmap.SelectOne(&server, "select * from servers where IP=?", line.Text)
+		if err1 != nil {
+		     newserver := orm.NewServerWithIP(nodename, line.Text)
+		     orm.ConnectToTable(dbmap, "servers", newserver)
+		     err := dbmap.Insert(&newserver)
+		     if err != nil {
+			      fmt.Println("server insert error======>")
+			       result["ip"] = false
+		      }
+		    result["ip"] = true
+		}
+		if len(line.Text) > 0 {
+			err := os.Remove(filePath)
+
+            if err != nil {
+                fmt.Println(err)
+            }
+			break
+		} 
+	  }
+	}
+}
+
+func verify_NODES(nodename string) bool {
+	var server orm.Servers
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	err := dbmap.SelectOne(&server, "select * from servers where Name=?", nodename)
+
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
+func cleanUP(filePath string) {  
+        cmd := exec.Command("truncate -s 0 "+filePath)
+        if err := cmd.Run(); err != nil {
+            log.Println(err)
+        }
 }
 
 // Join method handles WebSocket requests for WebSocketController.
