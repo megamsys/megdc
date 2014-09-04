@@ -217,7 +217,7 @@ func (this *ServerRouter) Verify() {
 func (this *ServerRouter) NodesInstall() {
 	var server orm.Servers
 	nodename := this.Ctx.Input.Param(":nodename")
-	filePath := "/usr/local/lib/megam/NODES.log"
+	filePath := "/var/lib/megam/megamcib/boxips"
 	
 	 db := orm.OpenDB()
 	 dbmap := orm.GetDBMap(db)
@@ -232,10 +232,8 @@ func (this *ServerRouter) NodesInstall() {
 	}()
 	
 	if verify_NODES(nodename) {
-		fmt.Println("+++++++++++++++++++++++++++++++++true")
 		result["ip"] = true
 	} else {
-		fmt.Println("+++++++++++++++++++++++++++++++++false")
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
         fmt.Printf("no such file or directory: %s", filePath)
          // open output file
