@@ -8,21 +8,20 @@ import (
 	"github.com/megamsys/libgo/action"
 	"github.com/megamsys/libgo/exec"
 	"log"
+	"time"
 	"strings"
 )
-
+const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (
 	rootPath              = "/tmp"
-	ganetipreinstall      = "bash conf/trusty/ganeti/mganeti_preinstall.sh"
-	ganetiverify          = "bash conf/trusty/ganeti/mganeti_verify.sh"
-	ganetipostinstall     = "bash conf/trusty/ganeti/mganeti_postinstall.sh"
-	ganetiinstall         = "bash conf/trusty/ganeti/mganeti_install.sh"
-	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
-	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
-	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
-	opennebulainstall     = "bash conf/trusty/opennebula/one_install.sh"
-	megam                 = "bash conf/trusty/megam/megam_error.sh"
-	cobbler               = "bash conf/trusty/cobblerd/cobbler_error.sh"
+	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
+	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
+	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
+	opennebulainstall     = "bash conf/trusty/opennebula/one_install_test.sh"
+	opennebulahostverify  = "bash conf/trusty/opennebulahost/host_verify_test.sh"
+	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install_test.sh"
+	megam                 = "bash conf/trusty/megam/megam_test.sh"
+	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
 )
 
 var ErrAppAlreadyExists = errors.New("there is already an app with this name.")
@@ -139,6 +138,151 @@ var cobblerInstall = action.Action{
 	MinParams: 1,
 }
 
+var opennebulaVerify = action.Action{
+	Name: "opennebulaVerify",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = opennebulaverify
+		exec, err1 := CIBExecutor(&cib)
+		
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var opennebulaInstall = action.Action{
+	Name: "opennebulaInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = opennebulainstall
+		exec, err1 := CIBExecutor(&cib)
+		
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var opennebulaPreInstall = action.Action{
+	Name: "opennebulaPreInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = opennebulapreinstall
+		exec, err1 := CIBExecutor(&cib)
+		
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var opennebulaPostInstall = action.Action{
+	Name: "opennebulaPostInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = opennebulapostinstall
+		exec, err1 := CIBExecutor(&cib)
+		// write server details in database
+
+		// insert rows - auto increment PKs will be set properly after the insert
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		newserver := orm.NewServer("OPENNEBULA")
+		orm.ConnectToTable(dbmap, "servers", newserver)
+		err := dbmap.Insert(&newserver)
+	    
+		if err != nil {
+		 	fmt.Println("server insert error======>")
+			return &cib, err
+		}
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		err := orm.DeleteRowFromServerName(dbmap, "OPENNEBULA")
+		if err != nil {
+			log.Printf("Server delete error")
+			///return &cib, err
+		}
+		log.Printf(" Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var opennebulaHostVerify = action.Action{
+	Name: "opennebulaHostVerify",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = opennebulahostverify
+		exec, err1 := CIBExecutor(&cib)
+		
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var opennebulaHostInstall = action.Action{
+	Name: "opennebulaHostInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		var server orm.Servers
+		cib.Command = opennebulahostinstall
+		exec, err1 := CIBExecutor(&cib)
+		// write server details in database
+
+		// insert rows - auto increment PKs will be set properly after the insert
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		nodename := "OPENNEBULAHOST"
+	   
+		server = orm.NewServer("OPENNEBULAHOST")	
+	    err := dbmap.SelectOne(&server, "select * from servers where Name=?", nodename)
+		if err != nil {
+		 	fmt.Println("server select error======>")
+			return &cib, err
+		}
+		err3 := orm.DeleteRowFromServerName(dbmap, nodename)
+		if err3 != nil {
+			log.Printf("Server delete error")
+			return &cib, err3
+		}
+		time := time.Now()
+		update_server := orm.Servers{Id: server.Id, Name: server.Name, Install: true, IP: server.IP, InstallDate: server.InstallDate, UpdateDate: time.Format(layout)}
+		orm.ConnectToTable(dbmap, "servers", update_server)
+		err2 := dbmap.Insert(&update_server)
+		//server.Install = true
+		//_, err2 := dbmap.Update(&server)
+		if err2 != nil {
+		 	fmt.Println("server insert error======>")
+			return &cib, err2
+		}
+		
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		err := orm.DeleteRowFromServerName(dbmap, "OPENNEBULAHOST")
+		if err != nil {
+			log.Printf("Server delete error")
+			///return &cib, err
+		}
+		log.Printf(" Nothing to recover")
+	},
+	MinParams: 1,
+}
+
 
 //Remove the installed packages..
 var remove = action.Action{
@@ -163,219 +307,3 @@ var remove = action.Action{
 	MinParams: 1,
 }
 
-var ganetiVerify = action.Action{
-	Name: "ganetiVerify",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-		app.Command = ganetiverify
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-var ganetiInstall = action.Action{
-	Name: "ganetiInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-
-		log.Printf("Installation %s", app.ClusterName)
-		app.Command = ganetiinstall
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-var ganetiPreInstall = action.Action{
-	Name: "ganetiPreInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-		app.Command = ganetipreinstall
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-var ganetiPostInstall = action.Action{
-	Name: "ganetiPostInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-		app.Command = ganetipostinstall
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-var opennebulaVerify = action.Action{
-	Name: "opennebulaVerify",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-		//filename, _ := osext.Executable()
-		app.Command = opennebulaverify
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-var opennebulaInstall = action.Action{
-	Name: "opennebulaInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-
-		log.Printf("Installation %s", app.ClusterName)
-		app.Command = opennebulainstall
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-var opennebulaPreInstall = action.Action{
-	Name: "opennebulaPreInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-		app.Command = opennebulapreinstall
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-var opennebulaPostInstall = action.Action{
-	Name: "opennebulaPostInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var app App
-		switch ctx.Params[0].(type) {
-		case App:
-			app = ctx.Params[0].(App)
-		case *App:
-			app = *ctx.Params[0].(*App)
-		default:
-			return nil, errors.New("First parameter must be App or *App.")
-		}
-		app.Command = opennebulapostinstall
-		return CommandExecutor(&app)
-	},
-	Backward: func(ctx action.BWContext) {
-		app := ctx.FWResult.(*App)
-		log.Printf("[%s] Nothing to recover for %s", app.ClusterName)
-	},
-	MinParams: 1,
-}
-
-
-var nebulaInstall = action.Action{
-	Name: "nebulaInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var cib CIB
-		cib.Command = cobbler
-		exec, err1 := CIBExecutor(&cib)
-		// write server details in database
-
-		// insert rows - auto increment PKs will be set properly after the insert
-		db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("OPENNEBULA")
-		orm.ConnectToTable(dbmap, "servers", newserver)
-		err := dbmap.Insert(&newserver)
-		if err != nil {
-			fmt.Println("server insert error======>")
-			return &cib, err
-		}
-		return exec, err1
-
-	},
-	Backward: func(ctx action.BWContext) {
-		//app := ctx.FWResult.(*App)
-		db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		err := orm.DeleteRowFromServerName(dbmap, "OPENNEBULA")
-		if err != nil {
-			log.Printf("Server delete error")
-			///return &cib, err
-		}
-		log.Printf(" Nothing to recover")
-	},
-	MinParams: 1,
-}

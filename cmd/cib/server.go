@@ -42,7 +42,8 @@ func handlerWeb() {
 	beego.Router("/servers/:id/log", server, "get:Log")
 	beego.Router("/servers/getlog", server, "get:GetLog")
 	beego.Router("/servers/verify/:name", server, "get:Verify")
-	beego.Router("/servers/:servername", server, "get:Install")
+	beego.Router("/servers/:servername", server, "get:MasterInstall")
+	beego.Router("/servers/nodes/:nodename", server, "get:NodesInstall")
 
 	port, _ := config.GetString("beego:http_port")
 	if port == "" {

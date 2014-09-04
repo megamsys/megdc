@@ -7,6 +7,12 @@ $(document).ready(function() {
 		installProcess(2);
 		return false; // for good measure
 	});
+	
+	$('#OPENNEBULAHOST_install_button').click(function(event) {
+		event.preventDefault();
+		installProcess(3);
+		return false; // for good measure
+	});
 
 	$("#ha_selection input:radio").on("ifClicked", function() {
 		if ($(this).attr("value") == "yes") {
@@ -29,11 +35,11 @@ $(document).ready(function() {
 });
 
 function installProcess(i) {
-	var servers = [ "MEGAM", "COBBLER", "OPENNEBULA" ];
+	var servers = [ "MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST" ];
 	serverID = servers[i].concat("_waiting1")
 	successID = servers[i].concat("_success")
 	errorID = servers[i].concat("_error")
-
+    buttonID = servers[i].concat("_install_button")
 	
 	if (i > 1) {
 		console.log("opennebula entry");
@@ -43,7 +49,7 @@ function installProcess(i) {
 			radius : 20,
 			auto : true
 		});
-		$("#OPENNEBULA_install_button").hide();
+		$('#' + buttonID).hide();
 	} else {
 		$('#' + serverID).waiting({
 			className : 'waiting-circles',
@@ -61,10 +67,6 @@ function installProcess(i) {
 		$("#" + progress).show();
 		$("." + progress).css('width', '50%');
 		log = servers[i].concat("_LOG");
-		console.log("log is " + log);
-
-		alert("log is " + log);
-
 		$("#" + log).show();
 		
 	}
@@ -111,6 +113,7 @@ function installProcess(i) {
 			}
 		},
 		error : function(xhr, status) {
+			alert("error " + status);
 			$('#' + serverID).hide();
 			$('#' + install_text).hide();
 			$('#' + errorID).show();
@@ -154,6 +157,42 @@ function opennebula_install_check() {
 			$('#OPENNEBULA_install_text').hide();
 			$('#OPENNEBULA_error').hide();
 			$("#OPENNEBULA_install_button").show();
+		}
+	});
+	return false;
+}
+
+function waiting_nodes_connection(nodes) {
+	serverNodeID = nodes.concat("_waiting")
+	buttonNodeID = nodes.concat("_install_button")
+	networkWarningTextID = nodes.concat("_network_warning_text")
+	networkSuccessTextID = nodes.concat("_network_success_text")
+	$('#' + serverNodeID).waiting({
+		className : 'waiting-circles',
+		elements : 8,
+		radius : 20,
+		auto : true
+	});
+	$.ajax({
+		type : "GET",
+		url : "/servers/nodes/"+nodes,
+		data : nodes,
+		dataType : 'text',
+		async : true,
+		success : function(response) {			
+			var res = JSON.parse(response);
+			if(res.ip) {
+				$('#' + serverNodeID).hide();				
+				$('#' + buttonNodeID).show();
+				$('#' + networkSuccessTextID).show();
+				$('#' + networkWarningTextID).hide();
+			}
+		},
+		error : function(xhr, status) {
+			$('#' + serverNodeID).show();				
+			$('#' + buttonNodeID).hide();
+			$('#' + networkSuccessTextID).hide();
+			$('#' + networkWarningTextID).show();
 		}
 	});
 	return false;

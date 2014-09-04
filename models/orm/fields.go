@@ -42,11 +42,12 @@ func NewUser(user *utils.User) Users {
 }
 
 type Servers struct {
-	Id              int64
-	Name            string
-	Install         bool
-	InstallDate     string
-	UpdateDate      string
+	Id              int64      `db:"Id"`
+	Name            string     `db:"Name"`
+	Install         bool       `db:"Install"`
+	IP              string     `db:"IP"`
+	InstallDate     string     `db:"InstallDate"`
+	UpdateDate      string     `db:"UpdateDate"`
 }
 
 func NewServer(serverName string) Servers {
@@ -54,9 +55,20 @@ func NewServer(serverName string) Servers {
 	return Servers{
 		Name:   serverName,
 		Install: true,
+		IP: "",
 		InstallDate: time.Format(layout),
-		UpdateDate: "",
+		UpdateDate: time.Format(layout),
 	}
 }
 
+func NewServerWithIP(serverName string, ip string) Servers {
+	time := time.Now()
+	return Servers{
+		Name:   serverName,
+		Install: false,
+		IP: ip,
+		InstallDate: time.Format(layout),
+		UpdateDate: time.Format(layout),
+	}
+}
 
