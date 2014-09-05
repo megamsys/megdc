@@ -3,7 +3,7 @@
 ping -c 1 us.archive.ubuntu.com &> /dev/null
 
 if [ $? -ne 0 ]; then
-  echo "`date`: check your network connection. us.archive.ubuntu.com is not reachable!" >> /var/log/megam/megamcib/one_preinstall.log
+  echo "`date`: check your network connection. us.archive.ubuntu.com is not reachable!" >> /var/log/megam/megamcib/opennebula.log
   exit 1
 fi
 

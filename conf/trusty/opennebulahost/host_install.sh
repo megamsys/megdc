@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ONE_INSTALL_LOG="/var/log/megam/megamcib/one_install.log"
+ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebulahost.log"
 
 ping -c 1 downloads.opennebula.org &> /dev/null
 
@@ -17,4 +17,6 @@ apt-get update
 
 apt-get upgrade
 
-sudo apt-get -y install opennebula opennebula-sunstone >> $ONE_INSTALL_LOG
+sudo apt-get -y install opennebula-node >> $ONE_INSTALL_LOG
+
+mkdir /var/lib/one/.ssh
