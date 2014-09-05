@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ONE_VERIFY_LOG="/var/log/megam/megamcib/one_verify.log"
+ONE_VERIFY_LOG="/var/log/megam/megamcib/opennebulahost.log"
 
 kvm=`kvm-ok  | grep "KVM acceleration can be used"`
 

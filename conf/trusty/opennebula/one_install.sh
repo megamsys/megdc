@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ONE_INSTALL_LOG="/var/log/megam/megamcib/one_install.log"
+ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 
 ping -c 1 downloads.opennebula.org &> /dev/null
 
