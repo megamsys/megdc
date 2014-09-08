@@ -43,6 +43,8 @@ endef
 
 all: check-path get test
 
+build: check-path get _go_test _cibd
+
 # It does not support GOPATH with multiple paths.
 check-path:
 ifndef GOPATH
@@ -76,16 +78,21 @@ _go_test:
 	go test $(GO_EXTRAFLAGS) ./...
 
 _cibd:
+	rm -f cibd
+	rm -f cibnd
 	go build $(GO_EXTRAFLAGS) -o cibd ./cmd/cib
 	go build $(GO_EXTRAFLAGS) -o cibnd ./cmd/cibn
+	
+
+_cibdr:
 	sudo ./cibd start
 	rm -f cibd
-
+	rm -f cibnd
 
 _sh_tests:
 	@conf/trusty/megam/megam_test.sh
 
-test: _go_test _cibd
+test: _go_test _cibd _cibdr
 
 _install_deadcode: git
 	go get $(GO_EXTRAFLAGS) github.com/remyoudompheng/go-misc/deadcode
