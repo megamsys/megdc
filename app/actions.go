@@ -21,7 +21,7 @@ const (
 	opennebulahostverify  = "bash conf/trusty/opennebulahost/host_verify.sh"
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
 	megam                 = "bash conf/trusty/megam/megam.sh"
-	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh"
+	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh install"
 )
 
 var ErrAppAlreadyExists = errors.New("there is already an app with this name.")
