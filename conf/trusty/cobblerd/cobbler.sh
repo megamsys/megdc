@@ -108,7 +108,7 @@ install_cobbler() {
   cecho "Installing cobblerd.." $yellow
   apt-get -y install cobbler cobbler-common cobbler-web dhcp3-server dnsmasq  >> $COBBLER_LOG
 
-  apt-get -y debmirror >> $COBBLER_LOG
+  apt-get -y install debmirror >> $COBBLER_LOG
   cobbler get-loaders >> $COBBLER_LOG
   cobbler check >> $COBBLER_LOG
 
