@@ -215,19 +215,23 @@ configure_cobbler() {
 
   sed -i 's/^[ \t]*dhcp-option=3.*/dhcp-option=3,192.168.2.23/' /etc/dnsmasq.conf
 
+  sed -i 's/^[ \t]*dhcp-range=.*/dhcp-range=192.168.2.20,192.168.2.200/' /etc/cobbler/dnsmasq.template
+  sed -i 's/^[ \t]*dhcp-option=3.*/dhcp-option=3,192.168.2.23/' /etc/cobbler/dnsmasq.template
+
   echo "enable-tftp" >> /etc/dnsmasq.conf
+  echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
+  echo "enable-tftp" >> /etc/cobbler/dnsmasq.template
+  echo "tftp-root=/var/lib/tftpboot" >> /etc/cobbler/dnsmasq.template
   echo "enable-tftp.."
 
   echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
 
   sed -i 's/^[ \t]*user.*/user                    = root/' /etc/cobbler/tftpd.template
   sed -i 's/^[ \t]*server_args.*/server_args             = -v -s /var/lib/tftpboot/' /etc/cobbler/tftpd.template
+  sed -i 's/^[ \t]*server .*/server             = /usr/sbin/in.tftpd/' /etc/cobbler/tftpd.template
 
-  service xinetd restart
 
-  service dnsmasq restart
-
-  service cobbler restart
+  restart_services
 
   cobbler sync
 
@@ -251,11 +255,9 @@ setup_boottrusty() {
 
   # Do you have to unmount the /mnt directory ?  after you are done importing ?
 
-  service xinetd restart
 
-  service dnsmasq restart
 
-  service cobbler restart
+  restart_services
 
   cecho "Running Synchronisation..." $yellow
 
@@ -263,8 +265,40 @@ setup_boottrusty() {
   cobbler sync
   sleep 10
   cobbler reposync
+  boot_menu
   install_complete
 }
+
+restart_services() {
+  service xinetd restart
+
+  service dnsmasq restart
+
+  service cobbler restart
+}
+#--------------------------------------------------------------------------
+#This function will print out boot menu
+#--------------------------------------------------------------------------
+boot_menu() {
+  cecho "##################################################" $green
+  > /var/lib/tftpboot/pxelinux.cfg/default
+
+  cat > //var/lib/tftpboot/pxelinux.cfg/default <<EOF
+DEFAULT menu
+PROMPT 0
+MENU TITLE Megam CIB | http://gomegam.com
+
+LABEL ubuntu-server-trusty-megamnode-x86_64
+        kernel /images/ubuntu-server-trusty-megamnode-x86_64/linux
+        MENU LABEL ubuntu-server-trusty-megamnode-x86_64
+        append initrd=/images/ubuntu-server-trusty-megamnode-x86_64/initrd.gz ksdevice=bootif lang=  locale=en_US priority=critical text  auto-install/enable=true priority=critical url=http://144.76.190.227/npreseed.cfg hostname=ubuntu-server-trusty-megamnode-x8664 domain=local.lan suite=trusty
+        ipappend 2
+MENU end
+EOF
+restart_services
+}
+
+
 #--------------------------------------------------------------------------
 #This function will print out an install report
 #--------------------------------------------------------------------------
