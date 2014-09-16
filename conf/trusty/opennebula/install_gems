@@ -1,0 +1,464 @@
+#!/usr/bin/env ruby
+
+require 'pp'
+
+DEFAULT_PRE=%w{sunstone quota cloud auth_ldap vmware oneflow ec2_hybrid oca}
+
+if defined?(RUBY_VERSION) && RUBY_VERSION>="1.8.7"
+    SQLITE='sqlite3'
+else
+    SQLITE='sqlite3-ruby --version 1.2.0'
+end
+
+if !defined?(RUBY_VERSION) || RUBY_VERSION < '1.9.0'
+    $nokogiri = 'nokogiri --version "< 1.6.0"'
+else
+    $nokogiri='nokogiri'
+    DEFAULT = DEFAULT_PRE + %w{hybrid}
+end
+
+DEFAULT = DEFAULT_PRE if !defined?(DEFAULT)
+
+GROUPS={
+    :quota      => [SQLITE, 'sequel'],
+    :sunstone   => ['json', 'rack', 'sinatra', 'thin', SQLITE],
+    :cloud      => %w{amazon-ec2 rack sinatra thin uuidtools curb json},
+    :hybrid     => %w{softlayer_api configparser azure},
+    :auth_ldap  => 'net-ldap',
+    :vmware     => %w{builder trollop},
+    :oneflow    => %w{sinatra json treetop parse-cron},
+    :ec2_hybrid => 'aws-sdk',
+    :oca        => 'ox'
+}
+
+PACKAGES=GROUPS.keys
+
+GEM_TEST={
+    'net-ldap' => 'net/ldap'
+}
+
+DISTRIBUTIONS={
+    :debian => {
+        :id => ['Ubuntu', 'Debian'],
+        :dependencies_common => [],                                     #MY CHANGE
+        :dependencies => {
+            SQLITE      => ['gcc', 'libsqlite3-dev'],
+            'mysql'     => ['gcc', 'libmysqlclient-dev'],
+            'curb'      => ['gcc', 'libcurl4-openssl-dev'],
+            $nokogiri   => %w{gcc rake libxml2-dev libxslt1-dev},
+            'xmlparser' => ['gcc', 'libexpat1-dev'],
+            'thin'      => ['g++'],
+            'json'      => ['gcc']
+        },
+        :install_command => 'apt-get install',
+        :gem_env    => {
+            'rake'      => '/usr/bin/rake'
+        }
+    },
+    :redhat => {
+        :id => ['CentOS', /^RedHat/],
+        :dependencies_common => ['ruby-devel', 'make'],
+        :dependencies => {
+            SQLITE      => ['gcc', 'sqlite-devel'],
+            'mysql'     => ['gcc', 'mysql-devel'],
+            'curb'      => ['gcc', 'curl-devel'],
+            $nokogiri   => %w{gcc rubygem-rake libxml2-devel libxslt-devel},
+            'xmlparser' => ['gcc', 'expat-devel'],
+            'thin'      => ['gcc-c++'],
+            'json'      => ['gcc']
+        },
+        :install_command => 'yum install'
+    },
+    :suse => {
+        :id => [/SUSE/],
+        :dependencies_common => ['ruby-devel', 'make'],
+        :dependencies => {
+            SQLITE      => ['gcc', 'sqlite3-devel'],
+            'mysql'     => ['gcc', 'libmysqlclient-devel'],
+            'curb'      => ['gcc', 'libcurl-devel'],
+            $nokogiri   => %w{rubygem-rake gcc rubygem-rake libxml2-devel libxslt-devel},
+            'xmlparser' => ['gcc', 'libexpat-devel'],
+            'thin'      => ['rubygem-rake', 'gcc-c++'],
+            'json'      => ['gcc']
+        },
+        :install_command => 'zypper install'
+    }
+}
+
+
+class String
+    def unindent(spaces=4)
+        self.gsub!(/^ {#{spaces}}/, '')
+    end
+end
+
+def good_gem_version?
+    v=`gem --version`.strip
+    version=Gem::Version.new(v)
+    version>=Gem::Version.new('1.3.6')
+end
+
+def select_distribution
+    items=[]
+    counter=0
+
+    puts(<<-EOT.unindent(8))
+        Select your distribution or press enter to continue without
+        installing dependencies.
+
+EOT
+
+    DISTRIBUTIONS.each do |name, dist|
+        names=dist[:id].map do |r|
+            if Regexp===r
+                r.source.gsub(/[^\w\d]/, '')
+            else
+                r
+            end
+        end.join('/')
+        text="#{items.length}. #{names}"
+
+        items << name
+
+        puts text
+    end
+
+    puts
+
+    options=(0..items.length).to_a.map {|k| k.to_s }
+
+    option=STDIN.readline[0,1]
+
+    if options.include?(option)
+        item=items[option.to_i]
+        [item, DISTRIBUTIONS[items[option.to_i]]]
+    else
+        nil
+    end
+end
+
+def install_rubygems
+    if !good_gem_version?
+        puts(<<-EOT.unindent())
+            The rubygems version installed is too old to install some required
+            libraries. We are about to update your rubygems version. If you
+            want to do this by other means cancel this installation with
+            CTRL+C now.
+
+ 
+EOT
+
+        #STDIN.readline                                         #MY CHANGE
+
+        `gem install rubygems-update --version '= 1.3.6'`
+
+        if $?.exitstatus!=0
+            puts "Error updating rubygems"
+            exit(-1)
+        end
+
+        update_rubygems_path=[
+            '/usr/bin/update_rubygems',
+            '/var/lib/gems/1.8/bin/update_rubygems',
+            '/var/lib/gems/1.9/bin/update_rubygems'
+        ]
+
+        installed=false
+
+        update_rubygems_path.each do |path|
+            if File.exist?(path)
+                `#{path}`
+
+                if $?.exitstatus!=0
+                    puts "Error executing update_rubygems"
+                    exit(-1)
+                end
+
+                installed=true
+                break
+             end
+        end
+
+        if !installed
+            puts "Could not find update_rubygems executable"
+            exit(-1)
+        end
+    end
+end
+
+def installed_gems
+    text=`gem list --no-versions --no-details`
+    if $?.exitstatus!=0
+        nil
+    else
+        text.split(/\s+/)
+    end
+end
+
+def try_library(name, error_message)
+    if GEM_TEST[name.to_s]
+        lib_test=GEM_TEST[name.to_s]
+    else
+        lib_test=name.to_s
+    end
+
+    begin
+        require lib_test
+    rescue LoadError, Exception
+        STDERR.puts error_message
+        exit(-1)
+    end
+end
+
+def install_warning(packages)
+#    puts "Use -h for help"
+#    puts
+    puts "About to install the gems for these components:"
+    puts "* "<<packages.join("\n* ")
+    puts
+    #puts "Press enter to continue..."
+    #yes=STDIN.readline                                         #MY CHANGE
+end
+
+def help
+    puts "Specify the package dependencies from this list:"
+    puts "* "<<PACKAGES.join("\n* ")
+    puts
+    puts "If no parameters are specified then this list will be used:"
+    puts DEFAULT.join(' ')
+    puts
+    puts "Use --check parameter to search for non installed libraries."
+    puts "Use --no-nokogiri parameter if you don't want to install"
+    puts "nokogiri gem."
+end
+
+def get_gems(packages)
+    (packages.map do |package|
+        GROUPS[package.to_sym]
+    end+[$nokogiri]).flatten.uniq-installed_gems
+end
+
+def detect_distro
+    begin
+        lsb_info=`lsb_release -a`
+    rescue
+    end
+
+    if $?.exitstatus!=0
+        STDERR.puts(<<-EOT.unindent(12))
+            lsb_release command not found. If you are using a RedHat based
+            distribution install redhat-lsb
+
+EOT
+        return nil
+    end
+
+    distribution_id=nil
+
+    lsb_info.scan(/^Distributor ID:\s*(.*?)$/) do |m|
+        distribution_id=m.first.strip
+    end
+
+    return nil if !distribution_id
+
+    distro=nil
+
+    DISTRIBUTIONS.find do |dist, info|
+        info[:id].find do |dist_id|
+            dist_id===distribution_id
+        end
+    end
+end
+
+def get_dependencies(gems, dependencies)
+    deps=[]
+
+    gems.each do |gem_name|
+        deps<<dependencies[gem_name]
+    end
+
+    deps.flatten!
+    deps.compact!
+    deps.uniq!
+
+    deps
+end
+
+def install_dependencies(gems, distro)
+    if !distro
+        puts(<<-EOT.unindent(12))
+            Distribution not detected. Make sure you manually install the
+            dependencies described in Building from Source from the OpenNebula
+            documentation.
+        EOT
+        #STDIN.readline                         #MY CHANGE
+    else
+        puts "Distribution \"#{distro.first}\" detected."
+        deps=get_dependencies(gems, distro.last[:dependencies])
+        deps+=distro.last[:dependencies_common]
+
+        if deps.length==0
+            return
+        end
+
+        puts "About to install these dependencies:"
+        puts "* "<<deps.join("\n* ")
+        puts
+        #puts "Press enter to continue..."
+        #STDIN.readline                                         #MY CHANGE
+
+        command=distro.last[:install_command]+" "<<deps.join(' ')
+        puts command
+        system command
+    end
+end
+
+def run_command(cmd)
+    puts cmd
+    system cmd
+    #system "true"
+
+    if $?!=0
+        puts "Error executing #{cmd}"
+        exit(-1)
+    end
+end
+
+def install_gems(packages)
+    gems_list=get_gems(packages)
+
+    if gems_list.empty?
+        puts "Gems already installed"
+        exit(0)
+    end
+
+    dist=detect_distro
+    if !dist
+        dist=select_distribution
+    end
+
+    install_dependencies(gems_list, dist)
+
+    packages_string=gems_list.join(' ')
+
+    prefix=""
+
+    if dist && dist.last[:gem_env]
+        prefix=dist.last[:gem_env].collect do |name, value|
+            "#{name}=\"#{value}\""
+        end.join(' ')+' '
+    end
+
+    command_string = "#{prefix}gem install --no-ri --no-rdoc"
+
+    install_warning(packages)
+
+    special_gems=gems_list.select {|g| g.match(/\s/) }
+    special_gems.each do |gem|
+        cmd=command_string+" "<<gem
+        run_command(cmd)
+    end
+
+    simple_gems=gems_list.select {|g| !(g.match(/\s/)) }
+    if simple_gems and !simple_gems.empty?
+        cmd=command_string+" " << simple_gems.join(' ')
+        run_command(cmd)
+    end
+end
+
+def check_lib(lib)
+    begin
+        require lib
+        true
+    rescue LoadError, Exception
+        false
+    end
+end
+
+def check_gems(packages)
+    list=get_gems(packages).compact
+    gems=list.map {|g| g.strip.split(/\s+/).first }
+
+    not_installed=Array.new
+
+    gems.each do |lib_name|
+        if !check_lib(lib_name)
+            not_installed << lib_name
+        end
+    end
+
+    if not_installed.empty?
+        puts "All ruby libraries installed"
+        exit(0)
+    else
+        puts "These ruby libraries are not installed:"
+        puts ""
+        puts "* "+not_installed.join("\n* ")
+        exit(-1)
+    end
+end
+
+try_library :rubygems, <<-EOT.unindent
+    rubygems required to use this tool
+
+    Use one of these methods:
+
+        * Debian/Ubuntu
+            apt-get install rubygems libopenssl-ruby
+
+        * RHEL/CENTOS
+            yum install rubygems
+
+        * SUSE
+            zypper install rubygems
+
+        * Specific rubygems package for your distro
+
+        * Follow the instructions from http://rubygems.org/pages/download
+EOT
+
+try_library :openssl, <<-EOT.unindent
+    ruby openssl libraries are needed. They usually come as companion
+    package to ruby.
+EOT
+
+install_rubygems
+
+command=''
+params=ARGV
+
+if params.include?('--no-nokogiri')
+    params-=['--no-nokogiri']
+    $nokogiri=nil
+end
+
+if params.include?('-h')
+    params-=['-h']
+    command='help'
+elsif params.include?('--check')
+    params-=['--check']
+    command='check'
+else
+    command='install'
+end
+
+if params.length>0
+    packages=params
+else
+    packages=DEFAULT
+end
+
+
+case command
+when 'help'
+    help
+    exit(0)
+when 'check'
+    check_gems(packages)
+when 'install'
+    install_gems(packages)
+end
+
+
+
+
