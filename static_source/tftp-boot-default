@@ -1,0 +1,10 @@
+DEFAULT menu
+PROMPT 0
+MENU TITLE Megam CIB | http://gomegam.com
+
+LABEL ubuntu-server-trusty-megamnode-x86_64
+        kernel /images/ubuntu-server-trusty-megamnode-x86_64/linux
+        MENU LABEL ubuntu-server-trusty-megamnode-x86_64
+        append initrd=/images/ubuntu-server-trusty-megamnode-x86_64/initrd.gz ksdevice=bootif lang=  locale=en_US priority=critical text  auto-install/enable=true priority=critical url=http://144.76.190.227/npreseed.cfg  hostname=megamcibn domain=local.lan suite=trusty
+        ipappend 2
+MENU end
