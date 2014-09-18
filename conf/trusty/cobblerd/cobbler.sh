@@ -190,28 +190,28 @@ configure_cobbler() {
 
   echo "manage_dhcp:1 => dhcp managed by cobbler.."
 
-  apt-get install xinetd tftpd tftp >> $COBBLER_LOG
+  apt-get -y install xinetd tftpd tftp >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*option routers.*/option routers 192.168.2.3;/' /etc/cobbler/dhcp.template
-  echo "route:192.168.2.3 => route is your cobblerd machine.."
+  echo "route:192.168.2.3 => route is your cobblerd machine.." >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*option domain-name-servers.*/option domain-name-servers 192.168.2.3;/' /etc/cobbler/dhcp.template
-  echo "domain-name-servers 192.168.2.3 => domain-name-servers is your cobbled machine.."
+  echo "domain-name-servers 192.168.2.3 => domain-name-servers is your cobbled machine.." >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*option subnet-mask.*/option subnet-mask 255.255.255.0;/' /etc/cobbler/dhcp.template
-  echo "manage_dhcp:1 dhcp managed by cobbler.."
+  echo "manage_dhcp:1 dhcp managed by cobbler.." >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*range dynamic-bootp.*/range dynamic-bootp 192.168.2.20 192.168.2.100;/' /etc/cobbler/dhcp.template
-  echo "manage_dhcp:1 dhcp managed by cobbler.."
+  echo "manage_dhcp:1 dhcp managed by cobbler.." >> $COBBLER_LOG
 
   sed -i 's/module = manage_bind/module = manage_dnsmasq/g' /etc/cobbler/modules.conf
-  echo "manage_bind:manage_dnsmasq => use dnsmasq.."
+  echo "manage_bind:manage_dnsmasq => use dnsmasq.." >> $COBBLER_LOG
 
   sed -i 's/module = manage_isc/module = manage_dnsmasq/g' /etc/cobbler/modules.conf
-  echo "manage_isc:manage_dnsmanq => use dnsmasq.."
+  echo "manage_isc:manage_dnsmanq => use dnsmasq.." >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*dhcp-range=.*/dhcp-range=192.168.2.20,192.168.2.200/' /etc/dnsmasq.conf
-  echo "dhcp-range=192.168.2.20-200 => use dhcp range from 192.168.2-200.." $blue
+  echo "dhcp-range=192.168.2.20-200 => use dhcp range from 192.168.2-200.."  >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*dhcp-option=3.*/dhcp-option=3,192.168.2.23/' /etc/dnsmasq.conf
 
@@ -222,7 +222,7 @@ configure_cobbler() {
   echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
   echo "enable-tftp" >> /etc/cobbler/dnsmasq.template
   echo "tftp-root=/var/lib/tftpboot" >> /etc/cobbler/dnsmasq.template
-  echo "enable-tftp.."
+  echo "enable-tftp.." >> $COBBLER_LOG
 
   echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
 
@@ -334,12 +334,6 @@ uninstall_cobbler() {
   [ -d /etc/cobbler ] && rm -rf /etc/cobbler
 
   apt-get -y autoremove
-
-  rm /var/cache/apt/archives/cobbler-common_2.4.1-0ubuntu2_all.deb
-  rm /var/cache/apt/archives/cobbler-web_2.4.1-0ubuntu2_all.deb
-
-  rm /var/cache/apt/archives/cobbler_2.4.1-0ubuntu2_all.deb
-  rm /var/log/upstart/cobbler.log
 
   cecho "##################################################" $green
 
