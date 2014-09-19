@@ -14,8 +14,8 @@
 #   limitations under the License.
 ###############################################################################
 # A cobbler linux script which sets up cobblerd and a DHCP using dnsmasq.
-# The dhcp range used by cobbler is 192.168.2.20 - 200.
-# The i/p address of the cobbler is 192.168.2.3
+# The dhcp range used by cobbler is 192.168.x.20 - 200.
+# The i/p address of the cobbler is 192.168.x.x
 # This script currently supports ubuntu 14.04 trusty.
 ###############################################################################
 
@@ -91,7 +91,7 @@ parseParameters()   {
 help() {
   cecho  "Usage    : cobbler.sh [Options]" $green
   cecho  "help     : prints the help message." $blue
-  cecho  "install  : setup cobblerd which network boots on dhcp 192.168.2.x" $blue
+  cecho  "install  : setup cobblerd which network boots on dhcp 192.168.x.x" $blue
   cecho  "uninstall: uninstalls cobblerd and remove the setup" $blue
 }
 #--------------------------------------------------------------------------
@@ -171,8 +171,8 @@ install_reconfigure_cobbler() {
 	fi
 }
 #--------------------------------------------------------------------------
-#Configures cobbler with the dhcp range 192.168.2.20-200.
-#cobblerd machine ip address is 192.168.2.3
+#Configures cobbler with the dhcp range 192.168.x.20-200.
+#cobblerd machine ip address is $ipaddr
 #dhcp managed by dnsmasq
 #--------------------------------------------------------------------------
 configure_cobbler() {
@@ -182,7 +182,7 @@ configure_cobbler() {
 
   sed -i 's/manage_dhcp: 0/manage_dhcp: 1/g' /etc/cobbler/settings
 
-  cp install_post_cibnode.py /usr/lib/python2.7/cobbler/modules
+  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/install_post_cibnode.py /usr/lib/python2.7/dist-packages/cobbler/modules/
 
   service cobbler restart
 
@@ -192,16 +192,19 @@ configure_cobbler() {
 
   apt-get -y install xinetd tftpd tftp >> $COBBLER_LOG
 
-  sed -i 's/^[ \t]*option routers.*/option routers 192.168.2.3;/' /etc/cobbler/dhcp.template
-  echo "route:192.168.2.3 => route is your cobblerd machine.." >> $COBBLER_LOG
+  sed -i "s/^[ \t]*option routers.*/option routers $ipaddr;/" /etc/cobbler/dhcp.template
+  echo "route:$ipaddr => route is your cobblerd machine.." >> $COBBLER_LOG
 
-  sed -i 's/^[ \t]*option domain-name-servers.*/option domain-name-servers 192.168.2.3;/' /etc/cobbler/dhcp.template
-  echo "domain-name-servers 192.168.2.3 => domain-name-servers is your cobbled machine.." >> $COBBLER_LOG
+  sed -i "s/^[ \t]*option domain-name-servers.*/option domain-name-servers $ipaddr;/" /etc/cobbler/dhcp.template
+  echo "domain-name-servers $ipaddr => domain-name-servers is your cobbled machine.." >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*option subnet-mask.*/option subnet-mask 255.255.255.0;/' /etc/cobbler/dhcp.template
   echo "manage_dhcp:1 dhcp managed by cobbler.." >> $COBBLER_LOG
 
-  sed -i 's/^[ \t]*range dynamic-bootp.*/range dynamic-bootp 192.168.2.20 192.168.2.100;/' /etc/cobbler/dhcp.template
+#GET first three values of ip
+ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
+
+  sed -i "s/^[ \t]*range dynamic-bootp.*/range dynamic-bootp $ip3.20 $ip3.100;/" /etc/cobbler/dhcp.template
   echo "manage_dhcp:1 dhcp managed by cobbler.." >> $COBBLER_LOG
 
   sed -i 's/module = manage_bind/module = manage_dnsmasq/g' /etc/cobbler/modules.conf
@@ -210,13 +213,13 @@ configure_cobbler() {
   sed -i 's/module = manage_isc/module = manage_dnsmasq/g' /etc/cobbler/modules.conf
   echo "manage_isc:manage_dnsmanq => use dnsmasq.." >> $COBBLER_LOG
 
-  sed -i 's/^[ \t]*dhcp-range=.*/dhcp-range=192.168.2.20,192.168.2.200/' /etc/dnsmasq.conf
-  echo "dhcp-range=192.168.2.20-200 => use dhcp range from 192.168.2-200.."  >> $COBBLER_LOG
+  sed -i "s/^[ \t]*dhcp-range=.*/dhcp-range=$ip3.20,$ip3.200/" /etc/dnsmasq.conf
+  echo "dhcp-range=$ip3.20-200 => use dhcp range from $ip3.200.."  >> $COBBLER_LOG
 
-  sed -i 's/^[ \t]*dhcp-option=3.*/dhcp-option=3,192.168.2.23/' /etc/dnsmasq.conf
+  sed -i "s/^[ \t]*dhcp-option=3.*/dhcp-option=3,$ip3.23/" /etc/dnsmasq.conf
 
-  sed -i 's/^[ \t]*dhcp-range=.*/dhcp-range=192.168.2.20,192.168.2.200/' /etc/cobbler/dnsmasq.template
-  sed -i 's/^[ \t]*dhcp-option=3.*/dhcp-option=3,192.168.2.23/' /etc/cobbler/dnsmasq.template
+  sed -i "s/^[ \t]*dhcp-range=.*/dhcp-range=$ip3.20,$ip3.200/" /etc/cobbler/dnsmasq.template
+  sed -i "s/^[ \t]*dhcp-option=3.*/dhcp-option=3,$ip3.23/" /etc/cobbler/dnsmasq.template
 
   echo "enable-tftp" >> /etc/dnsmasq.conf
   echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
@@ -264,9 +267,9 @@ setup_boottrusty() {
   sleep 3
   cobbler sync
   sleep 10
-  cobbler reposync
   boot_menu
   install_complete
+  cobbler reposync
 }
 
 restart_services() {
@@ -286,12 +289,12 @@ boot_menu() {
   cat > //var/lib/tftpboot/pxelinux.cfg/default <<EOF
 DEFAULT menu
 PROMPT 0
-MENU TITLE Megam CIB | http://gomegam.com
+MENU TITLE Megam Cloud In a Box(Node) | http://www.gomegam.com/cloudinabox
 
 LABEL ubuntu-server-trusty-megamnode-x86_64
         kernel /images/ubuntu-server-trusty-megamnode-x86_64/linux
         MENU LABEL ubuntu-server-trusty-megamnode-x86_64
-        append initrd=/images/ubuntu-server-trusty-megamnode-x86_64/initrd.gz ksdevice=bootif lang=  locale=en_US priority=critical text  auto-install/enable=true priority=critical url=http://144.76.190.227/npreseed.cfg hostname=ubuntu-server-trusty-megamnode-x8664 domain=local.lan suite=trusty
+        append initrd=/images/ubuntu-server-trusty-megamnode-x86_64/initrd.gz ksdevice=bootif lang=  locale=en_US priority=critical text  auto-install/enable=true priority=critical url=http://144.76.190.227/npreseed.cfg hostname=megamcibnode domain=local.lan suite=trusty
         ipappend 2
 MENU end
 EOF
@@ -305,8 +308,8 @@ restart_services
 install_complete() {
   cecho "##################################################" $green
   cecho "Step 1: cobbler installed successfully." $yellow
-  cecho "        The ip address of cobblerd is 192.168.2.3"
-  cecho "        The  subnet   dhcp range   is [192.168.2.20 .. 200]"
+  cecho "        The ip address of cobblerd is $ipaddr"
+  cecho "        The  subnet   dhcp range   is [$ip3.20 .. 200]"
   cecho "Refer http://bit.ly/megamcib for more information." $yellow
   cecho "##################################################" $green
 }

@@ -13,7 +13,9 @@ wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -
 
 echo "deb http://downloads.opennebula.org/repo/4.8/Ubuntu/14.04 stable opennebula" > /etc/apt/sources.list.d/opennebula.list
 
-sudo apt-get -y update
+echo "File created /etc/apt/sources.list.d/opennebula.list " >> $ONE_INSTALL_LOG
+
+sudo apt-get -y update >> $ONE_INSTALL_LOG
 
 
 sudo apt-get -y install opennebula opennebula-sunstone >> $ONE_INSTALL_LOG

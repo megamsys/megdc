@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import distutils.sysconfig
 import sys
+import logging
 import os
 import traceback
 
@@ -15,51 +16,68 @@ import cobbler.templar as templar
 from cobbler.cexceptions import CX
 import utils
 
+logging.basicConfig(filename='/var/log/megam/megamcib/cobbler_triggers.log',level=logging.DEBUG)
+logging.debug('==========> Loaded cobbler_triggers========> ')
 
 def register():
+   logging.debug("==========> Register node install Trigger =========> ")
    # this pure python trigger acts as if it were a legacy shell-trigger, but is much faster.
    # the return of this method indicates the trigger type
    return "/var/lib/cobbler/triggers/install/post/*"
 
 def run(api, args, logger):
-
+    logging.debug("==========> Runnig ============> ")
     settings = api.settings()
 
     # go no further if this feature is turned off
     if not str(settings.base_megamreporting_enabled).lower() in [ "1", "yes", "y", "true"]:
         return 0
 
+    logging.debug("==========> Runnig 1 ============> ")
     objtype = args[0] # "target" or "profile"
     name    = args[1] # name of target or profile
     boot_ip = args[2] # ip or "?"
 
     if logger is not None:
-  	logger.warning("post install for cib node [objtype=%s, name=%s, boot_ip=%s]",objtype, name, boot_ip)
+  	logger.debug("post install for cib node [objtype=%s, name=%s, boot_ip=%s]",objtype, name, boot_ip)
+        logging.debug("post install for cib node [objtype=%s, name=%s, boot_ip=%s]",objtype, name, boot_ip)
 
+    logging.debug("==========> Runnig 2 ============> ")
 
     if objtype == "system":
         target = api.find_system(name)
     else:
         target = api.find_profile(name)
 
+    logging.debug("==========> Runnig 3 ============> ")
     if logger is not None:
-	logger.warning("[post install] %s -> target is %s", name, target)
+	logger.debug("[post install] %s -> target is %s", name, target)
+	logging.debug("[post install] %s -> target is %s", name, target)
 
+    logging.debug("==========> Runnig 4 ============> ")
     # collapse the object down to a rendered datastructure
     target = utils.blender(api, False, target)
 
     if target == {}:
         raise CX("failure looking up target")
 
+    logging.debug("==========> Runnig 5 ============> ")
     boxip = target.get_ip_address()
 
     if logger is not None:
-	logger.warning("[post install] %s -> boxip is %s", target, boxip)
+	logger.debug("[post install] %s -> boxip is %s", target, boxip)
+	logging.debug("[post install] %s -> boxip is %s", target, boxip)
+
+    logging.debug("==========> Runnig 6 ============> %s ",boxip)
 
     with open('/var/lib/megam/megamcib/boxips', 'a') as f:
 	f.write(name + "=" + boxip)
 
+    logging.debug("==========> Runnig 7 ============> ")
     if logger is not None:
-	logger.warning("[post install] %s wrote \"%s\" to boxips file", target, boxip)
-
+	logger.debug("[post install] %s wrote \"%s\" to boxips file", target, boxip)
+	logging.debug("[post install] %s wrote \"%s\" to boxips file", target, boxip)
+ 
+    logging.debug("==========> Runnig 8 ============> ")
     return 0
+
