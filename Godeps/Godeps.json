@@ -1,6 +1,9 @@
 {
 	"ImportPath": "github.com/megamsys/cloudinabox",
 	"GoVersion": "go1.3.1",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/ActiveState/tail",
@@ -8,12 +11,12 @@
 		},
 		{
 			"ImportPath": "github.com/Unknwon/goconfig",
-			"Rev": "c0cc0d3a97a4153a8b064acd5c9d7bab9d6d5f3f"
+			"Rev": "0f8d8dc1c03e4602b1ad24c492b79c07c990fb49"
 		},
 		{
 			"ImportPath": "github.com/astaxie/beego",
-			"Comment": "v1.4.0-7-g7f977a0",
-			"Rev": "7f977a0c8ccdbc21e84f928046cb8778f24a67e0"
+			"Comment": "v1.4.1-2-gfcc359a",
+			"Rev": "fcc359af11650ff3c523ece170f9ec134ffa8aef"
 		},
 		{
 			"ImportPath": "github.com/beego/i18n",
@@ -21,12 +24,12 @@
 		},
 		{
 			"ImportPath": "github.com/coopernurse/gorp",
-			"Comment": "v1.6.1",
-			"Rev": "31a7c02fabe8965c887cd243e381ce08328f3741"
+			"Comment": "v1.7",
+			"Rev": "5d19ebd22fdcf3b9fb1c8cbfcf1d4e78e102f1e0"
 		},
 		{
 			"ImportPath": "github.com/gorilla/websocket",
-			"Rev": "4292df70df546334d4174bcd77271253c9b7835c"
+			"Rev": "a6f041ac33b84488bb44137d6866cd3c8706d792"
 		},
 		{
 			"ImportPath": "github.com/howeyc/fsnotify",
@@ -39,15 +42,23 @@
 		},
 		{
 			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Rev": "abd3d9caef4548682a279b60c859c197a1b32a47"
+			"Rev": "a80c27ba3354e27b4c8dfbbd1165bc253ca7c522"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/action",
-			"Rev": "0735104659eccccc98ee22c938d984f601eebb9e"
+			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/cmd",
+			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/exec",
-			"Rev": "0735104659eccccc98ee22c938d984f601eebb9e"
+			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/fs",
+			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
 		},
 		{
 			"ImportPath": "github.com/tsuru/config",
@@ -59,7 +70,17 @@
 		},
 		{
 			"ImportPath": "gopkg.in/v1/yaml",
-			"Rev": "feb4ca79644e8e7e39c06095246ee54b1282c118"
+			"Rev": "fc7f19eff1782a0beae3065097c776183e7d01d0"
+		},
+		{
+			"ImportPath": "launchpad.net/gnuflag",
+			"Comment": "13",
+			"Rev": "roger.peppe@canonical.com-20140716064605-pk32dnmfust02yab"
+		},
+		{
+			"ImportPath": "launchpad.net/gocheck",
+			"Comment": "87",
+			"Rev": "gustavo@niemeyer.net-20140225173054-xu9zlkf9kxhvow02"
 		}
 	]
 }
