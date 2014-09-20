@@ -23,7 +23,7 @@ const (
 	opennebulahostverify  = "bash conf/trusty/opennebulahost/host_verify.sh"
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
 	megam                 = "bash conf/trusty/megam/megam.sh"
-	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh install"
+	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh"
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -294,7 +294,7 @@ var remove = action.Action{
 		default:
 			return nil, errors.New("First parameter must be CIB or *CIB.")
 		}
-		
+
 		exec, err := CIBExecutor(&cib)
 
 		return exec, err

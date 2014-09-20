@@ -8,8 +8,15 @@
 		</a>
 	</div>
 	<div id="top-nav">
-		<a href="/support"
-			type="button"
+	<a HREF="mailto:support@megam.co.in?subject={{.Username}}: Cloud In a box support ticket&body=Hi, Megam%0D%0A
+%0D%0A
+I peformed the following steps %0D%0A
+1.  %0D%0A
+2.   %0D%0A
+%0D%0A
+I have attached the zipped logs from /var/log/megam/megamcib/*.log. %0D%0A
+%0D%0A
+You can contact me at {{.Username}} for more information." type="button"
 			class="btn btn-default navbar-btn navbar-right btn-primary m-r-30 mm-r-10">Submit a ticket</a>
 		<div class="navbar-dropdown navbar-right navbar-avatar">
 			<a href="#" data-target="#topavatar-toggle"
@@ -26,6 +33,6 @@
 		<input type="hidden" id="username_hidden" value={{.Username}}>
 		<a href="http://bit.ly/megamcib" target="_blank"
 			type="button"
-			class="btn btn-bordered text-white btn-lg navbar-btn navbar-right m-r-30 mm-r-10">Docs</a>
+			class="btn btn-bordered text-white btn-sm navbar-btn navbar-right m-r-30 mm-r-10">Docs</a>
 	</div>
 </nav>

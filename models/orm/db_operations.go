@@ -17,12 +17,10 @@
 package orm
 
 import (
-	//"fmt"
     "database/sql"
-    _ "github.com/mattn/go-sqlite3"
+    
     "github.com/coopernurse/gorp"
     "log"
-   // "reflect"
 )
 
 
