@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 

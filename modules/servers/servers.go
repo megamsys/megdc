@@ -62,7 +62,6 @@ func InstallServers(serverName string) error {
 
 func InstallNode(server *orm.Servers) error {
 	url := "http://"+server.IP+":8086/servernodes/nodes/"+server.Name
-//	url := "http://localhost:8078/servernodes/nodes/"+server.Name
     res, err := http.Get(url)
 	fmt.Println(res)
 	fmt.Println(err)
