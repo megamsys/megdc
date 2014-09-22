@@ -13,3 +13,16 @@ sudo chmod 755 /usr/share/one/install_gems
 
 sudo /usr/share/one/install_gems sunstone >> $ONE_INSTALL_LOG
 
+ip() {
+while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRTT; do
+		[ "$Mask" = "00000000" ] && \
+		interface="$Iface" && \
+		ipaddr=$(LC_ALL=C /sbin/ip -4 addr list dev "$interface" scope global) && \
+		ipaddr=${ipaddr#* inet } && \
+		ipaddr=${ipaddr%%/*} && \
+		break
+	done < /proc/net/route
+}
+
+ip
+sed -i "s/^[ \t]*:host:.*/:host: $ipaddr/" /etc/one/sunstone-server.conf
