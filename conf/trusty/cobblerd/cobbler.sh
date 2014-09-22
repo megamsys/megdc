@@ -227,11 +227,9 @@ ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
   echo "tftp-root=/var/lib/tftpboot" >> /etc/cobbler/dnsmasq.template
   echo "enable-tftp.." >> $COBBLER_LOG
 
-  echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
-
   sed -i 's/^[ \t]*user.*/user                    = root/' /etc/cobbler/tftpd.template
-  sed -i 's/^[ \t]*server_args.*/server_args             = -v -s /var/lib/tftpboot/' /etc/cobbler/tftpd.template
-  sed -i 's/^[ \t]*server .*/server             = /usr/sbin/in.tftpd/' /etc/cobbler/tftpd.template
+  sed -i "s/^[ \t]*server  .*/server             = \/usr\/sbin\/n.tftpd\//" /etc/cobbler/tftpd.template
+  sed -i "s/^[ \t]*server_args.*/server_args             = -v -s \/var\/lib\/tftpboot\//" /etc/cobbler/tftpd.template
 
 
   restart_services
@@ -245,9 +243,9 @@ ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
 #--------------------------------------------------------------------------
 setup_boottrusty() {
   cecho "Setup trusty megam node.." $yellow
-
+   echo "Setting up boot trusty " >> $COBBLER_LOG
   cd /var/lib/cobbler/isos/
-
+  echo "Downloading trusty_megamnode.iso" >> $COBBLER_LOG
   wget --tries=3 -c https://s3-ap-southeast-1.amazonaws.com/megampub/iso/trusty_megamnode.iso
 
   mv trusty_megamnode.iso trusty-amd64-megamnode.iso
@@ -258,18 +256,23 @@ setup_boottrusty() {
 
   # Do you have to unmount the /mnt directory ?  after you are done importing ?
 
+  echo "iso imported to cobbler" >> $COBBLER_LOG
 
 
   restart_services
 
   cecho "Running Synchronisation..." $yellow
-
+  echo "Running Synchronisation..." >> $COBBLER_LOG
   sleep 3
   cobbler sync
   sleep 10
   boot_menu
   install_complete
+  echo "Installation completed" >> $COBBLER_LOG
+  echo "Syncing repositories..." >> $COBBLER_LOG
   cobbler reposync
+  echo "reposync completed..." >> $COBBLER_LOG
+  static_dhcp
 }
 
 restart_services() {
@@ -285,16 +288,16 @@ restart_services() {
 boot_menu() {
   cecho "##################################################" $green
   > /var/lib/tftpboot/pxelinux.cfg/default
-
+  echo "Setting Boot menu..." >> $COBBLER_LOG
   cat > //var/lib/tftpboot/pxelinux.cfg/default <<EOF
 DEFAULT menu
 PROMPT 0
-MENU TITLE Megam Cloud In a Box(Node) | http://www.gomegam.com/cloudinabox
+MENU TITLE Megam Cloud In a Box(Node) | www.gomegam.com/cloudinabox
 
 LABEL ubuntu-server-trusty-megamnode-x86_64
         kernel /images/ubuntu-server-trusty-megamnode-x86_64/linux
-        MENU LABEL ubuntu-server-trusty-megamnode-x86_64
-        append initrd=/images/ubuntu-server-trusty-megamnode-x86_64/initrd.gz ksdevice=bootif lang=  locale=en_US priority=critical text  auto-install/enable=true priority=critical url=http://144.76.190.227/npreseed.cfg hostname=megamcibnode domain=local.lan suite=trusty
+        MENU LABEL Cloud In a Box(Node)
+        append initrd=/images/ubuntu-server-trusty-megamnode-x86_64/initrd.gz ksdevice=bootif lang=  locale=en_US priority=critical text  auto-install/enable=true url=http://144.76.190.227/npreseed.cfg hostname=megamcibnode domain=local.lan suite=trusty
         ipappend 2
 MENU end
 EOF
@@ -312,6 +315,12 @@ install_complete() {
   cecho "        The  subnet   dhcp range   is [$ip3.20 .. 200]"
   cecho "Refer http://bit.ly/megamcib for more information." $yellow
   cecho "##################################################" $green
+}
+
+static_dhcp() {
+#cat /etc/network/interfaces
+#iface p3p1 inet dhcp
+
 }
 #--------------------------------------------------------------------------
 #This function will uninstall cobblerd
