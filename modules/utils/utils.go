@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"crypto/hmac"
 	"crypto/sha1"
-//	"github.com/tsuru/config"
+	"github.com/tsuru/config"
 	"fmt"
 	"regexp"
 	"strings"
@@ -19,7 +19,7 @@ const (
 	X_Megam_APIKEY      = "X-Megam-APIKEY"
 	X_Megam_DATE        = "X-Megam-DATE"
 	X_Megam_HMAC        = "X-Megam-HMAC"
-	API_GATEWAY_VERSION = "/v1"
+	//API_GATEWAY_VERSION = "/v1"
 	Content_Type               = "Content-Type"
 	application_json           = "application/json"
 	Accept                     = "Accept"
@@ -58,7 +58,13 @@ func NewAuthly(urlsuffix string, jsonbody []byte, data *User) (*Authly, error) {
 	}, nil
 }
 
+func GetPort() string {
+	port, _ := config.GetString("beego:http_port")
+	return port
+}
+
 func (authly *Authly) AuthHeader() error {
+	API_GATEWAY_VERSION, _ := config.GetString("api:version")
 	timeStampedPath := authly.Date + "\n" + API_GATEWAY_VERSION + authly.UrlSuffix
 	md5Body := ""
 	if len(authly.JSONBody) > 0 {
@@ -112,6 +118,8 @@ func GetURL(path string) (string, error) {
 //	if err != nil {
 //		return "", err
 //	}
+target, _ := config.GetString("api:host")
+API_GATEWAY_VERSION, _ := config.GetString("api:version")
 	if m, _ := regexp.MatchString("^https?://", target); !m {
 		prefix = "http://"
 	}

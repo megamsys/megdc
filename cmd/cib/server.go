@@ -6,10 +6,12 @@ import (
 	"github.com/megamsys/cloudinabox/routers/auth"
 	"github.com/megamsys/cloudinabox/routers/page"
 	"github.com/megamsys/cloudinabox/routers/servers"
-	"github.com/tsuru/config"
+	"github.com/megamsys/cloudinabox/modules/utils"
+//	"github.com/tsuru/config"
 	"log"
 	"strconv"
 	"time"
+//	"fmt"
 )
 
 
@@ -45,9 +47,10 @@ func handlerWeb() {
 	beego.Router("/servers/:servername", server, "get:MasterInstall")
 	beego.Router("/servers/nodes/:nodename", server, "get:NodesInstall")
 
-	port, _ := config.GetString("beego:http_port")
+	//port, _ := config.GetString("beego:http_port")
+	port := utils.GetPort()
 	if port == "" {
-		port = "8086"
+		port = "8077"
 	}
 	http_port, _ := strconv.Atoi(port)
 	beego.HttpPort = http_port

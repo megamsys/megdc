@@ -95,7 +95,6 @@ func (this *ServerRouter) MasterInstall() {
 	this.Data["IsLoginPage"] = true
 	this.Data["Username"] = this.GetUser()
 	servername := this.Ctx.Input.Param(":servername")
-	fmt.Println(servername)
 
 	if len(this.Ctx.GetCookie("remember")) == 0 {
 		this.Redirect("/", 302)
@@ -154,6 +153,7 @@ func (this *ServerRouter) NodeInstall() {
 
 func (this *ServerRouter) Log() {
 	fmt.Println("Join entry LOG()============> ")
+	fmt.Println(this.Ctx.Input.Param(":id"))
 	this.Data["IsLoginPage"] = true
 	this.TplNames = "servers/log.html"
 	server := this.Ctx.Input.Param(":id")

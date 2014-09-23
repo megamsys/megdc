@@ -20,6 +20,7 @@ import (
 	"github.com/megamsys/cloudinabox/app"
 	"github.com/megamsys/cloudinabox/models/orm"
    "fmt"
+   "errors"
    "net/http"
 )
 
@@ -61,11 +62,18 @@ func InstallServers(serverName string) error {
 }
 
 func InstallNode(server *orm.Servers) error {
-	url := "http://"+server.IP+":8086/servernodes/nodes/"+server.Name
+	url := "http://"+server.IP+":8077/servernodes/nodes/"+server.Name
     res, err := http.Get(url)
-	fmt.Println(res)
-	fmt.Println(err)
-	return err
+	if err != nil {
+		return err
+	} else {
+		if res.StatusCode > 299 {
+			return errors.New(res.Status)
+		} else {
+	        err = app.SCPSSHInstall()  
+	        return err
+	   }
+	}
 }
 
 
