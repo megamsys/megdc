@@ -45,11 +45,11 @@
     }
     if ($('#dashboard-page').length > 0) {
       var str = $("#username_hidden").val();	
-      $.notify("Welcome back "+str , 'info', {
-        autoHide: true,
-        autoHideDelay: 5000,
-        arrowShow: false
-      });
+    //  $.notify("Welcome back "+str , 'info', {
+    //    autoHide: true,
+   //     autoHideDelay: 5000,
+   //     arrowShow: false
+    //  });
     }
     $(".mosaicflow__item").each(function() {
       var path, pathConfig, s;

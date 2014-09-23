@@ -117,6 +117,19 @@ func OpenNebulaHostInstall() error {
 	return nil
 }
 
+//
+// this executes all actions for opennebula install
+//
+func SCPSSHInstall() error {
+	actions := []*action.Action{&opennebulaSCPSSH}
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // GetEmail returns the email of the app.
 func (app *App) GetEmail() string {
 	return app.Email

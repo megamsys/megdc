@@ -12,9 +12,10 @@ import (
 	"strings"
 )
 
-const (
-  target = "https://api.megam.co"
-  )
+//const (
+	
+  //target = "https://api.megam.co"
+  //)
 
 type User struct {
   Username string

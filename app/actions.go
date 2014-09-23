@@ -92,6 +92,10 @@ var cobblerInstall = action.Action{
 		var cib CIB
 		cib.Command = cobbler
 		exec, err1 := CIBExecutor(&cib)
+		if err1 != nil {
+			fmt.Println("server insert error")
+			return &cib, err1
+		}
 		// write server details in database
 		// insert rows - auto increment PKs will be set properly after the insert
 		db := orm.OpenDB()
@@ -171,6 +175,10 @@ var opennebulaPostInstall = action.Action{
 		var cib CIB
 		cib.Command = opennebulapostinstall
 		exec, err1 := CIBExecutor(&cib)
+		if err1 != nil {
+			fmt.Println("server insert error")
+			return &cib, err1
+		}
 		// write server details in database
 
 		// insert rows - auto increment PKs will be set properly after the insert
@@ -203,7 +211,12 @@ var opennebulaSCPSSH = action.Action{
 	Name: "opennebulaSCPSSH",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
 		var cib CIB
-		cib.Command = opennebulascpssh
+		var server orm.Servers
+		db := orm.OpenDB()
+	    dbmap := orm.GetDBMap(db)
+	    err := dbmap.SelectOne(&server, "select * from servers where Name=?", "OPENNEBULAHOST")
+	    fmt.Println(err)
+		cib.Command = opennebulascpssh + " " + server.IP
 		exec, err1 := CIBExecutor(&cib)
 
 		return exec, err1
@@ -236,6 +249,10 @@ var opennebulaHostInstall = action.Action{
 		var server orm.Servers
 		cib.Command = opennebulahostinstall
 		exec, err1 := CIBExecutor(&cib)
+		if err1 != nil {
+			fmt.Println("server insert error")
+			return &cib, err1
+		}
 		// write server details in database
 
 		// insert rows - auto increment PKs will be set properly after the insert
