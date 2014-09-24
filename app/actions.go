@@ -22,8 +22,8 @@ const (
 	opennebulascpssh      = "bash conf/trusty/opennebula/scp_ssh.sh"
 	opennebulahostverify  = "bash conf/trusty/opennebulahost/host_verify.sh"
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
-	megam                 = "bash conf/trusty/megam/megam.sh"
-	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh"
+	megam                 = "bash conf/trusty/megam/megam_test.sh"
+	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
