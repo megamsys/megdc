@@ -2,7 +2,7 @@
 
 ONE_VERIFY_LOG="/var/log/megam/megamcib/opennebulahost.log"
 
-sudo apt-get -y install qemu-system-x86 qemu-kvm
+sudo apt-get -y install qemu-system-x86 qemu-kvm cpu-checker
 
 kvm=`kvm-ok  | grep "KVM acceleration can be used"`
 

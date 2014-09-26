@@ -106,7 +106,7 @@ install_cobbler() {
   fi
 
   cecho "Installing cobblerd.." $yellow
-  apt-get -y install cobbler cobbler-common cobbler-web dhcp3-server dnsmasq  >> $COBBLER_LOG
+  apt-get -y install cobbler cobbler-common cobbler-web dnsmasq  >> $COBBLER_LOG
 
   apt-get -y install debmirror >> $COBBLER_LOG
   cobbler get-loaders >> $COBBLER_LOG
@@ -329,9 +329,9 @@ uninstall_cobbler() {
   cecho "Uninstalling cobblerd.." $yellow
 
 
-  apt-get -y remove cobbler cobbler-common cobbler-web dhcp3-server dnsmasq >> $COBBLER_LOG
+  apt-get -y remove cobbler cobbler-common cobbler-web  dnsmasq >> $COBBLER_LOG
 
-  apt-get -y purge cobbler cobbler-common cobbler-web dhcp3-server >> $COBBLER_LOG
+  apt-get -y purge cobbler cobbler-common cobbler-web  >> $COBBLER_LOG
 
   apt-get -y remove debmirror >> $COBBLER_LOG
 
