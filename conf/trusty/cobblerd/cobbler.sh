@@ -216,10 +216,10 @@ ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
   sed -i "s/^[ \t]*dhcp-range=.*/dhcp-range=$ip3.20,$ip3.200/" /etc/dnsmasq.conf
   echo "dhcp-range=$ip3.20-200 => use dhcp range from $ip3.200.."  >> $COBBLER_LOG
 
-  sed -i "s/^[ \t]*dhcp-option=3.*/dhcp-option=3,$ip3.23/" /etc/dnsmasq.conf
+  sed -i "s/^[ \t]*dhcp-option=3.*/dhcp-option=3,$ip3.1/" /etc/dnsmasq.conf
 
   sed -i "s/^[ \t]*dhcp-range=.*/dhcp-range=$ip3.20,$ip3.200/" /etc/cobbler/dnsmasq.template
-  sed -i "s/^[ \t]*dhcp-option=3.*/dhcp-option=3,$ip3.23/" /etc/cobbler/dnsmasq.template
+  sed -i "s/^[ \t]*dhcp-option=3.*/dhcp-option=3,$ip3.1/" /etc/cobbler/dnsmasq.template
 
   echo "enable-tftp" >> /etc/dnsmasq.conf
   echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
