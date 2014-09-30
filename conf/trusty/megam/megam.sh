@@ -20,4 +20,6 @@ apt-get -y install megamd >> $MEGAM_LOG
 
 apt-get -y install megamanalytics >> $MEGAM_LOG
 
+apt-get -y install megamchefnative >> $MEGAM_LOG
+
 echo "`date`: Step1: megam installed successfully." >> $MEGAM_LOG
