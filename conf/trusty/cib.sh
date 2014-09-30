@@ -111,12 +111,53 @@ help() {
 # Verify  the cib
 #--------------------------------------------------------------------------
 report_cib() {
-  echo -e "${bldylw}Reporting cib..${txtrst}"
-  report_megam
-  report_cobblerd
-  report_one
-  report_onehost
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  echo -e "Select an option to report :"
+	echo -e "${bldwht}1)${txtrst} ${txtgrn}megam${txtrst}"
+	echo -e "${bldwht}2)${txtrst} ${txtgrn}cobblerd${txtrst}"
+	echo -e "${bldwht}3)${txtrst} ${txtgrn}one${txtrst}"
+	echo -e "${bldwht}4)${txtrst} ${txtgrn}onehost${txtrst}"
+	echo -e "${bldwht}5)${txtrst} ${txtgrn}all${txtrst}"
+	read case;
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldylw}%-40s${txtrst}" "   Reporting :";
+
+
+	case $case in
+    1)
+		printf "${bldwht}%-10s${txtrst}*\n" "MEGAM";
+		report_megam
+    ;;
+		2)
+    printf "${undpur}%-10s${txtrst}\n" "COBBLERD";
+		report_cobblerd
+		;;
+    3)
+		printf "${undpur}%-10s${txtrst}\n" "ONE";
+		report_one
+		;;
+		4)
+    printf "${undpur}%-10s${txtrst}\n" "ONEHOST";
+    report_onehost
+		;;
+    5)
+    printf "${undpur}%-10s${txtrst}\n" "ALL";
+    report_megam
+    report_cobblerd
+    report_one
+    report_onehost
+    ;;
+    *)
+    printf "\n"
+    ;;
+	esac
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+
+
 }
+
 
 report_megam() {
 
@@ -126,14 +167,7 @@ report_megam() {
 
   pkgnames=( megamcommon megamcib megamcibn megamnilavu megamsnowflake megamgateway megamd megamchefnative megamanalytics megamdesigner megammonitor riak rabbitmq-server nodejs sqlite3 ruby2.0 openjdk-7-jdk)
 
-  for pkgname in ${pkgnames[@]}
-    do
-      dpkg -s "$pkgname" >/dev/null 2>&1 && {
-        printf "${bldpur}%-15s ${bldcyn}%-15s${txtrst} %-6s ${bldgrn}%-15s${txtrst}\n" $pkgname 'INSTALL'  '.....' '[OK]';
-    } || {
-      printf "${bldpur}%-15s ${bldcyn}%-15s${txtrst} %-6s ${bldred}%-15s${txtrst}\n" $pkgname 'INSTALL'    '.....' '[FAIL]';
-    }
-  done
+  howdy_pkgs pkgnames[@]
 
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
   printf "*${bldblu}%-50s${txtrst}*\n" "   Services : Megam";
@@ -141,24 +175,11 @@ report_megam() {
 
   sernames=( megamcib megamcibn megamnilavu snowflake megamgateway megamd megamchefnative megamheka megamanalytics megamdesigner riak )
 
-  for sername in ${sernames[@]}
-  do
-    if (( $(ps -ef | grep -v grep | grep $sername | wc -l) > 0 ))
-    then
-    printf "${bldpur}%-15s ${bldcyn}%-15s${txtrst} %-6s " $sername 'SERVICE'  '.....';
-    sudo service $sername status > /dev/null 2>&1 && {
-      printf "${bldgrn}%-15s${txtrst}\n" '[OK]';
-    } || {
-      printf "${bldred}%-15s${txtrst}\n" '[FAIL]';
-    }
-    else
-    printf "${bldpur}%-15s ${txtred}%-15s${txtrst} %-6s ${bldred}%-15s${txtrst}\n" $sername 'SERVICE'  '.....'  '[FAIL]';
-    fi
-  done
+  howdy_services sernames[@]
 
   if (( $(ps -ef | grep -v grep | grep "rabbitmq-server" | wc -l) > 0 ))
   then
-  printf "${bldpur}%-15s ${bldcyn}%-15s${txtrst} %-6s " 'rabbitmq-server' 'SERVICE'  '.....';
+  printf "${bldpur}%-20s ${bldcyn}%-15s${txtrst} %-5s " 'rabbitmq-server' 'SERVICE'  '.....';
   sudo rabbitmqctl status > /dev/null 2>&1 && {
     printf "${bldgrn}%-15s${txtrst}\n" '[OK]';
   } || {
@@ -177,14 +198,40 @@ report_cobblerd() {
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
   printf "*${bldblu}%-50s${txtrst}*\n" "   Installation : Cobblerd";
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  pkgnames=( cobbler dnsmasq apache2 debmirror )
+
+  howdy_pkgs pkgnames[@]
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldblu}%-50s${txtrst}*\n" "   Services : Cobblerd";
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  sernames=( xinetd dnsmasq cobbler )
+
+  howdy_services sernames[@]
+
 }
 #--------------------------------------------------------------------------
 #This function will print out an install report
 #--------------------------------------------------------------------------
 report_one() {
+
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
   printf "*${bldblu}%-50s${txtrst}*\n" "   Installation : One";
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  pkgnames=( opennebula opennebula-sunstone )
+
+  howdy_pkgs pkgnames[@]
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldblu}%-50s${txtrst}*\n" "   Services : One";
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  sernames=( one )
+
+  howdy_services sernames[@]
 
 }
 
@@ -195,6 +242,18 @@ report_onehost() {
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
   printf "*${bldblu}%-50s${txtrst}*\n" "   Installation : One Host";
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  pkgnames=( opennebula-node qemu-kvm )
+
+  howdy_pkgs pkgnames[@]
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldblu}%-50s${txtrst}*\n" "   Services : One Host";
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  sernames=( onevm )
+
+  howdy_services sernames[@]
 
 }
 #--------------------------------------------------------------------------
@@ -208,6 +267,42 @@ start_cib() {
 #--------------------------------------------------------------------------
 stop_cib() {
   echo -e "${bldylw}Stopping cib..${txtrst}"
+}
+#--------------------------------------------------------------------------
+#This function will verify if the package exists
+#--------------------------------------------------------------------------
+howdy_pkgs() {
+  pkgnames=("${!1}")
+  for pkgname in ${pkgnames[@]}
+    do
+      dpkg -s "$pkgname" >/dev/null 2>&1 && {
+        printf "${bldpur}%-20s ${bldcyn}%-15s${txtrst} %-5s ${bldgrn}%-15s${txtrst}\n" $pkgname 'INSTALL'  '.....' '[OK]';
+    } || {
+      printf "${bldpur}%-20s ${bldcyn}%-15s${txtrst} %-5s ${bldred}%-15s${txtrst}\n" $pkgname 'INSTALL'    '.....' '[FAIL]';
+    }
+  done
+}
+#--------------------------------------------------------------------------
+#This function will verify if a process is running, and an upstart service is running
+#--------------------------------------------------------------------------
+howdy_services(){
+  sernames=("${!1}")
+
+  for sername in ${sernames[@]}
+  do
+    if (( $(ps -ef | grep -v grep | grep $sername | wc -l) > 0 ))
+    then
+    printf "${bldpur}%-20s ${bldcyn}%-15s${txtrst} %-5s " $sername 'SERVICE'  '.....';
+    sudo service $sername status > /dev/null 2>&1 && {
+      printf "${bldgrn}%-15s${txtrst}\n" '[OK]';
+    } || {
+      printf "${bldred}%-15s${txtrst}\n" '[FAIL]';
+    }
+    else
+    printf "${bldpur}%-20s ${txtred}%-15s${txtrst} %-5s ${bldred}%-15s${txtrst}\n" $sername 'SERVICE'  '.....'  '[FAIL]';
+    fi
+  done
+
 }
 #--------------------------------------------------------------------------
 #This function will exit out of the script.
