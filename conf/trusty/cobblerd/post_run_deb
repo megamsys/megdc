@@ -1,0 +1,10 @@
+# A general purpose snippet to add late-command actions for preseeds
+ /bin/echo "deb http://get.megam.co/0.5/ubuntu/ trusty testing" >> /target/etc/apt/sources.list.d/megam.list \
+ /bin/apt-key adv --keyserver keyserver.ubuntu.com --recv B3E0C1B7
+ /bin/apt-get update
+ /bin/apt-get -y --force-yes  install megamcibn whiptail
+ /bin/whiptail --title "Cloud In a Box(Node) : Install Complete." --msgbox "Login using userid: cibadmin pw:cibadmin" 10 50 --ok-button "Ok"
+#echo "deb http://get.megam.co/ trusty megam-0.5" >> /target/etc/apt/sources.list.d/megam.list; \
+
+ /bin/echo "Done post_rundeb "
+ 

@@ -14,8 +14,7 @@
 #   limitations under the License.
 ###############################################################################
 # A cobbler linux script which sets up cobblerd and a DHCP using dnsmasq.
-# The dhcp range used by cobbler is 192.168.x.20 - 200.
-# The i/p address of the cobbler is 192.168.x.x
+# The dhcp range used by cobbler is x.x.x.20 - 200.
 # This script currently supports ubuntu 14.04 trusty.
 ###############################################################################
 
@@ -105,35 +104,80 @@ install_cobbler() {
     exit 1
   fi
 
-  cecho "Installing cobblerd.." $yellow
-  apt-get -y install cobbler cobbler-common cobbler-web dnsmasq  >> $COBBLER_LOG
+  echo "Installing cobbler packages" >> $COBBLER_LOG
+  cecho "Installing cobbler packages.." $yellow
 
-  apt-get -y install debmirror >> $COBBLER_LOG
+  apt-get -y install cobbler cobbler-common cobbler-web dnsmasq debmirror xinetd tftpd tftp >> $COBBLER_LOG
+
   cobbler get-loaders >> $COBBLER_LOG
   cobbler check >> $COBBLER_LOG
 
-  #If any errors just fix as it says.
-  #on success --> No configuration problems found.  All systems go.
-  cobbler sync
+  echo "Manually dpkgconfigure cobbler" >> $COBBLER_LOG
 
-  install_reconfigure_cobbler
+  manual_dpkgreconfigure
+
+  echo "Configuring cobbler" >> $COBBLER_LOG
 
   configure_cobbler
-}
 
+  import_trustynode_iso
+
+  setup_profile_trustynode
+
+  cecho "Running Synchronisation..." $yellow
+  echo "Running Synchronisation..." >> $COBBLER_LOG
+  sleep 3
+  cobbler sync
+  sleep 10
+
+  echo "Syncing repositories..." >> $COBBLER_LOG
+  cobbler reposync &
+  echo "Reposync completed..." >> $COBBLER_LOG
+  restart_all
+
+  install_complete
+
+}
 #--------------------------------------------------------------------------
 #This runs the exact steps the dpkg-reconfigure does for cobbler.
 #--------------------------------------------------------------------------
-install_reconfigure_cobbler() {
+manual_dpkgreconfigure() {
   cecho "dpkg reconfiguring cobblerd.." $yellow
-  password="cobbler"
-	hash=$(printf "cobbler:Cobbler:$password" | md5sum | awk '{print $1}')
-	[ -e /etc/cobbler/users.digest ] || install -o root -g root -m 0600 /dev/null /etc/cobbler/users.digest
-	htpasswd -D /etc/cobbler/users.digest "cobbler" || true
-	printf "cobbler:Cobbler:$hash\n" >> /etc/cobbler/users.digest
-	hash=$(printf "$password" | openssl passwd -1 -stdin)
-	sed -i "s%^default_password_crypted:.*%default_password_crypted: \"$hash\"%" /etc/cobbler/settings
 
+  password="cobbler"
+  hash=$(printf "cobbler:Cobbler:$password" | md5sum | awk '{print $1}')
+  [ -e /etc/cobbler/users.digest ] || install -o root -g root -m 0600 /dev/null /etc/cobbler/users.digest
+  htpasswd -D /etc/cobbler/users.digest "cobbler" || true
+  printf "cobbler:Cobbler:$hash\n" >> /etc/cobbler/users.digest
+  hash=$(printf "$password" | openssl passwd -1 -stdin)
+
+  sed -i "s%^default_password_crypted:.*%default_password_crypted: \"$hash\"%" /etc/cobbler/settings
+
+  cecho "reconfigured password"
+
+  configure_with_ip
+
+  # Enable required apache modules
+  a2enmod proxy_http
+  a2enmod wsgi
+  a2enmod rewrite
+
+  # Install cobbler files and web config for API
+  ln -sf /var/lib/cobbler/webroot/cobbler /var/www/cobbler
+  if [ ! -e /etc/apache2/conf-enabled/cobbler_web.conf ]; then
+     ln -sf /etc/cobbler/cobbler.conf /etc/apache2/conf-enabled/cobbler.conf
+  fi
+
+  echo "Reconfigure complete." >> $COBBLER_LOG
+
+}
+#--------------------------------------------------------------------------
+# Figure out the ip address and set it up in the
+# /etc/cobbler/settings : server, next_server
+# update the ipaddress in /etc/hosts file.
+# not yet done : change network to use static, if it uses dhcp (https://github.com/megamsys/cloudinabox/issues/51).
+#-------------------------------------------------------------------------
+configure_with_ip() {
 	while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRTT; do
 		[ "$Mask" = "00000000" ] && \
 		interface="$Iface" && \
@@ -142,33 +186,24 @@ install_reconfigure_cobbler() {
 		ipaddr=${ipaddr%%/*} && \
 		break
 	done < /proc/net/route
-  cecho "figured out the host ip" $yellow
-	echo $ipaddr
 
-	if grep -qs "^next_server: *..*..*..*$" /etc/cobbler/settings; then
-		sed -i "s/^next_server: *..*..*..*$/next_server: $ipaddr/" /etc/cobbler/settings
-	fi
-	if grep -qs "^server: *..*..*..*$" /etc/cobbler/settings; then
-		sed -i "s/^server: *..*..*..*$/server: $ipaddr/" /etc/cobbler/settings
-	fi
 
-	# Enable required apache modules
-	a2enmod proxy_http
-	a2enmod wsgi
-	a2enmod rewrite
+	grep -qs "^127.0.0.1.*.localhost$" /etc/hosts || sudo sed '$ a\
+	127.0.0.1 localhost' /etc/hosts > /etc/hosts
+	  
+	grep -qs "^$ipaddr.*.megamubuntu$" /etc/hosts || sudo sed '$ a\
+	127.0.0.1 megamubuntu' /etc/hosts > /etc/hosts
+	  	  
+	  
+    if grep -qs "^next_server: *..*..*..*$" /etc/cobbler/settings; then
+        sed -i "s/^next_server: *..*..*..*$/next_server: $ipaddr/" /etc/cobbler/settings
+    fi
 
-	# Install cobbler files and web config for API
-	ln -sf /var/lib/cobbler/webroot/cobbler /var/www/cobbler
-	if [ ! -e /etc/apache2/conf-enabled/cobbler_web.conf ]; then
-	    ln -sf /etc/cobbler/cobbler.conf /etc/apache2/conf-enabled/cobbler.conf
-	fi
+    if grep -qs "^server: *..*..*..*$" /etc/cobbler/settings; then
+        sed -i "s/^server: *..*..*..*$/server: $ipaddr/" /etc/cobbler/settings
+    fi
 
-	# Need to restart apache to pickup web configs
-	if [ -x /usr/sbin/invoke-rc.d ]; then
-		invoke-rc.d apache2 restart || true
-	else
-		/etc/init.d/apache2 restart || true
-	fi
+	echo "Configured the ip" >> $COBBLER_LOG
 }
 #--------------------------------------------------------------------------
 #Configures cobbler with the dhcp range 192.168.x.20-200.
@@ -177,20 +212,10 @@ install_reconfigure_cobbler() {
 #--------------------------------------------------------------------------
 configure_cobbler() {
   cecho "configuring cobblerd.." $yellow
-
+  echo "configuring cobblerd.." >> $COBBLER_LOG
   echo 'base_megamreporting_enabled: 1' >> /etc/cobbler/settings
 
   sed -i 's/manage_dhcp: 0/manage_dhcp: 1/g' /etc/cobbler/settings
-
-  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/install_post_cibnode.py /usr/lib/python2.7/dist-packages/cobbler/modules/
-
-  service cobbler restart
-
-  cobbler sync
-
-  echo "manage_dhcp:1 => dhcp managed by cobbler.."
-
-  apt-get -y install xinetd tftpd tftp >> $COBBLER_LOG
 
   sed -i "s/^[ \t]*option routers.*/option routers $ipaddr;/" /etc/cobbler/dhcp.template
   echo "route:$ipaddr => route is your cobblerd machine.." >> $COBBLER_LOG
@@ -201,8 +226,8 @@ configure_cobbler() {
   sed -i 's/^[ \t]*option subnet-mask.*/option subnet-mask 255.255.255.0;/' /etc/cobbler/dhcp.template
   echo "manage_dhcp:1 dhcp managed by cobbler.." >> $COBBLER_LOG
 
-#GET first three values of ip
-ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
+  #GET first three values of ip
+  ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
 
   sed -i "s/^[ \t]*range dynamic-bootp.*/range dynamic-bootp $ip3.20 $ip3.100;/" /etc/cobbler/dhcp.template
   echo "manage_dhcp:1 dhcp managed by cobbler.." >> $COBBLER_LOG
@@ -225,109 +250,98 @@ ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
   echo "tftp-root=/var/lib/tftpboot" >> /etc/dnsmasq.conf
   echo "enable-tftp" >> /etc/cobbler/dnsmasq.template
   echo "tftp-root=/var/lib/tftpboot" >> /etc/cobbler/dnsmasq.template
-  echo "enable-tftp.." >> $COBBLER_LOG
+
+  echo "Setup complete to manage DHCP and DNS by cobbler" >> $COBBLER_LOG
+
+  echo "Setup complete to for tftp" >> $COBBLER_LOG
 
   sed -i 's/^[ \t]*user.*/user                    = root/' /etc/cobbler/tftpd.template
   sed -i "s/^[ \t]*server  .*/server             = \/usr\/sbin\/n.tftpd\//" /etc/cobbler/tftpd.template
   sed -i "s/^[ \t]*server_args.*/server_args             = -v -s \/var\/lib\/tftpboot\//" /etc/cobbler/tftpd.template
 
-
-  restart_services
-
-  cobbler sync
-
-  setup_boottrusty
 }
 #--------------------------------------------------------------------------
 #Download and setup trusty amd64 mini
 #--------------------------------------------------------------------------
-setup_boottrusty() {
+import_trustynode_iso() {
   cecho "Setup trusty megam node.." $yellow
-   echo "Setting up boot trusty " >> $COBBLER_LOG
+  echo "Setting up boot: trusty megam node iso" >> $COBBLER_LOG
+
   cd /var/lib/cobbler/isos/
+
   echo "Downloading trusty_megamnode.iso" >> $COBBLER_LOG
-  wget --tries=3 -c https://s3-ap-southeast-1.amazonaws.com/megampub/iso/trusty_megamnode.iso
+
+  wget --tries=5 -c https://s3-ap-southeast-1.amazonaws.com/megampub/iso/trusty_megamnode.iso
 
   mv trusty_megamnode.iso trusty-amd64-megamnode.iso
 
   mount -o loop trusty-amd64-megamnode.iso /mnt
 
-  cobbler import --name=ubuntu-server-trusty-megamnode --path=/mnt --breed=ubuntu --arch x86_64
+  cobbler import --name=trusty-megamnode --path=/mnt --breed=ubuntu --arch x86_64
 
-  # Do you have to unmount the /mnt directory ?  after you are done importing ?
+  echo "Imported trusty megam node iso to cobbler" >> $COBBLER_LOG
 
-  echo "iso imported to cobbler" >> $COBBLER_LOG
-
-
-  restart_services
-
-  cecho "Running Synchronisation..." $yellow
-  echo "Running Synchronisation..." >> $COBBLER_LOG
-  sleep 3
-  cobbler sync
-  sleep 10
-  boot_menu
-  install_complete
-  echo "Installation completed" >> $COBBLER_LOG
-  echo "Syncing repositories..." >> $COBBLER_LOG
-  cobbler reposync
-  echo "reposync completed..." >> $COBBLER_LOG
-  static_dhcp
 }
 
-restart_services() {
-  service xinetd restart
-
-  service dnsmasq restart
-
-  service cobbler restart
-}
 #--------------------------------------------------------------------------
 #This function will print out boot menu
 #--------------------------------------------------------------------------
-boot_menu() {
-  cecho "##################################################" $green
-  > /var/lib/tftpboot/pxelinux.cfg/default
-  echo "Setting Boot menu..." >> $COBBLER_LOG
-  cat > //var/lib/tftpboot/pxelinux.cfg/default <<EOF
+setup_profile_trustynode() {
+  cecho "Setting up profile trusty node..." $green
+  echo  "Setting up profile trusty node..." >> $COBBLER_LOG
+
+  cat > //etc/cobbler/pxe/pxedefault.template << 'EOF'
 DEFAULT menu
 PROMPT 0
 MENU TITLE Megam Cloud In a Box(Node) | www.gomegam.com/cloudinabox
+TIMEOUT 200
+TOTALTIMEOUT 6000
+ONTIMEOUT $pxe_timeout_profile
 
-LABEL ubuntu-server-trusty-megamnode-x86_64
-        kernel /images/ubuntu-server-trusty-megamnode-x86_64/linux
-        MENU LABEL Cloud In a Box(Node)
-        append initrd=/images/ubuntu-server-trusty-megamnode-x86_64/initrd.gz ksdevice=bootif lang=  locale=en_US priority=critical text  auto-install/enable=true url=http://144.76.190.227/npreseed.cfg hostname=megamcibnode domain=local.lan suite=trusty
-        ipappend 2
+$pxe_menu_items
+
 MENU end
 EOF
-restart_services
+
+  wget -O /var/lib/cobbler/kickstarts/megamnode.seed http://get.megam.co/npreseed.cfg
+
+  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/install_post_cibnode.py /usr/lib/python2.7/dist-packages/cobbler/modules/
+  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/preseed_early_ub1404 /var/lib/cobbler/scripts/
+  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/preseed_late_ub1404 /var/lib/cobbler/scripts/
+  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/kickstart_start /var/lib/cobbler/snippets/
+  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/kickstart_done /var/lib/cobbler/snippets/
+  cp /usr/share/megam/megamcib/conf/trusty/cobblerd/post_run_deb /var/lib/cobbler/snippets/
+
+  cobbler profile edit --name="trusty-megamnode-x86_64" --kickstart="/var/lib/cobbler/kickstarts/megamnode.seed"
+
 }
-
-
+#--------------------------------------------------------------------------
+#This function will restart the services
+#--------------------------------------------------------------------------
+restart_all() {
+  echo "Restarting services ..." >> $COBBLER_LOG
+  service xinetd restart
+  service dnsmasq restart
+  service cobbler restart
+  service apache2 restart
+  echo "Restarted services..." >> $COBBLER_LOG
+}
 #--------------------------------------------------------------------------
 #This function will print out an install report
 #--------------------------------------------------------------------------
 install_complete() {
   cecho "##################################################" $green
-  cecho "Step 1: cobbler installed successfully." $yellow
-  cecho "        The ip address of cobblerd is $ipaddr"
-  cecho "        The  subnet   dhcp range   is [$ip3.20 .. 200]"
+  cecho "cobbler installed successfully." $yellow
   cecho "Refer http://bit.ly/megamcib for more information." $yellow
   cecho "##################################################" $green
+  echo  "Cobbler installed successfully." >> $COBBLER_LOG
 }
 
-static_dhcp() {
-#cat /etc/network/interfaces
-#iface p3p1 inet dhcp
-
-}
 #--------------------------------------------------------------------------
 #This function will uninstall cobblerd
 #--------------------------------------------------------------------------
 uninstall_cobbler() {
   cecho "Uninstalling cobblerd.." $yellow
-
 
   apt-get -y remove cobbler cobbler-common cobbler-web  dnsmasq >> $COBBLER_LOG
 
@@ -344,8 +358,6 @@ uninstall_cobbler() {
   [ -d /var/log/cobbler ] && rm -rf /var/log/cobbler
   [ -d /var/lib/cobbler ] && rm -rf /var/lib/cobbler
   [ -d /etc/cobbler ] && rm -rf /etc/cobbler
-
-  apt-get -y autoremove
 
   cecho "##################################################" $green
 
