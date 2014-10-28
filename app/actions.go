@@ -14,7 +14,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (
-	/*rootPath              = "/tmp"
+	rootPath              = "/tmp"
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -24,9 +24,9 @@ const (
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
 	megam                 = "bash conf/trusty/megam/megam.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh"
-	*/
-	
-	rootPath              = "/tmp"
+
+
+	/*rootPath              = "/tmp"
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -36,6 +36,7 @@ const (
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install_test.sh"
 	megam                 = "bash conf/trusty/megam/megam_test.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
+	*/
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
