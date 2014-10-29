@@ -3,11 +3,9 @@
 #
 # Issue with /e/i/n getting clobbered.
 # See this: http://comments.gmane.org/gmane.linux.installation.cobbler/9613. Work around:
-rm -f /usr/lib/finish-install.d/55netcfg-copy-config /usr/lib/finish-install.d/50config-target-network
+# rm -f /usr/lib/finish-install.d/55netcfg-copy-config /usr/lib/finish-install.d/50config-target-network
 #
 # The standard stuff from the copied script:
-$SNIPPET('post_install_network_config_deb')
-$SNIPPET('post_run_deb')
-#
 $SNIPPET('kickstart_done')
+#
 # End preseed_late_ub1404
