@@ -1,7 +1,14 @@
 #!/bin/bash
 
 ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
-echo "One POSTINSTALL install gems=======> " >> $ONE_INSTALL_LOG
+
+echo "oneadmin ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/oneadmin            #all-nodes
+
+sudo apt-get install ntp                                                                  #all-nodes
+
+sudo chmod 0440 /etc/sudoers.d/oneadmin                                                  #all-nodes
+
+echo "One POSTINSTALL install gems =======> " >> $ONE_INSTALL_LOG
 
 #sed -i 's/.*dependencies_common => .*/:dependencies_common => [],/' /usr/share/one/install_gems
 sudo rm /usr/share/one/install_gems

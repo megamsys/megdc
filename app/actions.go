@@ -24,9 +24,10 @@ const (
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
 	megam                 = "bash conf/trusty/megam/megam.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh"
+	ceph                  = "bash conf/trusty/ceph/ceph_install.sh"
+	cephscpssh            = "bash conf/trusty/ceph/scp_ssh.sh"
 
-
-	/*rootPath              = "/tmp"
+	/*rootPath            = "/tmp"
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -36,6 +37,7 @@ const (
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install_test.sh"
 	megam                 = "bash conf/trusty/megam/megam_test.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
+	ceph                  = "bash conf/trusty/cobblerd/ceph_install_test.sh"
 	*/
 )
 
@@ -309,6 +311,72 @@ var opennebulaHostInstall = action.Action{
 	},
 	MinParams: 1,
 }
+
+/**
+This is used by nodes other than one host.
+**/
+var cephSCPSSH = action.Action{
+	Name: "cephSCPSSH",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		var server orm.Servers
+		db := orm.OpenDB()
+	    dbmap := orm.GetDBMap(db)
+	    err := dbmap.SelectOne(&server, "select * from servers where Name=?", "CEPH")
+	    fmt.Println(err)
+		cib.Command = cephscpssh + " " + server.IP
+		exec, err1 := CIBExecutor(&cib)
+
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+/*
+* Step 4: Install Ceph Storage
+ */
+var cephInstall = action.Action{
+	Name: "cephInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = ceph
+		exec, err := CIBExecutor(&cib)
+		if err != nil {
+			fmt.Println("server insert error")
+			return &cib, err
+		}
+		// write server details in database
+		// insert rows - auto increment PKs will be set properly after the insert
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		newserver := orm.NewServer("CEPH")
+		orm.ConnectToTable(dbmap, "servers", newserver)
+		err = dbmap.Insert(&newserver)
+		defer db.Close()
+		if err != nil {
+			fmt.Println("server insert error")
+			return &cib, err
+		}
+		return exec, err
+	},
+	Backward: func(ctx action.BWContext) {
+		//app := ctx.FWResult.(*App)
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		err := orm.DeleteRowFromServerName(dbmap, "CEPH")
+		if err != nil {
+			fmt.Println("Server delete error")
+			//return &cib, err
+		}
+		defer db.Close()
+		log.Printf(" Nothing to recover")
+	},
+	MinParams: 1,
+}
+
 
 
 //Remove the installed packages..
