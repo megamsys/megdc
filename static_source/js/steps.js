@@ -14,6 +14,12 @@ $(document).ready(function() {
 		return false; // for good measure
 	});
 
+    $('#STORAGE_install_button').click(function(event) {
+		event.preventDefault();
+		installProcess(4);
+		return false; // for good measure
+	});
+
 	$("#ha_selection input:radio").on("ifClicked", function() {
 		if ($(this).attr("value") == "yes") {
 			$("#ha_note").show();
@@ -35,7 +41,7 @@ $(document).ready(function() {
 });
 
 function installProcess(i) {
-	var servers = [ "MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST" ];
+	var servers = [ "MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST", "STORAGE" ];
 	serverID = servers[i].concat("_waiting1")
 	successID = servers[i].concat("_success")
 	errorID = servers[i].concat("_error")
