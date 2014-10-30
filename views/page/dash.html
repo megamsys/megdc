@@ -3,102 +3,100 @@
 	{{ template "base/nav.html" .}}
 
 	<script type='text/javascript'>
-		$(document)
-				.ready(
-						function() {
-							$
-									.ajax({
-										type : "GET",
-										url : "/servers",
-										dataType : 'text',
-										async : true,
-										// cache : true,
-										// jsonp : "onJSONPLoad",
-										// jsonpCallback: "newarticlescallback",
-										crossDomain : "true",
-										success : function(response) {
-											var res = JSON.parse(response);
-											console.log(res.data);
-											$
-													.each(
-															res.data,
-															function(idx, obj) {
-																var ser = JSON
-																		.parse(obj);
-																$(
-																		"#server_table")
-																		.append(
-																				'<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span \
-										class="avatar"> <i \
-											class="glyphicon glyphicon-star m-r-10 text-orange"></i> \
-									</span> <span class="author hidden-xs m-r-1">'
-																						+ ser.Name
-																						+ '</span> <span \
-										class="subject">'
-																						+ get_install_text(ser.Install)
-																						+ ' </span> \
-										<span class="date"><span class="text-gray-dark">'
-																						+ ser.InstallDate
-																						+ '</span> \
-										</span> \
-										<span class="date"><span class="text-gray-dark">'
-																						+ ser.UpdateDate
-																						+ '</span> \
-											</span> \
-								</a></li>')
-															});
-										},
-										error : function(xhr, status) {
-											console.log(status);
-										}
-									});
+$(document)
+.ready(
+function() {
+$
+.ajax({
+type : "GET",
+url : "/servers",
+dataType : 'text',
+async : true,
+// cache : true,
+// jsonp : "onJSONPLoad",
+// jsonpCallback: "newarticlescallback",
+crossDomain : "true",
+success : function(response) {
+var res = JSON.parse(response);
+console.log(res.data);
+//$("#server_table").remove();
+$.each(res.data, function(idx, obj) {
+console.log(i+1);
+var ser = JSON.parse(obj);
+$("#server_table").append('<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span \
+class="avatar"> <i \
+class="glyphicon glyphicon-star m-r-10 text-orange"></i> \
+</span> <span class="author hidden-xs m-r-1">'
++ ser.Name
++ '</span> <span \
+class="subject">'
++ get_install_text(ser.Install)
++ ' </span> \
+<span class="date"><span class="text-gray-dark">'
++ ser.InstallDate
++ '</span> \
+</span> \
+<span class="date"><span class="text-gray-dark">'
++ ser.UpdateDate
++ '</span> \
+</span> \
+</a></li>')
+});
+},
+error : function(xhr, status) {
+console.log(status);
+}
+});
 
-						});
-		function get_install_text(txt) {
-			if (txt) {
-				return "Installed.";
-			} else {
-				return "Not Installed.";
-			}
-		}
+});
+function get_install_text(txt) {
+if (txt) {
+return "Installed.";
+} else {
+return "Not Installed.";
+}
+}
 	</script>
 
 	<div
-		class="sidebar bg-gray-dark text-white text-center pushy pushy-left">
+	class="sidebar bg-gray-dark text-white text-center pushy pushy-left">
 		<header
-			class="bg-g-ln-gray p-tb-30 pm-tb-10 p-lr-10 b-bot-2px-gray-dark hidden-xs">
+		class="bg-g-ln-gray p-tb-30 pm-tb-10 p-lr-10 b-bot-2px-gray-dark hidden-xs">
 			<a href="#" data-target="#avatar-toggle"
-				class="hover-no-underline dropdown-toggle" data-toggle="dropdown">
-				<!-- <img src="/static/placeholders/avatars/avatar.jpg"
-				class="img-circle" width=35> <span class="text-gray-alt">Welcome</span> -->
-				<span class="text-gray-light">{{.Username}}</span> <span
-				class="caret white"></span>
-			</a>
+			class="hover-no-underline dropdown-toggle" data-toggle="dropdown"> <!-- <img src="/static/placeholders/avatars/avatar.jpg"
+			class="img-circle" width=35> <span class="text-gray-alt">Welcome</span> --> <span class="text-gray-light">{{.Username}}</span> <span
+			class="caret white"></span> </a>
 		</header>
 		<ul id="avatar-toggle" class="dropdown-sidebar-avatar" role="menu"
-			aria-labelledby="dLabel">
-			<li><a href="settings.html">Settings</a></li>
-			<li><a href="/logout">Signout</a></li>
+		aria-labelledby="dLabel">
+			<li>
+				<a href="settings.html">Settings</a>
+			</li>
+			<li>
+				<a href="/logout">Signout</a>
+			</li>
 		</ul>
 
 		<hr class="no-margin">
 
 		<ul class="unstyled nav">
-			<li class="active"><a href="#" class="text-left">Dashboard</a></li>
-			<li><a href="#" class="text-left">Servers</a></li>
+			<li class="active">
+				<a href="#" class="text-left">Dashboard</a>
+			</li>
+			<!--<li><a href="#" class="text-left">Servers</a></li>
 			<li><a href="#" class="text-left">Nodes</a></li>
-			<li><a href="#" class="text-left">Storage</a></li>
+			<li><a href="#" class="text-left">Storage</a></li> -->
 		</ul>
 
 		<!-- <div class="bg-gray-dark-shade text-left search">
-			<i class="glyphicon glyphicon-search text-gray-alt"></i> <input
-				type="text" placeholder="Search" class="input-invisible">
+		<i class="glyphicon glyphicon-search text-gray-alt"></i> <input
+		type="text" placeholder="Search" class="input-invisible">
 		</div>
 
 		<div class="sidebar-chart chart m-t-30" data-percent="50"
-			data-scale-color="rgba(255,255,255,.2)">
-			<div class="percentage text-gray-alt font-w-100">50%</div>
-			<div class="label text-gray-alt font-w-100 text-uppercase">Bandwidth</div>
+		data-scale-color="rgba(255,255,255,.2)">
+		<div class="percentage text-gray-alt font-w-100">50%</div>
+		<div class="label text-gray-alt font-w-100 text-uppercase">Bandwidth</div>
 		</div> -->
 
 	</div>
@@ -107,144 +105,151 @@
 		<div class="timer"></div>
 	</div>
 	<script>
-		(function($) {
-			$.fn.fwd_tabs = function() {
-				return this
-						.each(function() {
-							var tabs = $(this);
-							var tabMenuList = $(".nav-tabs", tabs).children();
+		( function($) {
+				$.fn.fwd_tabs = function() {
+					return this.each(function() {
+						var tabs = $(this);
+						var tabMenuList = $(".nav-tabs", tabs).children();
 
-							/* Create any missing content areas that are required for AJAX requests */
-							for (i = $(".tab-content", tabs).length,
-									j = tabMenuList.length; i < j; i++) {
-								tabs
-										.append('<div class="tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"></div>');
+						/* Create any missing content areas that are required for AJAX requests */
+						for ( i = $(".tab-content", tabs).length, j = tabMenuList.length; i < j; i++) {
+							tabs.append('<div class="tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"></div>');
+						}
+
+						var tabContent = $(".tab-content", tabs);
+
+						/* Hide all but the first content area */
+						tabContent.slice(1).hide();
+
+						/* Mark the first tab as active by default */
+						tabMenuList.eq(0).addClass("active");
+
+						/* Listen for clicks on the tab menu */
+						tabMenuList.find("a").click(function(e) {
+							var theParent = $(this).parent().index();
+
+							/* Deactivate any other tab menus and make the selected one active */
+							tabMenuList.removeClass('active').eq(theParent).addClass('active');
+
+							/* Hide any other content areas and make the selected content area visible */
+							tabContent.hide().eq(theParent).show();
+
+							/* If this is an external link and hasn't been called before, load the data into the content area */
+							if (tabContent.eq(theParent).html().length == 0 && $(this).attr("href").substr(0, 1) != "#") {
+								var fragment = ($(this).data("fragment") ? " " + $(this).data("fragment") : "");
+
+								tabContent.eq(theParent).append('<div class="tab-loading"></div>').load($(this).attr("href"), function(response, status, xhr) {
+									if (status == "error") {
+										tabContent.eq(theParent).html("Sorry, the content could not be loaded");
+									}
+
+								});
 							}
-
-							var tabContent = $(".tab-content", tabs);
-
-							/* Hide all but the first content area */
-							tabContent.slice(1).hide();
-
-							/* Mark the first tab as active by default */
-							tabMenuList.eq(0).addClass("active");
-
-							/* Listen for clicks on the tab menu */
-							tabMenuList
-									.find("a")
-									.click(
-											function(e) {
-												var theParent = $(this)
-														.parent().index();
-
-												/* Deactivate any other tab menus and make the selected one active */
-												tabMenuList.removeClass(
-														'active').eq(theParent)
-														.addClass('active');
-
-												/* Hide any other content areas and make the selected content area visible */
-												tabContent.hide().eq(theParent)
-														.show();
-
-												/* If this is an external link and hasn't been called before, load the data into the content area */
-												if (tabContent.eq(theParent)
-														.html().length == 0
-														&& $(this).attr("href")
-																.substr(0, 1) != "#") {
-													var fragment = ($(this)
-															.data("fragment") ? " "
-															+ $(this).data(
-																	"fragment")
-															: "");
-
-													tabContent
-															.eq(theParent)
-															.append(
-																	'<div class="tab-loading"></div>')
-															.load(
-																	$(this)
-																			.attr(
-																					"href"),
-																	function(
-																			response,
-																			status,
-																			xhr) {
-																		if (status == "error") {
-																			tabContent
-																					.eq(
-																							theParent)
-																					.html(
-																							"Sorry, the content could not be loaded");
-																		}
-
-																	});
-												}
-												e.preventDefault();
-											});
+							e.preventDefault();
 						});
-			}
-		}(jQuery));
+					});
+				}
+			}(jQuery));
 		$(function() {
 			$(".tabs").fwd_tabs();
 		});
 	</script>
 	<div id="container" class="main-content p-30 tp-t-60 tp-lr-10">
 
-
 		<button
-			class="menu-btn btn btn-bordered text-gray-alt text-bold top-left-corner">&#9776;
-			MENU</button>
+		class="menu-btn btn btn-bordered text-gray-alt text-bold top-left-corner">
+			&#9776;
+			MENU
+		</button>
 
 		<div class="tabs">
 			<ul class="nav nav-tabs">
-				<li><a href="/servers" data-fragment="#small-print"><span
-						class="text-uppercase">Servers</span></a></li>
+				<li>
+					<a href="/servers" data-fragment="#small-print"><span
+					class="text-uppercase">Servers</span></a>
+				</li>
 				<!-- <li><a href="#" data-fragment="#small-print"><span
-						class="text-uppercase">Nodes</span></a></li>
+				class="text-uppercase">Nodes</span></a></li>
 				<li><a href="#" data-fragment="#small-print"><span
-						class="text-uppercase">Storage</span></a></li>
-			-->
+				class="text-uppercase">Storage</span></a></li>
+				-->
 			</ul>
 
 			<!-- You'll notice the delivery info is missing, because we get this via Ajax -->
 
-
 			<!-- DASHBOARD TAB -->
 			<div
-				class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
-				id="servers">
-				<h1 class="text-center font-w-100">
-					Welcome <span class="text-blue">{{.Username}}</span>
-				</h1>
+			class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
+			id="servers">
+				<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
 				<!--  <div class="row">
-  						<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
-  					</div> -->
+				<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
+				</div> -->
 				<div class="row">
 					<div class="col-sm-12">
 						<!-- MESSAGES -->
 						<div class="iconmelon m-r-10">
 							<svg viewBox="0 0 32 32">
-                                     <g filter="">
-                                         <use xlink:href="#email-mail"></use>
-                                     </g>
-                                </svg>
+								<g filter="">
+									<use xlink:href="#email-mail"></use>
+								</g>
+							</svg>
 						</div>
 						<!-- <span class="text-gray-dark text-large align-with-button hidden-xs">
-									4 new messages
-								</span> -->
+						4 new messages
+						</span> -->
 
 						<!-- <a href="messages.html" class="btn-group pull-right">
-									<div class="btn btn-alt">
-										<i class="glyphicon glyphicon-list text-white"></i>
-									</div>
-									<div class="btn btn-primary">
-										Read all
-									</div>
-								</a> -->
+						<div class="btn btn-alt">
+						<i class="glyphicon glyphicon-list text-white"></i>
+						</div>
+						<div class="btn btn-primary">
+						Read all
+						</div>
+						</a> -->
 
 						<hr class="m-b-0">
 
 						<ul class="unstyled messages" id="server_table">
+                               <li>sample</li>
+						</ul>
+
+					</div>
+				</div>
+			</div>
+			<div
+			class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
+			id="nodes">
+				<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+				<!--  <div class="row">
+				<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
+				</div> -->
+				<div class="row">
+					<div class="col-sm-12">
+						<!-- MESSAGES -->
+						<div class="iconmelon m-r-10">
+							<svg viewBox="0 0 32 32">
+								<g filter="">
+									<use xlink:href="#email-mail"></use>
+								</g>
+							</svg>
+						</div>
+						<!-- <span class="text-gray-dark text-large align-with-button hidden-xs">
+						4 new messages
+						</span> -->
+
+						<!-- <a href="messages.html" class="btn-group pull-right">
+						<div class="btn btn-alt">
+						<i class="glyphicon glyphicon-list text-white"></i>
+						</div>
+						<div class="btn btn-primary">
+						Read all
+						</div>
+						</a> -->
+
+						<hr class="m-b-0">
+
+						<ul class="unstyled messages" id="server_table1">
 
 						</ul>
 
@@ -252,81 +257,38 @@
 				</div>
 			</div>
 			<div
-				class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
-				id="nodes">
-				<h1 class="text-center font-w-100">
-					Welcome <span class="text-blue">{{.Username}}</span>
-				</h1>
+			class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
+			id="storage">
+				<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
 				<!--  <div class="row">
-  						<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
-  					</div> -->
+				<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
+				</div> -->
 				<div class="row">
 					<div class="col-sm-12">
 						<!-- MESSAGES -->
 						<div class="iconmelon m-r-10">
 							<svg viewBox="0 0 32 32">
-                                     <g filter="">
-                                         <use xlink:href="#email-mail"></use>
-                                     </g>
-                                </svg>
+								<g filter="">
+									<use xlink:href="#email-mail"></use>
+								</g>
+							</svg>
 						</div>
 						<!-- <span class="text-gray-dark text-large align-with-button hidden-xs">
-									4 new messages
-								</span> -->
+						4 new messages
+						</span> -->
 
 						<!-- <a href="messages.html" class="btn-group pull-right">
-									<div class="btn btn-alt">
-										<i class="glyphicon glyphicon-list text-white"></i>
-									</div>
-									<div class="btn btn-primary">
-										Read all
-									</div>
-								</a> -->
+						<div class="btn btn-alt">
+						<i class="glyphicon glyphicon-list text-white"></i>
+						</div>
+						<div class="btn btn-primary">
+						Read all
+						</div>
+						</a> -->
 
 						<hr class="m-b-0">
 
-						<ul class="unstyled messages" id="server_table">
-
-						</ul>
-
-					</div>
-				</div>
-			</div>
-			<div
-				class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
-				id="storage">
-				<h1 class="text-center font-w-100">
-					Welcome <span class="text-blue">{{.Username}}</span>
-				</h1>
-				<!--  <div class="row">
-  						<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
-  					</div> -->
-				<div class="row">
-					<div class="col-sm-12">
-						<!-- MESSAGES -->
-						<div class="iconmelon m-r-10">
-							<svg viewBox="0 0 32 32">
-                                     <g filter="">
-                                         <use xlink:href="#email-mail"></use>
-                                     </g>
-                                </svg>
-						</div>
-						<!-- <span class="text-gray-dark text-large align-with-button hidden-xs">
-									4 new messages
-								</span> -->
-
-						<!-- <a href="messages.html" class="btn-group pull-right">
-									<div class="btn btn-alt">
-										<i class="glyphicon glyphicon-list text-white"></i>
-									</div>
-									<div class="btn btn-primary">
-										Read all
-									</div>
-								</a> -->
-
-						<hr class="m-b-0">
-
-						<ul class="unstyled messages" id="server_table">
+						<ul class="unstyled messages" id="server_table2">
 
 						</ul>
 

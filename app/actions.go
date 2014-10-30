@@ -38,7 +38,7 @@ const (
 	megam                 = "bash conf/trusty/megam/megam_test.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
 	ceph                  = "bash conf/trusty/cobblerd/ceph_install_test.sh"
-	*/
+    cephscpssh            = "bash conf/trusty/ceph/scp_ssh_test.sh"	*/
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
