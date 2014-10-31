@@ -21,7 +21,6 @@ const (
 	X_Megam_HMAC        = "X-Megam-HMAC"
 	//API_GATEWAY_VERSION = "/v1"
 	Content_Type               = "Content-Type"
-	application_json           = "application/json"
 	Accept                     = "Accept"
 	application_vnd_megam_json = "application/vnd.megam+json"
 )

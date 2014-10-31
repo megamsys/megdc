@@ -37,8 +37,6 @@ import (
 
 var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA"}
 
-//var servers_output = [...]string{}
-var servers_output []string
 
 // PageRouter serves home page.
 type ServerRouter struct {
@@ -48,6 +46,8 @@ type ServerRouter struct {
 // Get implemented dashboard page.
 func (this *ServerRouter) Get() {
 	var servers orm.Servers
+	var servers_output []string
+
 	result := map[string]interface{}{
 		"success": false,
 	}
@@ -66,14 +66,18 @@ func (this *ServerRouter) Get() {
 	dbmap := orm.GetDBMap(db)
 	n := len(serversList)
 	for i := 0; i < n; i++ {
+		log.Printf("[%s] Selecting\n", serversList[i])
 		err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])
 		if err != nil {
 			tmpserver := &orm.Servers{0, serversList[i], false, "", "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
 			servers_output = append(servers_output, string(jsonMsg))
+			log.Printf("[%s] Not error Selecting {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
 		} else {
 			jsonMsg, _ := json.Marshal(servers)
 			servers_output = append(servers_output, string(jsonMsg))
+			log.Printf("[%s] error Selecting {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
+			
 		}
 	}
 	result["success"] = true
@@ -284,13 +288,6 @@ func verify_NODES(nodename string) bool {
 	}
 }
 
-func cleanUP(filePath string) {
-	cmd := exec.Command("truncate -s 0 " + filePath)
-	if err := cmd.Run(); err != nil {
-		log.Println(err)
-	}
-}
-
 // Join method handles WebSocket requests for WebSocketController.
 func (this *ServerRouter) Join() {
 	uname := this.GetString("uname")
@@ -342,34 +339,6 @@ func broadcastWebSocket(event models.Event) {
 	}
 }
 
-var i = 0
-var oldServerName = ""
-
-func doSomething(server string) bool {
-	if oldServerName == "" {
-		oldServerName = server
-		i = i + 3
-		PublishMessage(server, i)
-	} else {
-		if oldServerName == server {
-			i = i + 3
-			if i <= 99 {
-				PublishMessage(server, i)
-			} else {
-				return false
-			}
-			//else {
-			//	publish <- newEvent(models.EVENT_MESSAGE, "megam", "completed")
-			// }
-		} else {
-			oldServerName = server
-			i = 0
-			i = i + 3
-			PublishMessage(server, i)
-		}
-	}
-	return true
-}
 
 func publishLog(server string) {
 	fmt.Printf("LOG FILE NAME ===========> : %s", server)
@@ -388,23 +357,6 @@ func PublishMessage(server string, i int) {
 	publish <- newEvent(models.EVENT_MESSAGE, server, strconv.Itoa(i))
 }
 
-func startPolling() {
-	db := orm.OpenDB()
-	dbmap := orm.GetDBMap(db)
-	var server orm.Servers
-	fmt.Println("polling entry")
-	for i := range serversList {
-		fmt.Println(serversList[i])
-		err := dbmap.SelectOne(&server, "select * from servers where Name=?", serversList[i])
-		fmt.Println(err)
-		if server.Install != true {
-			err := servers.InstallServers(serversList[i])
-			if err != nil {
-
-			}
-		}
-	}
-}
 
 type Subscription struct {
 	Archive []models.Event      // All the events from the archive.
