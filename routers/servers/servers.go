@@ -30,7 +30,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"strconv"
 	"time"
 )
@@ -72,11 +71,11 @@ func (this *ServerRouter) Get() {
 			tmpserver := &orm.Servers{0, serversList[i], false, "", "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
 			servers_output = append(servers_output, string(jsonMsg))
-			log.Printf("[%s] Not error Selecting {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
+			log.Printf("[%s] SQL select  {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
 		} else {
 			jsonMsg, _ := json.Marshal(servers)
 			servers_output = append(servers_output, string(jsonMsg))
-			log.Printf("[%s] error Selecting {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
+			log.Printf("[%s] SQL select ignored {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
 			
 		}
 	}

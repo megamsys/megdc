@@ -2,7 +2,6 @@ package app
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"github.com/megamsys/cloudinabox/models/orm"
 	"github.com/megamsys/libgo/action"
