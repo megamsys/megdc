@@ -18,12 +18,12 @@ async : true,
 crossDomain : "true",
 success : function(response) {
 var res = JSON.parse(response);
-console.log(res.data);
-//$("#server_table").remove();
-$.each(res.data, function(idx, obj) {
-console.log(i+1);
+//$("#servers_list").remove();
+//$("#servers_indash").html('<ul class="unstyled_messages" id="servers_list"></ul>');
+alert("servers list" + res.data)
+ $.each(res.data, function(idx, obj) {
 var ser = JSON.parse(obj);
-$("#server_table").append('<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span \
+$("#servers_list").append('<li><a href="#" class="p-tb-10 p-l-10 pm-lr-10"> <span \
 class="avatar"> <i \
 class="glyphicon glyphicon-star m-r-10 text-orange"></i> \
 </span> <span class="author hidden-xs m-r-1">'
@@ -40,8 +40,10 @@ class="subject">'
 + ser.UpdateDate
 + '</span> \
 </span> \
-</a></li>')
+</a></li>');
+
 });
+
 },
 error : function(xhr, status) {
 console.log(status);
@@ -58,8 +60,7 @@ return "Not Installed.";
 }
 	</script>
 
-	<div
-	class="sidebar bg-gray-dark text-white text-center pushy pushy-left">
+	<div class="sidebar bg-gray-dark text-white text-center pushy pushy-left">
 		<header
 		class="bg-g-ln-gray p-tb-30 pm-tb-10 p-lr-10 b-bot-2px-gray-dark hidden-xs">
 			<a href="#" data-target="#avatar-toggle"
@@ -70,10 +71,7 @@ return "Not Installed.";
 		<ul id="avatar-toggle" class="dropdown-sidebar-avatar" role="menu"
 		aria-labelledby="dLabel">
 			<li>
-				<a href="settings.html">Settings</a>
-			</li>
-			<li>
-				<a href="/logout">Signout</a>
+				<a href="/logout">Sign Out</a>
 			</li>
 		</ul>
 
@@ -195,108 +193,16 @@ return "Not Installed.";
 								</g>
 							</svg>
 						</div>
-						<!-- <span class="text-gray-dark text-large align-with-button hidden-xs">
-						4 new messages
-						</span> -->
-
-						<!-- <a href="messages.html" class="btn-group pull-right">
-						<div class="btn btn-alt">
-						<i class="glyphicon glyphicon-list text-white"></i>
-						</div>
-						<div class="btn btn-primary">
-						Read all
-						</div>
-						</a> -->
-
 						<hr class="m-b-0">
-
-						<ul class="unstyled messages" id="server_table">
-                               <li>sample</li>
+						<div id="servers_indash">
+						<ul class="unstyled messages" id="servers_list">
 						</ul>
-
-					</div>
-				</div>
-			</div>
-			<div
-			class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
-			id="nodes">
-				<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
-				<!--  <div class="row">
-				<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
-				</div> -->
-				<div class="row">
-					<div class="col-sm-12">
-						<!-- MESSAGES -->
-						<div class="iconmelon m-r-10">
-							<svg viewBox="0 0 32 32">
-								<g filter="">
-									<use xlink:href="#email-mail"></use>
-								</g>
-							</svg>
 						</div>
-						<!-- <span class="text-gray-dark text-large align-with-button hidden-xs">
-						4 new messages
-						</span> -->
-
-						<!-- <a href="messages.html" class="btn-group pull-right">
-						<div class="btn btn-alt">
-						<i class="glyphicon glyphicon-list text-white"></i>
-						</div>
-						<div class="btn btn-primary">
-						Read all
-						</div>
-						</a> -->
-
-						<hr class="m-b-0">
-
-						<ul class="unstyled messages" id="server_table1">
-
-						</ul>
-
-					</div>
-				</div>
-			</div>
-			<div
-			class=" tab-content tab-pane active fade in p-30 bg-white b-1px-gray-light b-top-none brad-bottom brad-tr b-bot-2px-gray-light"
-			id="storage">
-				<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
-				<!--  <div class="row">
-				<p class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perspiciatis, quis, ipsam saepe voluptas rem possimus quas tenetur iusto dolorem architecto tempore fugiat amet iure distinctio quia vel consequuntur aut quod!</p>
-				</div> -->
-				<div class="row">
-					<div class="col-sm-12">
-						<!-- MESSAGES -->
-						<div class="iconmelon m-r-10">
-							<svg viewBox="0 0 32 32">
-								<g filter="">
-									<use xlink:href="#email-mail"></use>
-								</g>
-							</svg>
-						</div>
-						<!-- <span class="text-gray-dark text-large align-with-button hidden-xs">
-						4 new messages
-						</span> -->
-
-						<!-- <a href="messages.html" class="btn-group pull-right">
-						<div class="btn btn-alt">
-						<i class="glyphicon glyphicon-list text-white"></i>
-						</div>
-						<div class="btn btn-primary">
-						Read all
-						</div>
-						</a> -->
-
-						<hr class="m-b-0">
-
-						<ul class="unstyled messages" id="server_table2">
-
-						</ul>
-
+					    </div>
 					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
 	<!-- /main content -->
 </div>

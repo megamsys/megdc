@@ -14,7 +14,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (
-	rootPath              = "/tmp"
+	/*
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -25,9 +25,8 @@ const (
 	megam                 = "bash conf/trusty/megam/megam.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh"
 	ceph                  = "bash conf/trusty/ceph/ceph_install.sh"
-	cephscpssh            = "bash conf/trusty/ceph/scp_ssh.sh"
+	cephscpssh            = "bash conf/trusty/ceph/scp_ssh.sh" */
 
-	/*rootPath            = "/tmp"
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -38,7 +37,7 @@ const (
 	megam                 = "bash conf/trusty/megam/megam_test.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
 	ceph                  = "bash conf/trusty/cobblerd/ceph_install_test.sh"
-    cephscpssh            = "bash conf/trusty/ceph/scp_ssh_test.sh"	*/
+    cephscpssh            = "bash conf/trusty/ceph/scp_ssh_test.sh"
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -377,28 +376,3 @@ var cephInstall = action.Action{
 	MinParams: 1,
 }
 
-
-
-//Remove the installed packages..
-var remove = action.Action{
-	Name: "remove",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var cib CIB
-		switch ctx.Params[0].(type) {
-		case CIB:
-			cib = ctx.Params[0].(CIB)
-		case *CIB:
-			cib = *ctx.Params[0].(*CIB)
-		default:
-			return nil, errors.New("First parameter must be CIB or *CIB.")
-		}
-
-		exec, err := CIBExecutor(&cib)
-
-		return exec, err
-	},
-	Backward: func(ctx action.BWContext) {
-		log.Printf("[%s] Nothing to recover for %s")
-	},
-	MinParams: 1,
-}

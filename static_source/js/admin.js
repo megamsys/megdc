@@ -77,46 +77,6 @@
         addRemoveLinks: true
       };
     }
-    sidebarChart = $('.sidebar-chart');
-    sidebarChart.easyPieChart({
-      barColor: "#2CC0D5",
-      trackColor: "rgba(255,255,255,.06)",
-      lineWidth: 10,
-      animate: 600,
-      lineCap: "square",
-      size: 140,
-      onStart: function(from, to) {
-        var percentage;
-        percentage = $(this.el).find('.percentage');
-        return $({
-          val: from
-        }).animate({
-          val: to
-        }, {
-          duration: 600,
-          easing: 'swing',
-          step: function() {
-            return percentage.text(Math.round(this.val) + "%");
-          }
-        });
-      }
-    });
-    animateSidebarChart = function() {
-      var random;
-      random = Math.round(Math.random() * (100 - 1) + 1);
-      return setTimeout(function() {
-        $('.sidebar-chart').data('easyPieChart').update(random);
-        return animateSidebarChart();
-      }, 5000);
-    };
-    animateSidebarChart();
-    inboxMessages = $('.messages-selectable');
-    if (inboxMessages.length > 0) {
-      inboxMessages.on('click', 'a', function(e) {
-        e.preventDefault();
-        return $(this).toggleClass('active');
-      });
-    }
     listSortable = $('.list-editable');
     if (listSortable.length > 0) {
       listItem = $('#item-template').clone();
