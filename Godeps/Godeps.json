@@ -46,19 +46,19 @@
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/action",
-			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
+			"Rev": "8caa748d441394a0ec960f820d24cfa8685fb4cd"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/cmd",
-			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
+			"Rev": "8caa748d441394a0ec960f820d24cfa8685fb4cd"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/exec",
-			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
+			"Rev": "8caa748d441394a0ec960f820d24cfa8685fb4cd"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/fs",
-			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
+			"Rev": "8caa748d441394a0ec960f820d24cfa8685fb4cd"
 		},
 		{
 			"ImportPath": "github.com/tsuru/config",
