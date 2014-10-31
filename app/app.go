@@ -3,14 +3,12 @@ package app
 import (
 	"encoding/json"
 	"github.com/megamsys/libgo/action"
-	"github.com/megamsys/cloudinabox/app/bind"
 	"fmt"
 )
 
 
 
 type App struct {
-	Env                map[string]bind.EnvVar
     Email              string `json:"email"`
 	ApiKey             string `json:"api_key"`
 	InstallPackage     string `json:"install_package"`

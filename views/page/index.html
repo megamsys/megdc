@@ -7,7 +7,6 @@
 		$(document).ready(function() {
 
 			$('#MyWizard').on('change', function(e, data) {
-				console.log('change');
 				if (data.step === 4 && data.direction === 'next') {
 					$('#btnWizardNext').hide();
 					$('#btnWizardDone').show();
@@ -68,26 +67,17 @@
 		<div class="well wizard-example">
 			<div id="MyWizard" class="wizard">
 				<ul class="steps">
-					<li data-target="#step1" class="active">
-						<span
+					<li data-target="#step1" class="active"><span
 						class="badge badge-info">1</span>Step 1<span class="chevron"></span>
 					</li>
-					<li data-target="#step2">
-						<span class="badge">2</span>Step 2<span
-						class="chevron"></span>
-					</li>
-					<li data-target="#step3">
-						<span class="badge">3</span>Step 3<span
-						class="chevron"></span>
-					</li>
-					<li data-target="#step4">
-						<span class="badge">4</span>Step 4<span
-						class="chevron"></span>
-					</li>
-					<li data-target="#step5">
-						<span class="badge">5</span>Step 5<span
-						class="chevron"></span>
-					</li>
+					<li data-target="#step2"><span class="badge">2</span>Step 2<span
+						class="chevron"></span></li>
+					<li data-target="#step3"><span class="badge">3</span>Step 3<span
+						class="chevron"></span></li>
+					<li data-target="#step4"><span class="badge">4</span>Step 4<span
+						class="chevron"></span></li>
+					<li data-target="#step5"><span class="badge">5</span>Step 5<span
+						class="chevron"></span></li>
 				</ul>
 
 			</div>
@@ -95,15 +85,17 @@
 				<div class="step-pane active" id="step1">
 					<div class="tab-pane active fade in p-30" id="dashboard">
 
-						<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+						<h1 class="text-center font-w-100">
+							Welcome <span class="text-blue">{{.Username}}</span>
+						</h1>
 						<div class="row">
 							<p
-							class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
+								class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
 
 								Automatically starts the install of <a
-								href="http://www.gomegam.com/" target="_blank">MEGAM</a>. On
+									href="http://www.gomegam.com/" target="_blank">MEGAM</a>. On
 								successful completion of megam installation <a
-								href="http://www.cobblerd.org/" target="_blank">COBBLERD</a>
+									href="http://www.cobblerd.org/" target="_blank">COBBLERD</a>
 								install is started. Click Log to watch the progress of the
 								install.
 							</p>
@@ -112,12 +104,13 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div
-								class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+									class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
 									<div class="row">
 										<div class="col-sm-2 text-center">
 											<div class="p-10 brad">
 												<a href="http://www.gomegam.com/"> <img
-												src="/static_source/images/megam.png" alt=""> </a>
+													src="/static_source/images/megam.png" alt="">
+												</a>
 
 												<div>
 													<div>
@@ -140,52 +133,53 @@
 															<tr>
 																<td>Megam</td>
 																<td>
-																<div class="progress progress-striped"
-																id="MEGAM_PROGRESS" style="display: none">
-																	<div
-																	class="progress-bar progress-bar-info MEGAM_PROGRESS"
-																	role="progressbar" aria-valuenow="20"
-																	aria-valuemin="0" aria-valuemax="100"
-																	style="width: 0%" id="change_MEGAM">
-																		<span class="sr-only">20% Complete</span>
+																	<div class="progress progress-striped"
+																		id="MEGAM_PROGRESS" style="display: none">
+																		<div
+																			class="progress-bar progress-bar-info MEGAM_PROGRESS"
+																			role="progressbar" aria-valuenow="20"
+																			aria-valuemin="0" aria-valuemax="100"
+																			style="width: 0%" id="change_MEGAM">
+																			<span class="sr-only">20% Complete</span>
+																		</div>
 																	</div>
-																</div></td>
+																</td>
 																<td>
-																<div class="col-sm-12">
-																	<div class="col-sm-6">
-																		<div id="MEGAM_install_text" style="display: none">
-																			<p class="text-info">
-																				Installing...
+																	<div class="col-sm-12">
+																		<div class="col-sm-6">
+																			<div id="MEGAM_install_text" style="display: none">
+																				<p class="text-info">Installing...</p>
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div id="MEGAM_waiting1"></div>
+																		</div>
+																		<div id="MEGAM_success" style="display: none">
+																			<p class="text-success">
+																			<div class="fi-icon text-success">
+																				<i class="fi-check m-10 text-large"></i>Installed
+																				successfully.
+																			</div>
+																			</p>
+																		</div>
+																		<div id="MEGAM_error" style="display: none">
+																			<p class="text-danger">
+																			<div class="fi-icon text-danger">
+																				<i class="fi-alert m-10 text-large"></i>Install
+																				failure.
+																			</div>
 																			</p>
 																		</div>
 																	</div>
-																	<div class="col-sm-6">
-																		<div id="MEGAM_waiting1"></div>
-																	</div>
-																	<div id="MEGAM_success" style="display: none">
-																		<p class="text-success">
-																			<div class="fi-icon text-success">
-																				<i class="fi-check m-10 text-large"></i>Installed successfully.
-																			</div>
-																		</p>
-																	</div>
-																	<div id="MEGAM_error" style="display: none">
-																		<p class="text-danger">
-																			<div class="fi-icon text-danger">
-																				<i class="fi-alert m-10 text-large"></i>Install failure.
-																			</div>
-																		</p>
-																	</div>
-																</div></td>
+																</td>
 																<td><span style="display: none" id="MEGAM_LOG"><a
-																	href="/servers/megam/log" class="btn-group pull-right"
-																	target="_blank">
-																	<div class="btn btn-alt">
-																		<i class="glyphicon glyphicon-list text-white"></i>
-																	</div>
-																	<div class="btn btn-primary">
-																		Log
-																	</div> </a></span></td>
+																		href="/servers/megam/log" class="btn-group pull-right"
+																		target="_blank">
+																			<div class="btn btn-alt">
+																				<i class="glyphicon glyphicon-list text-white"></i>
+																			</div>
+																			<div class="btn btn-primary">Log</div>
+																	</a></span></td>
 															</tr>
 														</tbody>
 													</table>
@@ -205,52 +199,53 @@
 															<tr>
 																<td>Cobblerd</td>
 																<td>
-																<div class="progress progress-striped"
-																id="COBBLER_PROGRESS" style="display: none">
-																	<div
-																	class="progress-bar progress-bar-info COBBLER_PROGRESS"
-																	role="progressbar" aria-valuenow="20"
-																	aria-valuemin="0" aria-valuemax="100"
-																	style="width: 0%" id="change_COBBLER">
-																		<span class="sr-only">20% Complete</span>
+																	<div class="progress progress-striped"
+																		id="COBBLER_PROGRESS" style="display: none">
+																		<div
+																			class="progress-bar progress-bar-info COBBLER_PROGRESS"
+																			role="progressbar" aria-valuenow="20"
+																			aria-valuemin="0" aria-valuemax="100"
+																			style="width: 0%" id="change_COBBLER">
+																			<span class="sr-only">20% Complete</span>
+																		</div>
 																	</div>
-																</div></td>
+																</td>
 																<td>
-																<div class="col-sm-12">
-																	<div class="col-sm-6">
-																		<div id="COBBLER_install_text" style="display: none">
-																			<p class="text-info">
-																				Installing...
+																	<div class="col-sm-12">
+																		<div class="col-sm-6">
+																			<div id="COBBLER_install_text" style="display: none">
+																				<p class="text-info">Installing...</p>
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div id="COBBLER_waiting1"></div>
+																		</div>
+																		<div id="COBBLER_success" style="display: none">
+																			<p class="text-success">
+																			<div class="fi-icon text-success">
+																				<i class="fi-check m-10 text-large"></i>Installed
+																				successfully.
+																			</div>
+																			</p>
+																		</div>
+																		<div id="COBBLER_error" style="display: none">
+																			<p class="text-danger">
+																			<div class="fi-icon text-danger">
+																				<i class="fi-alert m-10 text-large"></i>Install
+																				failure.
+																			</div>
 																			</p>
 																		</div>
 																	</div>
-																	<div class="col-sm-6">
-																		<div id="COBBLER_waiting1"></div>
-																	</div>
-																	<div id="COBBLER_success" style="display: none">
-																		<p class="text-success">
-																			<div class="fi-icon text-success">
-																				<i class="fi-check m-10 text-large"></i>Installed successfully.
-																			</div>
-																		</p>
-																	</div>
-																	<div id="COBBLER_error" style="display: none">
-																		<p class="text-danger">
-																			<div class="fi-icon text-danger">
-																				<i class="fi-alert m-10 text-large"></i>Install failure.
-																			</div>
-																		</p>
-																	</div>
-																</div></td>
+																</td>
 																<td><span style="display: none" id="COBBLER_LOG"><a
-																	href="/servers/cobbler/log"
-																	class="btn-group pull-right" target="_blank">
-																	<div class="btn btn-alt">
-																		<i class="glyphicon glyphicon-list text-white"></i>
-																	</div>
-																	<div class="btn btn-primary">
-																		Log
-																	</div> </a></span></td>
+																		href="/servers/cobbler/log"
+																		class="btn-group pull-right" target="_blank">
+																			<div class="btn btn-alt">
+																				<i class="glyphicon glyphicon-list text-white"></i>
+																			</div>
+																			<div class="btn btn-primary">Log</div>
+																	</a></span></td>
 															</tr>
 														</tbody>
 													</table>
@@ -267,10 +262,12 @@
 				<div class="step-pane" id="step2">
 					<div class="tab-pane active fade in p-30" id="dashboard">
 
-						<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+						<h1 class="text-center font-w-100">
+							Welcome <span class="text-blue">{{.Username}}</span>
+						</h1>
 						<div class="row">
 							<p
-							class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
+								class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
 								Step 2 install <a href="http://opennebula.org/" target="_blank">Opennebula</a>.
 								Click log to watch the progress of the install.
 							</p>
@@ -287,13 +284,14 @@
 							</div>-->
 							<div class="col-sm-12">
 								<div
-								class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+									class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
 									<div class="row">
 										<div class="col-sm-5 text-center">
 											<div class="p-10 brad">
 												<a href="http://opennebula.org/"> <img
-												src="/static_source/images/opennebula.png" alt=""
-												class="img-circle" width="115"> </a>
+													src="/static_source/images/opennebula.png" alt=""
+													class="img-circle" width="115">
+												</a>
 
 												<div>
 													<div>
@@ -308,35 +306,31 @@
 											<div class="col-sm-12">
 												<div>
 													<h4>Version</h4>
-													<p class="text-gray-alt">
-														4.6
-													</p>
+													<p class="text-gray-alt">4.8</p>
 												</div>
 												<hr />
 											</div>
 											<div class="col-sm-12">
 												<div class="col-sm-4">
 													<a href="" class="btn btn-primary btn-lg m-t-10"
-													id="OPENNEBULA_install_button">Install</a>
+														id="OPENNEBULA_install_button">Install</a>
 													<div id="OPENNEBULA_install_text" style="display: none">
-														<p class="text-info">
-															Installing...
-														</p>
+														<p class="text-info">Installing...</p>
 													</div>
 													<div id="OPENNEBULA_success" style="display: none">
 														<p class="text-success">
-															<div class="fi-icon text-success">
-																<i class="fi-check m-10 text-large"></i>Installed
-																successfully.
-															</div>
+														<div class="fi-icon text-success">
+															<i class="fi-check m-10 text-large"></i>Installed
+															successfully.
+														</div>
 														</p>
 													</div>
 													<div id="OPENNEBULA_error" style="display: none">
 														<p class="text-danger">
-															<div class="fi-icon text-danger">
-																<i class="fi-alert m-10 text-large"></i>
-															</div>
-															Install failure.
+														<div class="fi-icon text-danger">
+															<i class="fi-alert m-10 text-large"></i>
+														</div>
+														Install failure.
 														</p>
 													</div>
 												</div>
@@ -347,12 +341,11 @@
 													<span id="OPENNEBULA_LOG"><a
 														href="/servers/opennebula/log"
 														class="btn-group pull-right" target="_blank">
-														<div class="btn btn-alt">
-															<i class="glyphicon glyphicon-list text-white"></i>
-														</div>
-														<div class="btn btn-primary">
-															Log
-														</div> </a></span>
+															<div class="btn btn-alt">
+																<i class="glyphicon glyphicon-list text-white"></i>
+															</div>
+															<div class="btn btn-primary">Log</div>
+													</a></span>
 												</div>
 											</div>
 										</div>
@@ -405,19 +398,21 @@
 				<div class="step-pane" id="step3">
 					<div class="tab-pane active fade in p-30" id="dashboard">
 
-						<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+						<h1 class="text-center font-w-100">
+							Welcome <span class="text-blue">{{.Username}}</span>
+						</h1>
 						<div class="row">
 							<p
-							class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
+								class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
 								Step 3 install <a href="http://opennebula.org/" target="_blank">Opennebula
-								HOST</a>. Click log to watch the progress of the install.
+									HOST</a>. Click log to watch the progress of the install.
 							</p>
 						</div>
 
 						<div class="row">
 							<div class="col-sm-12">
 								<div
-								class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+									class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
 									<div class="row">
 										<div class="col-sm-5 text-center">
 											<div class="p-10 brad">
@@ -435,30 +430,24 @@
 											<div class="col-sm-12">
 												<div>
 													<p class="lead text-warning text-uppercase"
-													id="OPENNEBULAHOST_network_warning_text">
-														Please
+														id="OPENNEBULAHOST_network_warning_text">Please
 														network the new server to this LAN and netboot it. When
-														your server is ready click install.
-													</p>
+														your server is ready click install.</p>
 													<p class="lead text-success text-uppercase"
-													style="display: none"
-													id="OPENNEBULAHOST_network_success_text">
-														Your Node
-														is ready, you can proceed to install OPENNEBULAHOST
-													</p>
+														style="display: none"
+														id="OPENNEBULAHOST_network_success_text">Your Node is
+														ready, you can proceed to install OPENNEBULAHOST</p>
 												</div>
 												<hr />
 												<a href="" class="btn btn-primary btn-lg m-t-10"
-												id="OPENNEBULAHOST_install_button" style="display: none">Install</a>
+													id="OPENNEBULAHOST_install_button" style="display: none">Install</a>
 												<div id="OPENNEBULAHOST_waiting"></div>
 												<!-- 	onclick='opennebula_install()' id="OPENNEBULA_install_button">Install</a> -->
 											</div>
 											<div class="col-sm-12">
 												<div class="col-sm-6">
 													<div id="OPENNEBULAHOST_install_text" style="display: none">
-														<p class="text-info">
-															Installing...
-														</p>
+														<p class="text-info">Installing...</p>
 													</div>
 												</div>
 												<div class="col-sm-6">
@@ -466,16 +455,17 @@
 												</div>
 												<div id="OPENNEBULAHOST_success" style="display: none">
 													<p class="text-success">
-														<div class="fi-icon text-success">
-															<i class="fi-check m-10 text-large"></i>Installed successfully.
-														</div>
+													<div class="fi-icon text-success">
+														<i class="fi-check m-10 text-large"></i>Installed
+														successfully.
+													</div>
 													</p>
 												</div>
 												<div id="OPENNEBULAHOST_error" style="display: none">
 													<p class="text-danger">
-														<div class="fi-icon text-danger">
-															<i class="fi-alert m-10 text-large"></i>Install failure.
-														</div>
+													<div class="fi-icon text-danger">
+														<i class="fi-alert m-10 text-large"></i>Install failure.
+													</div>
 													</p>
 												</div>
 											</div>
@@ -489,38 +479,36 @@
 				<div class="step-pane" id="step4">
 					<div class="tab-pane active fade in p-30" id="dashboard">
 
-						<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+						<h1 class="text-center font-w-100">
+							Welcome <span class="text-blue">{{.Username}}</span>
+						</h1>
 						<div
-						class="bg-white p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
+							class="bg-white p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
 
 							<div class="row" id="ha_selection">
 								<div class="col-sm-8  text-center">
 									<span
-									class="text-gray-dark text-large align-with-button pos-abs"> Do you want to install
-										<p class="text-info text-bold">
-											STORAGE
-										</p> </span>
+										class="text-gray-dark text-large align-with-button pos-abs">
+										Do you want to install
+										<p class="text-info text-bold">STORAGE</p>
+									</span>
 								</div>
 								<div class="col-sm-2">
 									<div class="m-b-10">
-										<input type="radio" name="optionsRadios" value="yes"
-										class="icheck">
-										<span class="m-l-10">Yes</span>
+										<input type="radio" name="optionsRadios" value="yes" disabled
+											class="icheck"> <span class="m-l-10">Yes</span>
 									</div>
 								</div>
 								<div class="col-sm-2">
 									<div class="m-b-10">
-										<input type="radio" name="optionsRadios" value="no"
-										class="icheck" checked>
-										<span class="m-l-10">No</span>
+										<input type="radio" name="optionsRadios" value="no" disabled
+											class="icheck" checked> <span class="m-l-10">No</span>
 									</div>
 								</div>
 								<div class="col-sm-12">
 									<div class="col-sm-6">
 										<div id="STORAGE_install_text" style="display: none">
-											<p class="text-info">
-												Installing...
-											</p>
+											<p class="text-info">Installing...</p>
 										</div>
 									</div>
 									<div class="col-sm-6">
@@ -528,16 +516,17 @@
 									</div>
 									<div id="STORAGE_success" style="display: none">
 										<p class="text-success">
-											<div class="fi-icon text-success">
-												<i class="fi-check m-10 text-large"></i>Installed successfully.
-											</div>
+										<div class="fi-icon text-success">
+											<i class="fi-check m-10 text-large"></i>Installed
+											successfully.
+										</div>
 										</p>
 									</div>
 									<div id="STORAGE_error" style="display: none">
 										<p class="text-danger">
-											<div class="fi-icon text-danger">
-												<i class="fi-alert m-10 text-large"></i>Install failure.
-											</div>
+										<div class="fi-icon text-danger">
+											<i class="fi-alert m-10 text-large"></i>Install failure.
+										</div>
 										</p>
 									</div>
 								</div>
@@ -546,15 +535,13 @@
 							<div class="row" id="ha_note" style="display: none">
 								<div class="col-sm-12  text-center">
 									<p
-									class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
-										Please
-										network the new server to this LAN and netboot it. When your
-										server is ready click install.
-									</p>
+										class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
+										Please network the new server to this LAN and netboot it. When
+										your server is ready click install.</p>
 								</div>
 								<div class="col-sm-12 text-center">
 									<a href="" class="btn btn-primary btn-lg m-t-10"
-									id="STORAGE_install_button" style="display: none">Install</a>
+										id="STORAGE_install_button" style="display: none">Install</a>
 									<div id="STORAGE_waiting"></div>
 								</div>
 							</div>
@@ -565,42 +552,43 @@
 				<div class="step-pane" id="step5">
 					<div class="tab-pane active fade in p-30" id="dashboard">
 
-						<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+						<h1 class="text-center font-w-100">
+							Welcome <span class="text-blue">{{.Username}}</span>
+						</h1>
 						<div
-						class="bg-white p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
+							class="bg-white p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
 
 							<div class="row" id="storage_selection">
 								<div class="col-sm-8  text-center">
 									<span
-									class="text-gray-dark text-large align-with-button pos-abs"> Do you want to enable
-										<p class="text-info text-bold">
-											HIGH AVAILABLITY
-										</p> </span>
+										class="text-gray-dark text-large align-with-button pos-abs">
+										Do you want to enable
+										<p class="text-info text-bold">HIGH AVAILABLITY</p>
+									</span>
 								</div>
 								<div class="col-sm-2">
 									<div class="m-b-10">
 										<input type="radio" name="optionsRadios" value="yes"
-										class="icheck">
-										<span class="m-l-10">Yes</span>
+											class="icheck"> <span class="m-l-10">Yes</span>
 									</div>
 								</div>
 								<div class="col-sm-2">
 									<div class="m-b-10">
 										<input type="radio" name="optionsRadios" value="no"
-										class="icheck" checked>
-										<span class="m-l-10">No</span>
+											class="icheck" checked> <span class="m-l-10">No</span>
 									</div>
 								</div>
 							</div>
 							<hr />
 							<div class="row" id="storage_note" style="display: none">
 								<div class="col-sm-12  text-center">
+									<div class="alert alert-warning">We are working on it.
+										Coming soon.</div>
+
 									<p
-									class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
-										Please
-										network the new server to this LAN and netboot it. when your
-										server is ready click install.
-									</p>
+										class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
+										Please network the new server to this LAN and netboot it. when
+										your server is ready click install.</p>
 								</div>
 								<div class="col-sm-12 text-center">
 									<a href="" class="btn btn-primary btn-lg m-t-10">Install</a>
@@ -616,14 +604,11 @@
 				<div class="fixer-container" style="display: none" id="wzdButtons">
 					<input class="btn" id="btnWizardPrev" value="Back" type="button">
 					<a href="/dash" class="btn btn-primary" id="btnWizardDone"
-					style="display: none">Done</a>
-					<input class="btn btn-primary"
-					id="btnWizardNext" value="Next" type="button">
+						style="display: none">Done</a> <input class="btn btn-primary"
+						id="btnWizardNext" value="Next" type="button">
 				</div>
 			</div>
-			<br />
-			<br />
-			<br />
+			<br /> <br /> <br />
 		</div>
 		<!-- /well -->
 

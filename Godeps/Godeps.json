@@ -1,22 +1,22 @@
 {
 	"ImportPath": "github.com/megamsys/cloudinabox",
-	"GoVersion": "go1.3.1",
+	"GoVersion": "go1.4beta1",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/ActiveState/tail",
-			"Rev": "fd3ba4e64ca930fe21edc4c8a8bd1a075ef7f4ac"
+			"Rev": "068b72961a6bc5b4a82cf4fc14ccc724c0cfa73a"
 		},
 		{
 			"ImportPath": "github.com/Unknwon/goconfig",
-			"Rev": "0f8d8dc1c03e4602b1ad24c492b79c07c990fb49"
+			"Rev": "4fff07bba1e5b54c871a40d6606866e6d5830c79"
 		},
 		{
 			"ImportPath": "github.com/astaxie/beego",
-			"Comment": "v1.4.1-2-gfcc359a",
-			"Rev": "fcc359af11650ff3c523ece170f9ec134ffa8aef"
+			"Comment": "v1.4.1-11-g2a85c79",
+			"Rev": "2a85c79ce5fd634b451d23e2d8ebccbc60afddad"
 		},
 		{
 			"ImportPath": "github.com/beego/i18n",
@@ -29,7 +29,7 @@
 		},
 		{
 			"ImportPath": "github.com/gorilla/websocket",
-			"Rev": "a6f041ac33b84488bb44137d6866cd3c8706d792"
+			"Rev": "87f6f6a22ebfbc3f89b9ccdc7fddd1b914c095f9"
 		},
 		{
 			"ImportPath": "github.com/howeyc/fsnotify",
@@ -38,39 +38,39 @@
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
-			"Rev": "b021d0ef20de4f7ed239e2cbe3b95648d8e41e95"
+			"Rev": "7175accbed18058468c07811f76440d6e8d7cf19"
 		},
 		{
 			"ImportPath": "github.com/mattn/go-sqlite3",
-			"Rev": "a80c27ba3354e27b4c8dfbbd1165bc253ca7c522"
+			"Rev": "e5819757da0824da7e9140b1a862cafecf88159c"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/action",
-			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
+			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/cmd",
-			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
+			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/exec",
-			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
+			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/fs",
-			"Rev": "3d503eb686888de8a9b7e9e0e28b2c7786baac5a"
+			"Rev": "9676c5a18fcf9c129485773860d86b20c7984db1"
 		},
 		{
 			"ImportPath": "github.com/tsuru/config",
-			"Rev": "ec7b78d45eab5959f4e31a4a092431fa6948e9a6"
+			"Rev": "96579b79a0a66b9b6c95a8ff7c344aa512b41288"
 		},
 		{
 			"ImportPath": "gopkg.in/tomb.v1",
-			"Rev": "c131134a1947e9afd9cecfe11f4c6dff0732ae58"
+			"Rev": "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
 		},
 		{
 			"ImportPath": "gopkg.in/v1/yaml",
-			"Rev": "fc7f19eff1782a0beae3065097c776183e7d01d0"
+			"Rev": "9f9df34309c04878acc86042b16630b0f696e1de"
 		},
 		{
 			"ImportPath": "launchpad.net/gnuflag",
