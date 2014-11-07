@@ -119,7 +119,7 @@ func OpenNebulaHostInstall() error {
 // this executes all actions for opennebula install
 //
 func CephInstall() error {
-	actions := []*action.Action{&cephSCPSSH, &cephInstall}
+	actions := []*action.Action{&cephInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
