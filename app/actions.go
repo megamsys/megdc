@@ -13,7 +13,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (
-	/*
+
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -22,10 +22,9 @@ const (
 	opennebulahostverify  = "bash conf/trusty/opennebulahost/host_verify.sh"
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
 	megam                 = "bash conf/trusty/megam/megam.sh"
-	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh"
-	ceph                  = "bash conf/trusty/ceph/ceph_install.sh"
-	cephscpssh            = "bash conf/trusty/ceph/scp_ssh.sh" */
-
+	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh install"
+	ceph                  = "bash conf/trusty/ceph/ceph_install.sh install OSD1_IP OSD1_HOST OSD2_IP OSD2_HOST OSD3_IP OSD3_HOST"
+	/*
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -36,7 +35,7 @@ const (
 	megam                 = "bash conf/trusty/megam/megam_test.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
 	ceph                  = "bash conf/trusty/cobblerd/ceph_install_test.sh"
-    cephscpssh            = "bash conf/trusty/ceph/scp_ssh_test.sh"
+    */
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -310,28 +309,6 @@ var opennebulaHostInstall = action.Action{
 	MinParams: 1,
 }
 
-/**
-This is used by nodes other than one host.
-**/
-var cephSCPSSH = action.Action{
-	Name: "cephSCPSSH",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var cib CIB
-		var server orm.Servers
-		db := orm.OpenDB()
-	    dbmap := orm.GetDBMap(db)
-	    err := dbmap.SelectOne(&server, "select * from servers where Name=?", "CEPH")
-	    fmt.Println(err)
-		cib.Command = cephscpssh + " " + server.IP
-		exec, err1 := CIBExecutor(&cib)
-
-		return exec, err1
-	},
-	Backward: func(ctx action.BWContext) {
-		log.Printf("[%s] Nothing to recover")
-	},
-	MinParams: 1,
-}
 
 /*
 * Step 4: Install Ceph Storage
