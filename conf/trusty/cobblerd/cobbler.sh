@@ -123,7 +123,7 @@ install_cobbler() {
   import_trustynode_iso
 
   setup_profile_trustynode
-
+  setup_profile_cephnode
   cecho "Running Synchronisation..." $yellow
   echo "Running Synchronisation..." >> $COBBLER_LOG
   sleep 3
@@ -313,8 +313,17 @@ EOF
   cp /usr/share/megam/megamcib/conf/trusty/cobblerd/post_run_deb /var/lib/cobbler/snippets/
 
   cobbler profile edit --name="trusty-megamnode-x86_64" --kickstart="/var/lib/cobbler/kickstarts/megamnode.seed"
-
 }
+
+#--------------------------------------------------------------------------
+#This function will add profile for ceph
+#--------------------------------------------------------------------------
+setup_profile_cephnode() {
+  wget -O /var/lib/cobbler/kickstarts/megamceph.seed http://get.megam.co/cephpreseed.cfg
+  cobbler profile add --name=trusty-megamceph --distro=trusty-megamnode-x86-64 --kickstart=/var/lib/cobbler/kickstarts/megamceph.seed
+}
+
+
 #--------------------------------------------------------------------------
 #This function will restart the services
 #--------------------------------------------------------------------------
