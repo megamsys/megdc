@@ -12,6 +12,8 @@ fi
 
 echo "Installing megam.."
 
+apt-get -y install megamcommon >> $MEGAM_LOG
+
 apt-get -y install megamnilavu >> $MEGAM_LOG
 
 apt-get -y install megamgateway >> $MEGAM_LOG
