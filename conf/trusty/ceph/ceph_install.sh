@@ -151,7 +151,7 @@ echo "$ceph_user ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ceph_user
 sudo chmod 0440 /etc/sudoers.d/$ceph_user
 
 #Ceph install
-echo deb http://ceph.com/debian-firefly/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
 sudo apt-get -y update
 sudo apt-get -y install ceph-deploy ceph-common ceph-mds
