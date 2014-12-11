@@ -4,7 +4,9 @@ ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 
 echo "oneadmin ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/oneadmin            #all-nodes
 
-sudo apt-get install ntp                                                                  #all-nodes
+sudo apt-get -y install ntp                                                                  
+
+#all-nodes
 
 sudo chmod 0440 /etc/sudoers.d/oneadmin                                                  #all-nodes
 
