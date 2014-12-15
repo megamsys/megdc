@@ -6,7 +6,7 @@ ping -c 1 downloads.opennebula.org &> /dev/null
 
 sudo apt-get -y install build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils 
 
-sudo apt-get -y install lvm2 ssh bridge-utils iproute iputils-arping make
+sudo apt-get -y install lvm2 ssh iproute iputils-arping make
 
 if [ $? -ne 0 ]; then
   echo "`date`: check your network connection. downloads.opennebula.org is not reachable!" >> $ONE_INSTALL_LOG

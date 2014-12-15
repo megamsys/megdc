@@ -20,5 +20,3 @@ echo "Oneadmin Authenticated. Oneadmin can access hosts without password "
 #su oneadmin
 sudo -H -u oneadmin bash -c 'onehost create $1 -i kvm -v kvm -n dummy'
 
-#Virtual Network
-sudo brctl addif virbr0 p4p1

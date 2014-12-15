@@ -178,6 +178,8 @@ ssh-keygen -N '' -t rsa -f $user_home/.ssh/id_rsa
 sshpass -p "$ceph_password" scp -o StrictHostKeyChecking=no $user_home/.ssh/id_rsa.pub $ceph_user@$osd1_host:$user_home/.ssh/authorized_keys
 sshpass -p "$ceph_password" scp -o StrictHostKeyChecking=no $user_home/.ssh/id_rsa.pub $ceph_user@$osd2_host:$user_home/.ssh/authorized_keys
 sshpass -p "$ceph_password" scp -o StrictHostKeyChecking=no $user_home/.ssh/id_rsa.pub $ceph_user@$osd3_host:$user_home/.ssh/authorized_keys
+
+sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@192.168.2.14:/var/lib/one/.ssh/authorized_keys
 EOF
 
 cat > $user_home/.ssh/config <<EOF
