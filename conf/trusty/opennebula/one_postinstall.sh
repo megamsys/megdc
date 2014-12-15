@@ -4,7 +4,7 @@ ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 
 echo "oneadmin ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/oneadmin            #all-nodes
 
-sudo apt-get install ntp                                                                  #all-nodes
+sudo apt-get -y install ntp                                                                  #all-nodes
 
 sudo chmod 0440 /etc/sudoers.d/oneadmin                                                  #all-nodes
 
@@ -33,3 +33,9 @@ while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRT
 
 ip
 sed -i "s/^[ \t]*:host:.*/:host: $ipaddr/" /etc/one/sunstone-server.conf
+
+sudo -H -u oneadmin bash -c "echo \"TM_MAD=ssh\" > /tmp/ds_tm_mad"
+sudo -H -u oneadmin bash -c "onedatastore update 0 /tmp/ds_tm_mad"
+sudo -H -u oneadmin bash -c "onedatastore update 1 /tmp/ds_tm_mad"
+sudo -H -u oneadmin bash -c "onedatastore update 2 /tmp/ds_tm_mad"
+
