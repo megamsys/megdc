@@ -8,7 +8,7 @@ import (
 	"github.com/megamsys/libgo/exec"
 	"log"
 	"strings"
-	"time"
+//	"time"
 )
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
@@ -24,7 +24,7 @@ const (
 	megam                 = "bash conf/trusty/megam/megam.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh install"
 	ceph                  = "bash conf/trusty/ceph/ceph_install.sh install OSD1_IP OSD1_HOST OSD2_IP OSD2_HOST OSD3_IP OSD3_HOST"
-	/*
+	 /*
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -35,7 +35,7 @@ const (
 	megam                 = "bash conf/trusty/megam/megam_test.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
 	ceph                  = "bash conf/trusty/cobblerd/ceph_install_test.sh"
-    */
+   */
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -258,6 +258,44 @@ var opennebulaHostInstall = action.Action{
 	Name: "opennebulaHostInstall",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
 		var cib CIB
+		cib.Command = opennebulahostinstall
+		exec, err1 := CIBExecutor(&cib)
+		if err1 != nil {
+			fmt.Println("server insert error")
+			return &cib, err1
+		}
+		// write server details in database
+
+		// insert rows - auto increment PKs will be set properly after the insert
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		newserver := orm.NewServer("OPENNEBULAHOST")
+		orm.ConnectToTable(dbmap, "servers", newserver)
+		err := dbmap.Insert(&newserver)
+
+		if err != nil {
+			fmt.Println("server insert error======>")
+			return &cib, err
+		}
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+		err := orm.DeleteRowFromServerName(dbmap, "OPENNEBULAHOST")
+		if err != nil {
+			log.Printf("Server delete error")
+			///return &cib, err
+		}
+		log.Printf(" Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+/*var opennebulaHostInstall = action.Action{
+	Name: "opennebulaHostInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
 		var server orm.Servers
 		cib.Command = opennebulahostinstall
 		exec, err1 := CIBExecutor(&cib)
@@ -307,7 +345,7 @@ var opennebulaHostInstall = action.Action{
 		log.Printf(" Nothing to recover")
 	},
 	MinParams: 1,
-}
+}*/
 
 
 /*

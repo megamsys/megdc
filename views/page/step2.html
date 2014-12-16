@@ -1,0 +1,157 @@
+<div class="tab-pane active fade in p-30" id="dashboard">
+
+	<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+	<div class="row">
+		<p
+		class="m-b-30 p-b-30 text-gray-alt text-uppercase text-center col-lg-8 col-lg-offset-2">
+			Step 2 install <a href="http://opennebula.org/" target="_blank">Opennebula</a>.
+			Click log to watch the progress of the install.
+		</p>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+				<div class="row">
+					<div class="col-sm-5 text-center">
+						<div class="p-10 brad">
+							<a href="http://opennebula.org/"> <img
+							src="/static_source/images/opennebula.png" alt=""
+							class="img-circle" width="115"> </a>
+
+							<div>
+								<div>
+									<div>
+										<h3 class="m-b-0">OPENNEBULA</h3>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-7">
+						<div class="col-sm-12">
+							<div>
+								<h4>Version</h4>
+								<p class="text-gray-alt">
+									4.8
+								</p>
+							</div>
+							<hr />
+						</div>
+						<div class="col-sm-12">
+							<div class="col-sm-4">
+								<a href="" class="btn btn-primary btn-lg m-t-10"
+								id="OPENNEBULA_install_button">Install</a>
+								<div id="OPENNEBULA_install_text" style="display: none">
+									<p class="text-info">
+										Installing...
+									</p>
+								</div>
+								<div id="OPENNEBULA_success" style="display: none">
+									<p class="text-success">
+										<div class="fi-icon text-success">
+											<i class="fi-check m-10 text-large"></i>Installed
+											successfully.
+										</div>
+									</p>
+								</div>
+								<div id="OPENNEBULA_error" style="display: none">
+									<p class="text-danger">
+										<div class="fi-icon text-danger">
+											<i class="fi-alert m-10 text-large"></i>
+										</div>
+										Install failure.
+									</p>
+								</div>
+							</div>
+							<div class="col-sm-4">
+								<div id="OPENNEBULA_waiting1"></div>
+							</div>
+							<div class="col-sm-4">
+								<span id="OPENNEBULA_LOG"><a
+									href="/servers/opennebula/log"
+									class="btn-group pull-right" target="_blank">
+									<div class="btn btn-alt">
+										<i class="glyphicon glyphicon-list text-white"></i>
+									</div>
+									<div class="btn btn-primary">
+										Log
+									</div> </a></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-12">
+			<div class="bg-white p-30 brad b-bot-2px-gray-light b-right-1px-gray-light">
+				<div class="row">
+					<div class="col-sm-5 text-center">
+						<div class="p-10 brad">
+							<i class="glyphicon glyphicon-tasks m-10 text-large"></i>
+							<div>
+								<div>
+									<div>
+										<h3 class="m-b-0">OPENNEBULA HOST</h3>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-7">
+						<div class="col-sm-12">
+							<div>
+								<p class="lead text-success text-uppercase"	>
+									Install OPENNEBULAHOST in master node
+								</p>
+							</div>
+							<hr />
+						</div>
+						<div class="col-sm-12">
+							<div class="col-sm-4">
+								<a href="" class="btn btn-primary btn-lg m-t-10"
+								id="OPENNEBULAHOST_install_button">Install</a>
+								<div id="OPENNEBULAHOST_install_text" style="display: none">
+									<p class="text-info">
+										Installing...
+									</p>
+								</div>
+								<div id="OPENNEBULAHOST_success" style="display: none">
+									<p class="text-success">
+										<div class="fi-icon text-success">
+											<i class="fi-check m-10 text-large"></i>Installed
+											successfully.
+										</div>
+									</p>
+								</div>
+								<div id="OPENNEBULAHOST_error" style="display: none">
+									<p class="text-danger">
+										<div class="fi-icon text-danger">
+											<i class="fi-alert m-10 text-large"></i>
+										</div>
+										Install failure.
+									</p>
+								</div>
+							</div>
+							<div class="col-sm-4">
+								<div id="OPENNEBULAHOST_waiting1"></div>
+							</div>
+							<div class="col-sm-4">
+								<span id="OPENNEBULAHOST_LOG"><a
+									href="/servers/opennebulahost/log"
+									class="btn-group pull-right" target="_blank">
+									<div class="btn btn-alt">
+										<i class="glyphicon glyphicon-list text-white"></i>
+									</div>
+									<div class="btn btn-primary">
+										Log
+									</div> </a></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>		
+
+	</div>
+</div>
