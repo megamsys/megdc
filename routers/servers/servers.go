@@ -34,7 +34,7 @@ import (
 	"time"
 )
 
-var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA"}
+var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST"}
 
 
 // PageRouter serves home page.
