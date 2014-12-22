@@ -105,8 +105,21 @@ func NebulaInstall() error {
 //
 // this executes all actions for opennebula install
 //
-func OpenNebulaHostInstall() error {
-	actions := []*action.Action{&opennebulaHostVerify, &opennebulaHostInstall}
+func OpenNebulaHostMasterInstall() error {
+	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostMasterInstall}
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//
+// this executes all actions for opennebula install
+//
+func OpenNebulaHostNodeInstall() error {
+	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostNodeInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {

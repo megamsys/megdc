@@ -45,6 +45,7 @@ func InitDB(dbmap *gorp.DbMap) error {
     // specifying that the Id property is an auto incrementing PK
     dbmap.AddTableWithName(Users{}, "users").SetKeys(true, "Id")
     dbmap.AddTableWithName(Servers{}, "servers").SetKeys(true, "Id")
+    dbmap.AddTableWithName(Nodes{}, "nodes").SetKeys(true, "Id")
     // create the table. in a production system you'd generally
     // use a migration tool, or create the tables via scripts
     err := dbmap.CreateTablesIfNotExists()

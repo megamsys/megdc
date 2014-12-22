@@ -1,0 +1,49 @@
+ {{template "base/base.html" .}} {{ define "body" }}
+<div id="dashboard-page" class="bg-gray-light">
+	{{ template "base/nav.html" .}}
+
+	<div class="sidebar bg-gray-dark text-white text-center pushy pushy-left">
+		<header class="bg-g-ln-gray p-tb-30 pm-tb-10 p-lr-10 b-bot-2px-gray-dark hidden-xs">
+			<a href="#" data-target="#avatar-toggle" class="hover-no-underline dropdown-toggle" data-toggle="dropdown"> <span class="text-gray-light">{{.Username}}</span> <span class="caret white"></span> </a>
+		</header>
+		<ul id="avatar-toggle" class="dropdown-sidebar-avatar" role="menu" aria-labelledby="dLabel">
+			<li>
+				<a href="/logout">Sign Out</a>
+			</li>
+		</ul>
+
+		<hr class="no-margin">
+
+		<ul class="unstyled nav">
+			<li>
+				<a href="dash" class="text-left">Dashboard</a>
+			</li>
+			<li>
+				<a href="nodes" class="text-left">Nodes</a>
+			</li>
+			<li class="active">
+				<a href="ha" class="text-left">HA nodes</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="preloader">
+		<div class="timer"></div>
+	</div>
+	
+	<div id="container" class="main-content">
+	 
+	  <button class="menu-btn btn btn-bordered text-gray-alt text-bold top-left-corner">
+			&#9776; MENU
+		</button>
+	
+		<div class="p-30">
+			<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>			
+			<br/>
+			<br/>	
+			{{ template "page/step5.html" .}}
+		</div>
+	</div>
+</div>
+<!-- /main content -->
+{{ end }}
