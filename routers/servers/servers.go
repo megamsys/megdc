@@ -35,7 +35,7 @@ import (
 )
 
 var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST"}
-
+const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
 // PageRouter serves home page.
 type ServerRouter struct {
@@ -142,6 +142,7 @@ func (this *ServerRouter) MasterInstall() {
 	result["data"] = servers_output
 }
 
+
 func (this *ServerRouter) NodeInstallRequest() {
 	result := map[string]interface{}{
 		"success": false,
@@ -151,16 +152,25 @@ func (this *ServerRouter) NodeInstallRequest() {
 		this.Data["json"] = result
 		this.ServeJson()
 	}()
-	
+	var nodes orm.Nodes
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
 	node_err := servers.InstallNode(nodeip)
 	fmt.Printf("%s", node_err)
 	if node_err != nil {
 		result["success"] = false
 	} else {
+		uerr := updateNode(nodeip)
+		fmt.Println(uerr)
+		err := dbmap.SelectOne(&nodes, "select * from nodes where IP=?", nodeip)
+		if err == nil {
+			jsonMsg, _ := json.Marshal(nodes)
+			result["data"] = string(jsonMsg)
+		}
 		result["success"] = true
 	}
-	
 }
+
 
 func (this *ServerRouter) NodeInstall() {
 	result := map[string]interface{}{
@@ -278,8 +288,11 @@ func (this *ServerRouter) GetNodeIP() {
 		}
 
 		for line := range t.Lines {
+			fmt.Println("-------------------------")
 			fmt.Println(line.Text)
 			err1 := dbmap.SelectOne(&node, "select * from nodes where IP=?", line.Text)
+			fmt.Println("++++++++++++++++++++++++")
+			fmt.Println(err1)
 			if err1 != nil {
 				newnode := orm.NewNode(line.Text)
 				orm.ConnectToTable(dbmap, "nodes", newnode)
@@ -298,7 +311,7 @@ func (this *ServerRouter) GetNodeIP() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				break
+				return
 			}
 		}
 }
@@ -475,3 +488,32 @@ func isUserExist(subscribers *list.List, user string) bool {
 	}
 	return false
 }
+
+func updateNode(nodeip string) error {
+        // insert rows - auto increment PKs will be set properly after the insert
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+
+		node := orm.Nodes{}
+		err := dbmap.SelectOne(&node, "select * from nodes where IP=?", nodeip)
+		if err != nil {
+			fmt.Println("node select error======>")
+			return err
+		}
+		err3 := orm.DeleteRowFromNodeIP(dbmap, nodeip)
+		if err3 != nil {
+			log.Printf("node delete error")
+			return err3
+		}
+		time := time.Now()
+		update_node := orm.Nodes{Id: node.Id, Install: true, IP: node.IP, InstallDate: node.InstallDate, UpdateDate: time.Format(layout)}
+		orm.ConnectToTable(dbmap, "nodes", update_node)
+		err2 := dbmap.Insert(&update_node)
+	
+		if err2 != nil {
+			fmt.Println("node insert error======>")
+			return err2
+		}	
+	return nil
+}	
+

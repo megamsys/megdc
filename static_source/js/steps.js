@@ -175,13 +175,15 @@ function nodeInstall() {
 		async : true,
 		crossDomain : "true",
 		success : function(response) {
-			var res = JSON.parse(response);
-			console.log(res.success);
+			var res = JSON.parse(response);			
 			if (res.success) {
-				var ser = JSON.parse(res.data);
+			//	var ser = JSON.parse(res.data);
 				$('#' + serverID).hide();
 				$('#' + install_text).hide();
-				$('#' + successID).show();								
+				$('#' + successID).show();
+				if (res.data) {	
+				  updateNodesList(res.data);
+				}							
 			} else {
 				$('#' + serverID).hide();
 				$('#' + install_text).hide();
@@ -200,135 +202,6 @@ function nodeInstall() {
 	return false;
 }
 
-/*function installProcess(i) {
- var servers = [ "MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST", "STORAGE" ];
- serverID = servers[i].concat("_waiting1");
- successID = servers[i].concat("_success");
- errorID = servers[i].concat("_error");
- buttonID = servers[i].concat("_install_button");
-
- if (i > 1) {
- console.log("opennebula entry");
- $('#' + serverID).waiting({
- className : 'waiting-circles',
- elements : 8,
- radius : 20,
- auto : true
- });
- $('#' + buttonID).hide();
- } else {
- $('#' + serverID).waiting({
- className : 'waiting-circles',
- elements : 8,
- radius : 20,
- auto : true
- });
- // $('#' + serverID).waiting({
- // className : 'waiting-blocks',
- // elements : 5,
- // speed : 200,
- // auto : true
- // });
- progress = servers[i].concat("_PROGRESS");
- $("#" + progress).show();
- $("." + progress).css('width', '50%');
- log = servers[i].concat("_LOG");
- $("#" + log).show();
-
- }
-
- $('#' + serverID).show();
- install_text = servers[i].concat("_install_text");
- $('#' + install_text).show();
-
- $.ajax({
- type : "GET",
- url : "/servers/" + servers[i],
- data : servers[i],
- dataType : 'text',
- async : true,
- crossDomain : "true",
- success : function(response) {
- var res = JSON.parse(response);
- console.log(res.success);
- if (res.success) {
- $('#' + serverID).hide();
- $('#' + install_text).hide();
- $('#' + successID).show();
- if (i < 2) {
- $("." + progress).css('width', '100%');
- }
- if (i == 0) {
- $("#wzdButtons").show();
- //installProcess(i + 1);
- }
- //if (i == 1) {
- //$("#wzdButtons").show();
- //}
- } else {
- $('#' + serverID).hide();
- $('#' + install_text).hide();
- $('#' + errorID).show();
- if (i == 0) {
- $("." + progress).css('width', '100%');
- $('#change_' + servers[i]).removeClass('progress-bar-info')
- .addClass('progress-bar-danger');
- }
- }
- },
- error : function(xhr, status) {
- alert("error " + status);
- $('#' + serverID).hide();
- $('#' + install_text).hide();
- $('#' + errorID).show();
- if (i == 0) {
- $("." + progress).css('width', '100%');
- $('#change_' + servers[i]).removeClass('progress-bar-info')
- .addClass('progress-bar-danger');
- }
- }
- });
- return false;
- }
-
- function install_check(pname) {
- serverID = pname.concat("_waiting1");
- successID = pname.concat("_success");
- errorID = pname.concat("_error");
- buttonID = pname.concat("_install_button");
- textID = pname.concat("_install_text");
-
- $.ajax({
- type : "GET",
- url : "/servers/verify/" + pname,
- data : pname,
- dataType : 'text',
- async : true,
- crossDomain : "true",
- success : function(response) {
- var res = JSON.parse(response);
- if (res.success) {
- $('#' + buttonID).hide();
- $('#' + serverID).hide();
- $('#' + textID).hide();
- $('#' + successID).show();
- } else {
- $('#' + serverID).hide();
- $('#' + textID).hide();
- $('#' + errorID).hide();
- $('#' + buttonID).show();
- }
- },
- error : function(xhr, status) {
- $('#' + serverID).hide();
- $('#' + textID).hide();
- $('#' + errorID).hide();
- $('#' + buttonID).show();
- }
- });
- return false;
- }
- */
 
 function install_check(i, servers) {
 	console.log(i);
@@ -409,3 +282,18 @@ function waiting_nodes_connection(nodes) {
 	});
 	return false;
 }
+
+function updateNodesList(res) {
+   var obj = JSON.parse(res);
+    $("#nodes_list").append(
+		'<tr style="height: 50px;">\
+		<td class="success">' + obj.IP + '</td>\
+		<td class="warning">' + get_install_text(obj.Install) + '</td>\
+		<td class="danger">' + obj.InstallDate + '</td>\
+		<td class="active">' + obj.UpdateDate + '</td>\
+		</tr>');
+}
+
+
+
+

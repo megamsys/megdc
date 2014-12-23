@@ -1,23 +1,32 @@
 {{template "base/base.html" .}} {{ define "body" }}
-<div id="dashboard-page" class="bg-gray-light">
+<div id="dashboard-page" class="bg-white">
 	{{ template "base/nav.html" .}}
 
     <script type='text/javascript'>
 		$(document).ready(function() {
 			$.ajax({
-				type : "GET",
-				url : "/getnodes",
-				dataType : 'text',
-				async : true,
-				crossDomain : "true",
-				success : function(response) {
-					var res = JSON.parse(response);
-					
+		type : "GET",
+		url : "/getnodes",
+		dataType : 'text',
+		async : true,
+		crossDomain : "true",
+		success : function(response) {
+				var res = JSON.parse(response);
+                $.each(JSON.parse(res.data), function(idx, obj) {                   
+						$("#nodes_list").append(
+						'<tr style="height: 50px;">\
+						<td class="success">' + obj.IP + '</td>\
+						<td class="warning">' + get_install_text(obj.Install) + '</td>\
+						<td class="danger">' + obj.InstallDate + '</td>\
+						<td class="active">' + obj.UpdateDate + '</td>\
+						</tr>');
+						
+					});					
 				},
 				error : function(xhr, status) {
 					console.log(status);
-				}
-			});
+			}
+	});
 		});		
 
 	</script> 
@@ -55,7 +64,7 @@
 	<input type="hidden" id="hostip">
 		<div class="tab-pane active fade in p-30" id="dashboard">
 
-			<div class="bg-white p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
+			<div class="bg-gray-light p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
 
 				<div class="row" id="storage_selection">
 					<div class="col-sm-8  text-center">
@@ -83,9 +92,7 @@
 				<hr />
 				<div class="row" id="storage_note" style="display: none">
 					<div class="col-sm-12  text-center">
-
-						<p
-						class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
+						<p class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
 							Please network the new server to this LAN and netboot it. when
 							your server is ready click install.
 						</p>
@@ -135,7 +142,7 @@
 					<table class="table table-condensed">
 						<thead>
 							<tr>
-								<th>Name</th>
+								<th>Ip</th>
 								<th>Status</th>
 								<th>Install date</th>
 								<th>Update Date</th>

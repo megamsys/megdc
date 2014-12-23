@@ -60,9 +60,24 @@ func ConnectToTable(dbmap *gorp.DbMap, tablename string, field interface{}) erro
     return nil
 }
 
+func ConnectToTableWithoutKey(dbmap *gorp.DbMap, tablename string, field interface{}) error {
+	// add a table, setting the table name to 'posts' and
+    // specifying that the Id property is an auto incrementing PK
+    dbmap.AddTableWithName(field, tablename)
+    return nil
+}
+
+
 func DeleteRowFromServerName(dbmap *gorp.DbMap, serverName string) error {
 	// delete row manually via Exec
     _, err := dbmap.Exec("delete from servers where Name=?", serverName)
+    CheckErr(err, "Exec failed")
+    return err
+}
+
+func DeleteRowFromNodeIP(dbmap *gorp.DbMap, nodeip string) error {
+	// delete row manually via Exec
+    _, err := dbmap.Exec("delete from nodes where IP=?", nodeip)
     CheckErr(err, "Exec failed")
     return err
 }
