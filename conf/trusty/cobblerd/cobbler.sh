@@ -129,7 +129,8 @@ install_cobbler() {
   sleep 3
   cobbler sync
   sleep 10
-
+  mv /tftpboot/ /var/lib/                       #Who place the file here?
+  restart_all
   echo "Syncing repositories..." >> $COBBLER_LOG
   cobbler reposync &
   echo "Reposync completed..." >> $COBBLER_LOG
