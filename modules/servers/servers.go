@@ -20,7 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/megamsys/cloudinabox/app"
-	"github.com/megamsys/cloudinabox/models/orm"
+//	"github.com/megamsys/cloudinabox/models/orm"
 	"net/http"
 )
 
@@ -49,7 +49,7 @@ func InstallServers(serverName string) error {
 			return err
 		}
 	case "OPENNEBULAHOST":
-		err = app.OpenNebulaHostInstall()
+		err = app.OpenNebulaHostMasterInstall()
 		if err != nil {
 			fmt.Printf("Error: Install error for [%s]", serverName)
 			fmt.Println(err)
@@ -62,14 +62,20 @@ func InstallServers(serverName string) error {
 			fmt.Println(err)
 			return err
 		}
+	case "NODEINSTALL":
+		err = app.OpenNebulaHostNodeInstall()
+		if err != nil {
+			fmt.Printf("Error: Install error for [%s]", serverName)
+			fmt.Println(err)
+			return err
+		}	
 
 	}
 	return nil
 }
 
-func InstallNode(server *orm.Servers) error {
-	url := "http://" + server.IP + ":8077/servernodes/nodes/" + 
-server.Name
+func InstallNode(nodeip string) error {
+	url := "http://" + nodeip + ":8078/servernodes/nodes/install"
 	res, err := http.Get(url)
 	if err != nil {
 		return err

@@ -1,72 +1,4 @@
-{{template "base/base.html" .}} {{ define "body" }}
-<div id="dashboard-page" class="bg-gray-light">
-	{{ template "base/nav.html" .}}
-
-	<script type='text/javascript'>
-		$(document).ready(function() {
-			$.ajax({
-				type : "GET",
-				url : "/servers",
-				dataType : 'text',
-				async : true,
-				crossDomain : "true",
-				success : function(response) {
-					var res = JSON.parse(response);
-					$.each(res.data, function(idx, obj) {
-						var ser = JSON.parse(obj);
-
-						//$("#servers_list").append(
-						//'<tr style="height: 50px;">\
-						//<td class="success">' + ser.Name + '</td>\
-						//<td class="warning">' + get_install_text(ser.Install) + '</td>\
-						//<td class="danger">' + ser.InstallDate + '</td>\
-						//<td class="active">' + ser.UpdateDate + '</td>\
-						//</tr>');
-						$("#" + ser.Name + "_status").text(get_install_text(ser.Install, ser.Name));
-						$("#" + ser.Name + "_installdate").text(ser.InstallDate);
-						$("#" + ser.Name + "_updatedate").text(ser.UpdateDate);
-
-					});
-				},
-				error : function(xhr, status) {
-					console.log(status);
-				}
-			});
-		});		
-
-	</script>
-
-	<div class="sidebar bg-gray-dark text-white text-center pushy pushy-left">
-		<header class="bg-g-ln-gray p-tb-30 pm-tb-10 p-lr-10 b-bot-2px-gray-dark hidden-xs">
-			<a href="#" data-target="#avatar-toggle" class="hover-no-underline dropdown-toggle" data-toggle="dropdown"> <span class="text-gray-light">{{.Username}}</span> <span class="caret white"></span> </a>
-		</header>
-		<ul id="avatar-toggle" class="dropdown-sidebar-avatar" role="menu" aria-labelledby="dLabel">
-			<li>
-				<a href="/logout">Sign Out</a>
-			</li>
-		</ul>
-
-		<hr class="no-margin">
-
-		<ul class="unstyled nav">
-			<li class="active">
-				<a href="#" class="text-left" id="dashboard">Dashboard</a>
-			</li>
-			<li>
-				<a href="nodes" class="text-left">Nodes</a>
-			</li>
-			<li>
-				<a href="ha" class="text-left">HA nodes</a>
-			</li>
-		</ul>
-	</div>
-
-	<div class="preloader">
-		<div class="timer"></div>
-	</div>
-
-	<div id="container" class="main-content p-30 tp-t-60 tp-lr-10">
-		<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
+	<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>
 		<br/>
 		<br/>
 
@@ -308,10 +240,3 @@
 				</div>
 			</div>
 		</div>
-
-	</div>
-</div>
-<!-- /main content -->
-</div>
-
-{{ end }}

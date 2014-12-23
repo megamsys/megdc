@@ -6,6 +6,7 @@ import (
 	"github.com/megamsys/cloudinabox/routers/auth"
 	"github.com/megamsys/cloudinabox/routers/page"
 	"github.com/megamsys/cloudinabox/routers/servers"
+	"github.com/megamsys/cloudinabox/routers/nodes"
 	"github.com/megamsys/cloudinabox/modules/utils"
 //	"github.com/tsuru/config"
 	"log"
@@ -44,8 +45,13 @@ func handlerWeb() {
 	beego.Router("/servers/:id/log", server, "get:Log")
 	beego.Router("/servers/getlog", server, "get:GetLog")
 	beego.Router("/servers/verify/:name", server, "get:Verify")
-	beego.Router("/servers/:servername", server, "get:MasterInstall")
-	beego.Router("/servers/nodes/:nodename", server, "get:NodesInstall")
+	beego.Router("/servers/install/:servername", server, "get:MasterInstall")
+	beego.Router("/servers/getIP", server, "get:GetNodeIP")
+	nodes := new(nodes.NodesRouter)
+	beego.Router("/nodes/request/:nodeip", server, "get:NodeInstallRequest")
+	beego.Router("/nodes", nodes, "get:Nodes")
+	beego.Router("/getnodes", nodes, "get:GetNodes")
+	beego.Router("/ha", nodes, "get:Ha")
 
 	//port, _ := config.GetString("beego:http_port")
 	port := utils.GetPort()

@@ -1,0 +1,155 @@
+{{template "base/base.html" .}} {{ define "body" }}
+<div id="dashboard-page" class="bg-gray-light">
+	{{ template "base/nav.html" .}}
+
+    <script type='text/javascript'>
+		$(document).ready(function() {
+			$.ajax({
+				type : "GET",
+				url : "/getnodes",
+				dataType : 'text',
+				async : true,
+				crossDomain : "true",
+				success : function(response) {
+					var res = JSON.parse(response);
+					
+				},
+				error : function(xhr, status) {
+					console.log(status);
+				}
+			});
+		});		
+
+	</script> 
+
+	<div class="sidebar bg-gray-dark text-white text-center pushy pushy-left">
+		<header class="bg-g-ln-gray p-tb-30 pm-tb-10 p-lr-10 b-bot-2px-gray-dark hidden-xs">
+			<a href="#" data-target="#avatar-toggle" class="hover-no-underline dropdown-toggle" data-toggle="dropdown"> <span class="text-gray-light">{{.Username}}</span> <span class="caret white"></span> </a>
+		</header>
+		<ul id="avatar-toggle" class="dropdown-sidebar-avatar" role="menu" aria-labelledby="dLabel">
+			<li>
+				<a href="/logout">Sign Out</a>
+			</li>
+		</ul>
+
+		<hr class="no-margin">
+
+		<ul class="unstyled nav">
+			<li>
+				<a href="dash" class="text-left">Dashboard</a>
+			</li>
+			<li class="active">
+				<a href="nodes" class="text-left">Nodes</a>
+			</li>
+			<li>
+				<a href="ha" class="text-left">HA nodes</a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="preloader">
+		<div class="timer"></div>
+	</div>
+    
+	<div id="container" class="main-content">
+	<input type="hidden" id="hostip">
+		<div class="tab-pane active fade in p-30" id="dashboard">
+
+			<div class="bg-white p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
+
+				<div class="row" id="storage_selection">
+					<div class="col-sm-8  text-center">
+						<span
+						class="text-gray-dark text-large align-with-button pos-abs"> Do you want to add
+							<p class="text-info text-bold">
+								Compute/Storage
+							</p> </span>
+					</div>
+					<div class="col-sm-2">
+						<div class="m-b-10">
+							<input type="radio" name="optionsRadios" value="yes"
+							class="icheck">
+							<span class="m-l-10">Yes</span>
+						</div>
+					</div>
+					<div class="col-sm-2">
+						<div class="m-b-10">
+							<input type="radio" name="optionsRadios" value="no"
+							class="icheck" checked>
+							<span class="m-l-10">No</span>
+						</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row" id="storage_note" style="display: none">
+					<div class="col-sm-12  text-center">
+
+						<p
+						class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
+							Please network the new server to this LAN and netboot it. when
+							your server is ready click install.
+						</p>
+					</div>
+					<div class="col-sm-12 text-center">
+						<a href="" class="btn btn-primary btn-lg m-t-10"
+						id="COMPUTE_install_button" style="display: none">Install</a>
+						<div id="COMPUTE_waiting"></div>
+					</div>
+					<div class="col-sm-12">
+						<div class="col-sm-6">
+							<div id="COMPUTE_install_text" style="display: none">
+								<p class="text-info">
+									Installing...
+								</p>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div id="COMPUTE_waiting1"></div>
+						</div>
+						<div id="COMPUTE_success" style="display: none">
+							<p class="text-success">
+								<div class="fi-icon text-success">
+									<i class="fi-check m-10 text-large"></i>Installed
+									successfully.
+								</div>
+							</p>
+						</div>
+						<div id="COMPUTE_error" style="display: none">
+							<p class="text-danger">
+								<div class="fi-icon text-danger">
+									<i class="fi-alert m-10 text-large"></i>Install failure.
+								</div>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-sm-12">
+			<h1 class="text-center font-w-100"> Compute/Storages</h1>
+			<br/>
+			<br/>
+			<div class="col-sm-12">
+				<div class="table-responsive">
+					<table class="table table-condensed">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Status</th>
+								<th>Install date</th>
+								<th>Update Date</th>
+								<th>#</th>
+							</tr>
+						</thead>
+						<tbody id="nodes_list">
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /main content -->
+{{ end }}

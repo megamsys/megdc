@@ -26,13 +26,13 @@ func handlerNode() {
 	beego.Router("/servernodes/:id/log", server, "get:Log")
 	beego.Router("/servernodes/getlog", server, "get:GetLog")
 	beego.Router("/servernodes/verify/:name", server, "get:Verify")
-	beego.Router("/servernodes/nodes/:nodename", server, "get:NodeInstall")
+	beego.Router("/servernodes/nodes/install", server, "get:NodeInstall")
 	//	beego.Router("/servernodes/streamlog", server, "get:StreamLog")
 
 
 	port, _ := config.GetString("beego:http_port")
 	if port == "" {
-		port = "8077"
+		port = "8078"
 	}
 	http_port, _ := strconv.Atoi(port)
 	beego.HttpPort = http_port

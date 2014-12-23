@@ -1,6 +1,6 @@
 {{template "base/base.html" .}} {{ define "body" }}
 
-<body id="dashboard-page" class="bg-gray-light">
+<body id="dashboard-page" class="bg-gray-light" style="overflow:hidden; margin:0">
 	{{ template "base/nav.html" .}}
 
 	<script type='text/javascript'>
@@ -13,14 +13,10 @@
 			});
 
 			$('#MyWizard').on('change', function(e, data) {
-				if (data.step === 3 && data.direction === 'next') {
+				if (data.step === 2 && data.direction === 'next') {
 					$('#btnWizardNext').hide();
 					$('#btnWizardDone').show();
-				}
-
-			//	if (data.step === 2 && data.direction === 'next') {
-			//		waiting_nodes_connection("OPENNEBULAHOST");
-			//	}
+				}			
 
 				if (data.step === 2 && data.direction === 'next') {
 					waiting_nodes_connection("STORAGE");
@@ -30,11 +26,9 @@
 				if (item.step == 1) {
 				    var servers = [ "OPENNEBULA", "OPENNEBULAHOST"];
 	                install_check(0, servers);
-				//	install_check("OPENNEBULA");
 				}
 
 				if (data.direction === 'previous') {
-
 					$('#btnWizardNext').show();
 					$('#btnWizardDone').hide();
 				}
@@ -86,11 +80,7 @@
 					<li data-target="#step3">
 						<span class="badge">3</span>Step 3<span
 						class="chevron"></span>
-					</li>
-					<li data-target="#step4">
-						<span class="badge">4</span>Step 4<span
-						class="chevron"></span>
-					</li>					
+					</li>								
 				</ul>
 				<div class="actions">
 					<input class="btn" id="btnWizardPrev" value="Prev" type="button">
@@ -109,10 +99,7 @@
 				</div>				
 				<div class="step-pane" id="step3">
 					{{ template "page/step4.html" .}}
-				</div>
-				<div class="step-pane" id="step4">
-					{{ template "page/step5.html" .}}
-				</div>
+				</div>				
 			</div>
 		</div>
 	</div>

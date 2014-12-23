@@ -86,6 +86,7 @@ func (this *ServerRouter) Get() {
 
 func (this *ServerRouter) MasterInstall() {
 	var server orm.Servers
+	var servers_output string
 	result := map[string]interface{}{
 		"success": false,
 	}
@@ -107,15 +108,15 @@ func (this *ServerRouter) MasterInstall() {
 	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
 	fmt.Println(err)
 	if server.Install != true {
-		if len(server.IP) > 0 {
-			node_err := servers.InstallNode(&server)
-			fmt.Printf("%s", node_err)
-			if node_err != nil {
-				result["success"] = false
-			} else {
+		//if len(server.IP) > 0 {
+		//	node_err := servers.InstallNode(&server)
+		//	fmt.Printf("%s", node_err)
+		//	if node_err != nil {
+		//		result["success"] = false
+		//	} else {
 				result["success"] = true
-			}
-		} else {
+		//	}
+		//} else {
 			err := servers.InstallServers(servername)
 			fmt.Printf("%s", err)
 			if err != nil {
@@ -123,10 +124,42 @@ func (this *ServerRouter) MasterInstall() {
 			} else {
 				result["success"] = true
 			}
-		}
+	//	}
 	} else {
 		result["success"] = true
 	}
+	dberr := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
+	if dberr != nil {
+			tmpserver := &orm.Servers{0, servername, false, "", "", ""}
+			jsonMsg, _ := json.Marshal(tmpserver)
+			servers_output = string(jsonMsg)
+			log.Printf("[%s] SQL select  {%s}\n%v\n", servername, jsonMsg, servers_output)
+	} else {
+			jsonMsg, _ := json.Marshal(server)
+			servers_output = string(jsonMsg)
+			log.Printf("[%s] SQL select ignored {%s}\n%v\n", servername, jsonMsg, servers_output)
+	}
+	result["data"] = servers_output
+}
+
+func (this *ServerRouter) NodeInstallRequest() {
+	result := map[string]interface{}{
+		"success": false,
+	}
+    nodeip := this.Ctx.Input.Param(":nodeip")
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	node_err := servers.InstallNode(nodeip)
+	fmt.Printf("%s", node_err)
+	if node_err != nil {
+		result["success"] = false
+	} else {
+		result["success"] = true
+	}
+	
 }
 
 func (this *ServerRouter) NodeInstall() {
@@ -138,12 +171,10 @@ func (this *ServerRouter) NodeInstall() {
 		this.Data["json"] = result
 		this.ServeJson()
 	}()
-
-	this.Data["IsLoginPage"] = true
-	this.Data["Username"] = this.GetUser()
-	servername := this.Ctx.Input.Param(":nodename")
-	fmt.Println(servername)
-
+	
+	//servername := this.Ctx.Input.Param(":nodename")
+	
+    servername := "NODEINSTALL"
 	err := servers.InstallServers(servername)
 	fmt.Printf("%s", err)
 	if err != nil {
@@ -215,9 +246,9 @@ func (this *ServerRouter) Verify() {
 	}
 }
 
-func (this *ServerRouter) NodesInstall() {
-	var server orm.Servers
-	nodename := this.Ctx.Input.Param(":nodename")
+func (this *ServerRouter) GetNodeIP() {
+	var node orm.Nodes
+	//nodename := this.Ctx.Input.Param(":nodename")
 	filePath := "/var/lib/megam/megamcib/boxips"
 
 	db := orm.OpenDB()
@@ -231,10 +262,7 @@ func (this *ServerRouter) NodesInstall() {
 		this.Data["json"] = result
 		this.ServeJson()
 	}()
-
-	if verify_NODES(nodename) {
-		result["ip"] = true
-	} else {
+	
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
 			fmt.Printf("no such file or directory: %s", filePath)
 			// open output file
@@ -251,16 +279,18 @@ func (this *ServerRouter) NodesInstall() {
 
 		for line := range t.Lines {
 			fmt.Println(line.Text)
-			err1 := dbmap.SelectOne(&server, "select * from servers where IP=?", line.Text)
+			err1 := dbmap.SelectOne(&node, "select * from nodes where IP=?", line.Text)
 			if err1 != nil {
-				newserver := orm.NewServerWithIP(nodename, line.Text)
-				orm.ConnectToTable(dbmap, "servers", newserver)
-				err := dbmap.Insert(&newserver)
+				newnode := orm.NewNode(line.Text)
+				orm.ConnectToTable(dbmap, "nodes", newnode)
+				err := dbmap.Insert(&newnode)
 				if err != nil {
-					fmt.Println("server insert error======>")
+					fmt.Println("Node insert error======>")
 					result["ip"] = false
+					result["ipvalue"] = ""
 				}
 				result["ip"] = true
+				result["ipvalue"] = line.Text
 			}
 			if len(line.Text) > 0 {
 				err := os.Remove(filePath)
@@ -271,11 +301,10 @@ func (this *ServerRouter) NodesInstall() {
 				break
 			}
 		}
-	}
 }
 
-func verify_NODES(nodename string) bool {
-	var server orm.Servers
+/*func verify_NODES(nodename string) bool {
+	var node orm.Nodes
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
 	err := dbmap.SelectOne(&server, "select * from servers where Name=?", nodename)
@@ -285,7 +314,7 @@ func verify_NODES(nodename string) bool {
 	} else {
 		return true
 	}
-}
+}*/
 
 // Join method handles WebSocket requests for WebSocketController.
 func (this *ServerRouter) Join() {

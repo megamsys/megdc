@@ -50,6 +50,14 @@ type Servers struct {
 	UpdateDate      string     `db:"UpdateDate"`
 }
 
+type Nodes struct {
+	Id              int64      `db:"Id"`
+	Install         bool       `db:"Install"`
+	IP              string     `db:"IP"`
+	InstallDate     string     `db:"InstallDate"`
+	UpdateDate      string     `db:"UpdateDate"`
+}
+
 func NewServer(serverName string) Servers {
 	time := time.Now()
 	return Servers{
@@ -61,14 +69,15 @@ func NewServer(serverName string) Servers {
 	}
 }
 
-func NewServerWithIP(serverName string, ip string) Servers {
+
+func NewNode(ip string) Nodes {
 	time := time.Now()
-	return Servers{
-		Name:   serverName,
+	return Nodes{
 		Install: false,
 		IP: ip,
 		InstallDate: time.Format(layout),
 		UpdateDate: time.Format(layout),
 	}
 }
+
 
