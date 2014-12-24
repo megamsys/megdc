@@ -32,7 +32,7 @@ func handlerNode() {
 
 	port, _ := config.GetString("beego:http_port")
 	if port == "" {
-		port = "8078"
+		port = "8077"
 	}
 	http_port, _ := strconv.Atoi(port)
 	beego.HttpPort = http_port

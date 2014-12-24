@@ -19,7 +19,8 @@ package nodes
 import (
 	"github.com/megamsys/cloudinabox/models/orm"
 	"github.com/megamsys/cloudinabox/routers/base"
-	"fmt"
+//	"fmt"
+	"encoding/json"
 )
 
 var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST"}
@@ -50,9 +51,9 @@ func (this *NodesRouter) Ha() {
 
 // Get implemented dashboard page.
 func (this *NodesRouter) GetNodes() {
-	var nodes orm.Nodes
+	var nodes []*orm.Nodes
+	var nodesempty []*orm.Nodes
 //	var nodes_output []string
-
 	result := map[string]interface{}{
 		"success": false,
 	}
@@ -70,16 +71,14 @@ func (this *NodesRouter) GetNodes() {
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
 	_, err := dbmap.Select(&nodes, "select * from nodes")
-	fmt.Println("+++++++++++++++++++++++++++++");
-	fmt.Println(nodes);
-	fmt.Println(err);
-	//jsonMsg, _ := json.Marshal(nodes)
-	//servers_output = append(servers_output, string(jsonMsg))
-	//log.Printf("[%s] SQL select ignored {%s}\n%v\n", serversList[i], jsonMsg, servers_output)		
-	
-	result["success"] = true
-	//result["data"] = servers_output
-
+	if err != nil {
+		result["success"] = false
+	    result["data"] = nodesempty
+	} else {
+	   jsonMsg, _ := json.Marshal(nodes)
+	   result["success"] = true
+	   result["data"] = string(jsonMsg)
+  }
 }
 
 
