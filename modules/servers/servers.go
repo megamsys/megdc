@@ -75,7 +75,7 @@ func InstallServers(serverName string) error {
 }
 
 func InstallNode(nodeip string) error {
-	url := "http://" + nodeip + ":8078/servernodes/nodes/install"
+	url := "http://" + nodeip + ":8077/servernodes/nodes/install"
 	res, err := http.Get(url)
 	if err != nil {
 		return err

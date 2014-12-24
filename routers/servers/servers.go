@@ -108,15 +108,6 @@ func (this *ServerRouter) MasterInstall() {
 	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
 	fmt.Println(err)
 	if server.Install != true {
-		//if len(server.IP) > 0 {
-		//	node_err := servers.InstallNode(&server)
-		//	fmt.Printf("%s", node_err)
-		//	if node_err != nil {
-		//		result["success"] = false
-		//	} else {
-				result["success"] = true
-		//	}
-		//} else {
 			err := servers.InstallServers(servername)
 			fmt.Printf("%s", err)
 			if err != nil {
@@ -124,7 +115,6 @@ func (this *ServerRouter) MasterInstall() {
 			} else {
 				result["success"] = true
 			}
-	//	}
 	} else {
 		result["success"] = true
 	}
@@ -288,11 +278,7 @@ func (this *ServerRouter) GetNodeIP() {
 		}
 
 		for line := range t.Lines {
-			fmt.Println("-------------------------")
-			fmt.Println(line.Text)
 			err1 := dbmap.SelectOne(&node, "select * from nodes where IP=?", line.Text)
-			fmt.Println("++++++++++++++++++++++++")
-			fmt.Println(err1)
 			if err1 != nil {
 				newnode := orm.NewNode(line.Text)
 				orm.ConnectToTable(dbmap, "nodes", newnode)
@@ -315,19 +301,6 @@ func (this *ServerRouter) GetNodeIP() {
 			}
 		}
 }
-
-/*func verify_NODES(nodename string) bool {
-	var node orm.Nodes
-	db := orm.OpenDB()
-	dbmap := orm.GetDBMap(db)
-	err := dbmap.SelectOne(&server, "select * from servers where Name=?", nodename)
-
-	if err != nil {
-		return false
-	} else {
-		return true
-	}
-}*/
 
 // Join method handles WebSocket requests for WebSocketController.
 func (this *ServerRouter) Join() {
