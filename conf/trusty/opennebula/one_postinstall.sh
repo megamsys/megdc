@@ -49,10 +49,6 @@ sudo -H -u oneadmin bash -c "onedatastore update 2 /tmp/ds_tm_mad"
 #Edit clone file for scp problem
 sed -i '/SRC=$1/a SRC=${SRC#*:}' /var/lib/one/remotes/tm/ssh/clone
 
-
-service_restart
-
-
 service_restart() {
 sunstone-server restart
 econe-server restart
@@ -60,6 +56,11 @@ occi-server restart
 onegate-server restart
 one restart
 }
+
+service_restart
+
+
+
 
 
 #Add code to automate template, image, and network
