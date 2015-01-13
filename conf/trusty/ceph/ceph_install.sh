@@ -15,6 +15,8 @@
 ###############################################################################
 # A ceph linux script which sets up a ceph-mon and two ceph-osd
 # This script currently supports ubuntu 14.04 trusty.
+#
+#bash ceph_install.sh install osd1="/storage1" osd2="/storage2" osd3="/storage3"
 ###############################################################################
 
 black='\033[30m'
@@ -30,19 +32,10 @@ alias Reset="tput sgr0"      #  Reset text attributes to normal
 # without clearing screen.
 
 CEPH_LOG="/var/log/megam/megamcib/ceph.log"
-ceph_user="megamceph"
-ceph_password="megamceph"
-ceph_group="megamceph"
+ceph_user="cibadmin"
+ceph_password="cibadmin"
+ceph_group="cibadmin"
 user_home="/home/$ceph_user"
-
-osd1_ip="$2"
-osd1_host="$3"
-
-osd2_ip="$4"
-osd2_host="$5"
-
-osd3_ip="$6"
-osd3_host="$7"
 
 host=`hostname`
 
@@ -90,6 +83,15 @@ parseParameters()   {
       [uU][nN][iI][nN][sS][tT][aA][lL][lL])
       uninstall_ceph
       ;;
+      osd1=*)
+      osd1="${i#*=}"
+      ;;
+      osd2=*)
+      osd2="${i#*=}"
+      ;;
+      osd3=*)
+      osd3="${i#*=}"
+      ;;
       *)
       cecho "Unknown option : $item - refer help." $red
       help
@@ -122,84 +124,52 @@ while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRT
 echo $ipaddr
 }
 
-create_cephgroup() {
-    if ! getent group $ceph_group > /dev/null 2>&1; then
-        addgroup --system $ceph_group
-    fi
-}
-
-create_cephuser() {
-    if ! getent passwd $ceph_user > /dev/null 2>&1; then
-        useradd -d $user_home -m -g $ceph_group $ceph_user -s /bin/bash
-        #Set password
-        sudo echo -e "$ceph_password\n$ceph_password\n" | sudo passwd $ceph_user
-    else
-        user_home=`getent passwd $ceph_user | cut -f6 -d:`
-        # Renable user (give him a shell)
-        usermod --shell /bin/bash $ceph_user
-        # Make sure MEGAMHOME exists, might have been removed on previous purge
-        mkdir -p $user_home
-    fi
-}
-
 install_ceph() {
- 
-create_cephgroup
-create_cephuser
 #ceph user as sudoer 
 echo "$ceph_user ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ceph_user
 sudo chmod 0440 /etc/sudoers.d/$ceph_user
 
 #Ceph install
-echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
-wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
+sudo echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
 sudo apt-get -y update
 sudo apt-get -y install ceph-deploy ceph-common ceph-mds
+sudo apt-get -y install dnsmasq openssh-server ntp sshpass
 
 IP_ADDR=$( getip )
-
-sudo apt-get install ntp
 
 #edit /etc/hosts to access osd nodes
 
 echo "$IP_ADDR $host" >> /etc/hosts
-echo "$osd1_ip $osd1_host" >> /etc/hosts
-echo "$osd2_ip $osd2_host" >> /etc/hosts
-echo "$osd3_ip $osd3_host" >> /etc/hosts
 
-
-sudo apt-get install dnsmasq 
-sudo apt-get install openssh-server
 
 sudo -u $ceph_user bash << EOF
 #Create ssh files
 ssh-keygen -N '' -t rsa -f $user_home/.ssh/id_rsa
-
-sshpass -p "$ceph_password" scp -o StrictHostKeyChecking=no $user_home/.ssh/id_rsa.pub $ceph_user@$osd1_host:$user_home/.ssh/authorized_keys
-sshpass -p "$ceph_password" scp -o StrictHostKeyChecking=no $user_home/.ssh/id_rsa.pub $ceph_user@$osd2_host:$user_home/.ssh/authorized_keys
-sshpass -p "$ceph_password" scp -o StrictHostKeyChecking=no $user_home/.ssh/id_rsa.pub $ceph_user@$osd3_host:$user_home/.ssh/authorized_keys
-
-sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@192.168.2.14:/var/lib/one/.ssh/authorized_keys
+cp $user_home/.ssh/id_rsa $user_home/.ssh/authorized_keys
 EOF
 
-cat > $user_home/.ssh/config <<EOF
-Host $osd1_host
-   Hostname $osd1_host
-   User $ceph_user
-Host $osd2_host
-   Hostname $osd2_host
-   User $ceph_user
-Host $osd3_host
-   Hostname $osd3_host
-   User $ceph_user
+#No prompt on "Add ip to known_hosts list"
+sudo -H -u $ceph_user bash -c "cat > /$user_home/.ssh/ssh_config <<EOF
+ConnectTimeout 5
+Host *
+StrictHostKeyChecking no
+EOF"
+
+sudo -H -u $ceph_user bash -c "cat > $user_home/.ssh/config <<EOF
 Host $host
    Hostname $host
    User $ceph_user
-EOF
+EOF"
 
-chown $ceph_user:$ceph_user $user_home/.ssh/config
 
-mkdir /storage
+mkdir $osd1/osd
+mkdir $osd2/osd
+mkdir $osd3/osd
+
+  #GET first three values of ip
+  ip3=`echo $IP_ADDR| cut -d'.' -f 1,2,3`
+
 
 sudo -u $ceph_user bash << EOF
 mkdir $user_home/ceph-cluster
@@ -207,32 +177,27 @@ cd $user_home/ceph-cluster
 
 ceph-deploy new $host
 
+echo "osd crush chooseleaf type = 0" >> ceph.conf
+echo "public network = $ip3.0/24" >> ceph.conf
+echo "cluster network = $ip3.0/24" >> ceph.conf
 
-ceph-deploy install $osd1_host $osd2_host $osd3_host $host
+ceph-deploy install $host
 #PROMPT  Are you sure you want to continue connecting (yes/no)? yes    for the first time          cephuser@hostname's password: 
 
 ceph-deploy mon create-initial
 
-scp $user_home/ceph-cluster/ceph.bootstrap-osd.keyring $ceph_user@$osd1_host:$user_home/ceph.keyring
-scp $user_home/ceph-cluster/ceph.bootstrap-osd.keyring $ceph_user@$osd2_host:$user_home/ceph.keyring
-scp $user_home/ceph-cluster/ceph.bootstrap-osd.keyring $ceph_user@$osd3_host:$user_home/ceph.keyring
+ceph-deploy osd prepare $host:$osd1/osd $host:$osd2/osd $host:$osd3/osd
+ceph-deploy osd activate $host:$osd1/osd $host:$osd2/osd $host:$osd3/osd
 
-#scp /home/megamceph/ceph-cluster/ceph.bootstrap-osd.keyring megamceph@alrin:/home/megamceph/ceph.keyring
-
-#ssh megamceph@osd1 'sudo mv /home/megamceph/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
-
-
-ssh $ceph_user@$osd1_host 'sudo mv $user_home/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
-ssh $ceph_user@$osd2_host 'sudo mv $user_home/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
-
-ssh $ceph_user@$osd3_host 'sudo mv $user_home/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
-
-#ceph-deploy osd prepare megamubuntu:/storage alrin:/storage osd1:/storage
-ceph-deploy osd prepare $osd1_host:/storage $osd2_host:/storage $osd3_host:/storage
-ceph-deploy osd activate $osd1_host:/storage $osd2_host:/storage $osd3_host:/storage
-
-ceph-deploy admin $host $osd1_host $osd2_host $osd3_host
+ceph-deploy admin $host
 sudo chmod +r /etc/ceph/ceph.client.admin.keyring
+
+sleep 180
+ceph osd pool set rbd pg_num 256
+#It takes some more time
+#better sleep 2 mins
+sleep 180
+ceph osd pool set rbd pgp_num 256
 
 EOF
 
@@ -254,9 +219,9 @@ install_complete() {
 #--------------------------------------------------------------------------
 
 uninstall_ceph() {
-ceph-deploy purgedata $host $osd1_host $osd2_host $osd3_host
+ceph-deploy purgedata $host
 ceph-deploy forgetkeys
-ceph-deploy purge $host $osd1_host $osd2_host $osd3_host
+ceph-deploy purge $host
 sudo rm -r /var/lib/ceph/
 sudo apt-get -y autoremove
 sudo apt-get -y remove ceph-deploy ceph-common ceph-mds
