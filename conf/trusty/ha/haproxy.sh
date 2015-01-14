@@ -43,43 +43,7 @@ echo "ENABLED=1" >> /etc/default/haproxy
 mv /etc/haproxy/haproxy.cfg{,.original}
 
 cat << EOT >> /etc/haproxy/haproxy.cfg
-global
-	log /dev/log	local0
-	log /dev/log	local1 notice
-	chroot /var/lib/haproxy
-	stats socket /run/haproxy/admin.sock mode 660 level admin
-	stats timeout 30s
-	user haproxy
-	group haproxy
-	daemon
-
-	# Default SSL material locations
-	ca-base /etc/ssl/certs
-	crt-base /etc/ssl/private
-
-	# Default ciphers to use on SSL-enabled listening sockets.
-	# For more information, see ciphers(1SSL).
-	ssl-default-bind-ciphers kEECDH+aRSA+AES:kRSA+AES:+AES256:RC4-SHA:!kEDH:!LOW:!EXP:!MD5:!aNULL:!eNULL
-        ssl-default-bind-options no-sslv3
-
-defaults
-	log	global
-	mode	http
-	option	httplog
-	option	dontlognull
-        timeout connect 5000
-        timeout client  50000
-        timeout server  50000
-	errorfile 400 /etc/haproxy/errors/400.http
-	errorfile 403 /etc/haproxy/errors/403.http
-	errorfile 408 /etc/haproxy/errors/408.http
-	errorfile 500 /etc/haproxy/errors/500.http
-	errorfile 502 /etc/haproxy/errors/502.http
-	errorfile 503 /etc/haproxy/errors/503.http
-	errorfile 504 /etc/haproxy/errors/504.http
-
-
-listen     web-cluster         $gateway
+listen     megamnialvu         192.168.1.100:8080
                  mode http
                  stats enable
                  stats auth cibadmin:cibadmin # Change this to your own username and password!
@@ -87,8 +51,31 @@ listen     web-cluster         $gateway
                  option httpclose
                  option forwardfor
                  cookie JSESSIONID prefix
-                 server megammaster $address1 cookie A check
-                 server megamslave $address2 cookie B check
+                 server megammaster 192.168.1.100:8080 cookie A check
+                 server megamslave 192.168.1.101:8080 cookie B check
+
+
+listen     opennebula         192.168.1.100:9869
+                 mode http
+                 stats enable
+                 stats auth cibadmin:cibadmin # Change this to your own username and password!
+                 balance roundrobin
+                 option httpclose
+                 option forwardfor
+                 cookie JSESSIONID prefix
+                 server megammaster 192.168.1.100:9869 cookie A check
+                 server megamslave 192.168.1.101:9869 cookie B check
+
+listen     apache         192.168.1.100:80
+                 mode http
+                 stats enable
+                 stats auth cibadmin:cibadmin # Change this to your own username and password!
+                 balance roundrobin
+                 option httpclose
+                 option forwardfor
+                 cookie JSESSIONID prefix
+                 server megammaster 192.168.1.100:80 cookie A check
+                 server megamslave 192.168.1.101:80 cookie B check
 EOT
 
 service haproxy restart

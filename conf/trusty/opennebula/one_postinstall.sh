@@ -41,10 +41,10 @@ ip
 sed -i "s/^[ \t]*:host:.*/:host: $ipaddr/" /etc/one/sunstone-server.conf
 
 #Cahnge all datastore's tm_mad to ssh
-sudo -H -u oneadmin bash -c "echo \"TM_MAD=ssh\" > /tmp/ds_tm_mad"
-sudo -H -u oneadmin bash -c "onedatastore update 0 /tmp/ds_tm_mad"
-sudo -H -u oneadmin bash -c "onedatastore update 1 /tmp/ds_tm_mad"
-sudo -H -u oneadmin bash -c "onedatastore update 2 /tmp/ds_tm_mad"
+#sudo -H -u oneadmin bash -c "echo \"TM_MAD=ssh\" > /tmp/ds_tm_mad"
+#sudo -H -u oneadmin bash -c "onedatastore update 0 /tmp/ds_tm_mad"
+#sudo -H -u oneadmin bash -c "onedatastore update 1 /tmp/ds_tm_mad"
+#sudo -H -u oneadmin bash -c "onedatastore update 2 /tmp/ds_tm_mad"
 
 #Edit clone file for scp problem
 sed -i '/SRC=$1/a SRC=${SRC#*:}' /var/lib/one/remotes/tm/ssh/clone
@@ -55,6 +55,7 @@ econe-server restart
 occi-server restart
 onegate-server restart
 one restart
+sudo service opennebula restart
 }
 
 service_restart
