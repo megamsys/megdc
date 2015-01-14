@@ -55,13 +55,6 @@ func InstallServers(serverName string) error {
 			fmt.Println(err)
 			return err
 		}
-	case "CEPH":
-		err = app.CephInstall()
-		if err != nil {
-			fmt.Printf("Error: Install error for [%s]", serverName)
-			fmt.Println(err)
-			return err
-		}
 	case "NODEINSTALL":
 		err = app.OpenNebulaHostNodeInstall()
 		if err != nil {
@@ -69,13 +62,20 @@ func InstallServers(serverName string) error {
 			fmt.Println(err)
 			return err
 		}	
-
+     case "HAINSTALL":
+		err = app.HANodeInstall()
+		if err != nil {
+			fmt.Printf("Error: Install error for [%s]", serverName)
+			fmt.Println(err)
+			return err
+		}	
 	}
 	return nil
 }
 
-func InstallNode(nodeip string) error {
-	url := "http://" + nodeip + ":8077/servernodes/nodes/install"
+func InstallNode(nodeip string, nodetype string) error {
+	if nodetype == "COMPUTE" {
+	url := "http://" + nodeip + ":8078/servernodes/nodes/install"
 	res, err := http.Get(url)
 	if err != nil {
 		return err
@@ -86,5 +86,18 @@ func InstallNode(nodeip string) error {
 			err = app.SCPSSHInstall()
 			return err
 		}
+	 }
+	} else {
+		url := "http://" + nodeip + ":8078/servernodes/ha/install"
+	    res, err := http.Get(url)
+	    if err != nil {
+		    return err
+	    } else {
+		 if res.StatusCode > 299 {
+			return errors.New(res.Status)
+		} else {
+			return nil
+		}
+	  }
 	}
 }

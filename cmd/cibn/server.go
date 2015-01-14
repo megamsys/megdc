@@ -27,6 +27,7 @@ func handlerNode() {
 	beego.Router("/servernodes/getlog", server, "get:GetLog")
 	beego.Router("/servernodes/verify/:name", server, "get:Verify")
 	beego.Router("/servernodes/nodes/install", server, "get:NodeInstall")
+	beego.Router("/servernodes/ha/install", server, "get:HAInstall")
 	//	beego.Router("/servernodes/streamlog", server, "get:StreamLog")
 
 
