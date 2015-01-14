@@ -15,7 +15,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (
-   
+  /* 
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -25,8 +25,9 @@ const (
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
 	megam                 = "bash conf/trusty/megam/megam.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh install"
-	ceph                  = "bash conf/trusty/ceph/ceph_install.sh install OSD1_IP OSD1_HOST OSD2_IP OSD2_HOST OSD3_IP OSD3_HOST"
-	/*
+	ceph                  = "bash conf/trusty/ceph/ceph_install.sh install osd1="/storage1" osd2="/storage2" osd3="/storage3""
+	cephone               = "bash conf/trusty/ceph/ceph_one_install.sh"
+	*/
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -36,8 +37,9 @@ const (
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install_test.sh"
 	megam                 = "bash conf/trusty/megam/megam_test.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
-	ceph                  = "bash conf/trusty/cobblerd/ceph_install_test.sh"
-   */
+	ceph                  = "bash conf/trusty/ceph/ceph_install_test.sh"
+	cephone               = "bash conf/trusty/ceph/ceph_one_install_test.sh"
+   
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -382,14 +384,20 @@ var cephInstall = action.Action{
 			fmt.Println("server insert error")
 			return &cib, err
 		}
-		// write server details in database
-		// insert rows - auto increment PKs will be set properly after the insert
-		db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("CEPH")
-		orm.ConnectToTable(dbmap, "servers", newserver)
-		err = dbmap.Insert(&newserver)
-		defer db.Close()
+		return exec, err
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf(" Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var cephOneInstall = action.Action{
+	Name: "cephOneInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = cephone
+		exec, err := CIBExecutor(&cib)
 		if err != nil {
 			fmt.Println("server insert error")
 			return &cib, err
@@ -397,15 +405,6 @@ var cephInstall = action.Action{
 		return exec, err
 	},
 	Backward: func(ctx action.BWContext) {
-		//app := ctx.FWResult.(*App)
-		db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		err := orm.DeleteRowFromServerName(dbmap, "CEPH")
-		if err != nil {
-			fmt.Println("Server delete error")
-			//return &cib, err
-		}
-		defer db.Close()
 		log.Printf(" Nothing to recover")
 	},
 	MinParams: 1,

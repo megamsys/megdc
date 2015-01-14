@@ -35,7 +35,14 @@ $(document).ready(function() {
 	
 	$('#COMPUTE_install_button').click(function(event) {
 		event.preventDefault();
-		nodeInstall();
+		nodeInstall("COMPUTE");
+		return false;
+		// for good measure
+	});
+	
+	$('#HA_install_button').click(function(event) {
+		event.preventDefault();
+		nodeInstall("HA");
 		return false;
 		// for good measure
 	});
@@ -56,6 +63,16 @@ $(document).ready(function() {
 			waiting_nodes_connection("COMPUTE");
 		} else {
 			$("#storage_note").hide();
+		}
+
+	});
+	
+	$("#ha_selection input:radio").on("ifClicked", function() {
+		if ($(this).attr("value") == "yes") {
+			$("#ha_note").show();
+			waiting_nodes_connectionha("HA");
+		} else {
+			$("#ha_note").hide();
 		}
 
 	});
@@ -148,12 +165,17 @@ function installProcess(str) {
 	return false;
 }
 
-function nodeInstall() {
-	serverID = "COMPUTE_waiting1";
-	successID = "COMPUTE_success";
-	errorID = "COMPUTE_error";
-	buttonID = "COMPUTE_install_button";
-    str = $("#hostip").val();
+function nodeInstall(str) {
+    serverID = str.concat("_waiting");
+	successID = str.concat("_success");
+	errorID = str.concat("_error");
+	buttonID = str.concat("_install_button");
+	
+	if(str == "COMPUTE") {	
+        str_ip = $("#hostip").val();
+    } else {
+        str_ip = $("#hosthaip").val();
+    }
     
 	$('#' + serverID).waiting({
 		className : 'waiting-circles',
@@ -164,12 +186,12 @@ function nodeInstall() {
 	$('#' + buttonID).hide();
     
 	$('#' + serverID).show();
-	install_text = "COMPUTE_install_text";
+	install_text = str.concat("_install_text");
 	$('#' + install_text).show();
 
 	$.ajax({
 		type : "GET",
-		url : "/nodes/request/" + str,
+		url : "/nodes/request/" + str + "-" + str_ip,
 		data : str,
 		dataType : 'text',
 		async : true,
@@ -265,12 +287,54 @@ function waiting_nodes_connection(nodes) {
 		async : true,
 		success : function(response) {
 			var res = JSON.parse(response);
+			console.log(res);
+		
 			if (res.ip) {
 				$('#' + serverNodeID).hide();
 				$('#' + buttonNodeID).show();
 				$('#' + networkSuccessTextID).show();
 				$('#' + networkWarningTextID).hide();
 				$("#hostip").val(res.ipvalue);
+			//	$("#hosthaip").val(res.ipvalue);
+			}
+		},
+		error : function(xhr, status) {
+			$('#' + serverNodeID).show();
+			$('#' + buttonNodeID).hide();
+			$('#' + networkSuccessTextID).hide();
+			$('#' + networkWarningTextID).show();
+		}
+	});
+	return false;
+}
+
+//waiting the getting ip for host node
+function waiting_nodes_connectionha(nodes) {
+	serverNodeID = nodes.concat("_waiting");
+	buttonNodeID = nodes.concat("_install_button");
+	networkWarningTextID = nodes.concat("_network_warning_text");
+	networkSuccessTextID = nodes.concat("_network_success_text");
+	$('#' + serverNodeID).waiting({
+		className : 'waiting-circles',
+		elements : 8,
+		radius : 20,
+		auto : true
+	});
+	$.ajax({
+		type : "GET",
+		url : "/servers/getIP",
+		data : nodes,
+		dataType : 'text',
+		async : true,
+		success : function(response) {
+			var res = JSON.parse(response);
+			if (res.ip) {
+				$('#' + serverNodeID).hide();
+				$('#' + buttonNodeID).show();
+				$('#' + networkSuccessTextID).show();
+				$('#' + networkWarningTextID).hide();
+			//	$("#hostip").val(res.ipvalue);
+				$("#hosthaip").val(res.ipvalue);
 			}
 		},
 		error : function(xhr, status) {
