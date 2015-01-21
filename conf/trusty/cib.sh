@@ -117,7 +117,9 @@ report_cib() {
 	echo -e "${bldwht}2)${txtrst} ${txtgrn}cobblerd${txtrst}"
 	echo -e "${bldwht}3)${txtrst} ${txtgrn}one${txtrst}"
 	echo -e "${bldwht}4)${txtrst} ${txtgrn}onehost${txtrst}"
-	echo -e "${bldwht}5)${txtrst} ${txtgrn}all${txtrst}"
+	echo -e "${bldwht}5)${txtrst} ${txtgrn}ceph${txtrst}"
+	echo -e "${bldwht}6)${txtrst} ${txtgrn}drbd${txtrst}"
+	echo -e "${bldwht}7)${txtrst} ${txtgrn}all${txtrst}"
 	read case;
 
   printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
@@ -142,11 +144,21 @@ report_cib() {
     report_onehost
 		;;
     5)
+		printf "${undpur}%-10s${txtrst}\n" "CEPH";
+		report_ceph
+		;;
+    6)
+		printf "${undpur}%-10s${txtrst}\n" "DRBD";
+		report_drbd
+		;;
+    7)
     printf "${undpur}%-10s${txtrst}\n" "ALL";
     report_megam
     report_cobblerd
     report_one
     report_onehost
+    report_ceph
+    report_drbd
     ;;
     *)
     printf "\n"
@@ -234,6 +246,61 @@ report_one() {
   howdy_services sernames[@]
 
 }
+
+report_ceph() {
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldblu}%-50s${txtrst}*\n" "   Installation : Ceph";
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  pkgnames=( ceph-deploy ceph-common ceph-mds )
+
+  howdy_pkgs pkgnames[@]
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldblu}%-50s${txtrst}*\n" "   Services : Ceph";
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+if [[ `ceph status` == *"HEALTH_OK"* ]]
+then
+  printf "${bldpur}%-20s ${bldcyn}%-15s${txtrst} %-5s " Ceph 'SERVICE'  '.....'  '[OK]';
+  printf "\n";
+else
+  printf "${bldpur}%-20s ${txtred}%-15s${txtrst} %-5s ${bldred}%-15s${txtrst}\n" ceph 'SERVICE'  '.....'  '[FAIL]';
+fi
+
+}
+
+
+report_drbd() {
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldblu}%-50s${txtrst}*\n" "   Installation : DRBD";
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  pkgnames=( drbd8-utils linux-image-extra-virtual pacemaker heartbeat )
+
+  howdy_pkgs pkgnames[@]
+
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+  printf "*${bldblu}%-50s${txtrst}*\n" "   Services : DRBD";
+  printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
+
+  sernames=( drbd heartbeat )
+
+  howdy_services sernames[@]
+
+if [[ `crm status` == *"Started"* ]]
+then
+  printf "${bldpur}%-20s ${bldcyn}%-15s${txtrst} %-5s \n " CRM 'SERVICE'  '.....'  '[OK]';
+  printf "\n";
+else
+  printf "${bldpur}%-20s ${txtred}%-15s${txtrst} %-5s ${bldred}%-15s${txtrst}\n" CRM 'SERVICE'  '.....'  '[FAIL]';
+fi
+
+}
+
+
 
 #--------------------------------------------------------------------------
 # Starts the cib
