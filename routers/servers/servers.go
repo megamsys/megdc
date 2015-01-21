@@ -30,6 +30,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"strconv"
 	"time"
 )
@@ -137,7 +138,10 @@ func (this *ServerRouter) NodeInstallRequest() {
 	result := map[string]interface{}{
 		"success": false,
 	}
-    nodeip := this.Ctx.Input.Param(":nodeip")
+	req := this.Ctx.Input.Param(":nodeip")
+	s := strings.Split(req, "-")
+    nodeip := s[1]
+    nodetype := s[0]
 	defer func() {
 		this.Data["json"] = result
 		this.ServeJson()
@@ -145,7 +149,7 @@ func (this *ServerRouter) NodeInstallRequest() {
 	var nodes orm.Nodes
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
-	node_err := servers.InstallNode(nodeip)
+	node_err := servers.InstallNode(nodeip, nodetype)
 	fmt.Printf("%s", node_err)
 	if node_err != nil {
 		result["success"] = false
@@ -175,6 +179,29 @@ func (this *ServerRouter) NodeInstall() {
 	//servername := this.Ctx.Input.Param(":nodename")
 	
     servername := "NODEINSTALL"
+	err := servers.InstallServers(servername)
+	fmt.Printf("%s", err)
+	if err != nil {
+		result["success"] = false
+	} else {
+		result["success"] = true
+	}
+
+}
+
+func (this *ServerRouter) HAInstall() {
+	result := map[string]interface{}{
+		"success": false,
+	}
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	//servername := this.Ctx.Input.Param(":nodename")
+	
+    servername := "HAINSTALL"
 	err := servers.InstallServers(servername)
 	fmt.Printf("%s", err)
 	if err != nil {
@@ -271,12 +298,11 @@ func (this *ServerRouter) GetNodeIP() {
 				panic(err)
 			}
 		}
-
-		t, err := tail.TailFile(filePath, tail.Config{Follow: true, MustExist: true})
+		t, err := tail.TailFile(filePath, tail.Config{Follow: true})
+		fmt.Println(t)
 		if err != nil {
 			log.Printf("ERROR LOG READ ==> : %s", err.Error())
 		}
-
 		for line := range t.Lines {
 			err1 := dbmap.SelectOne(&node, "select * from nodes where IP=?", line.Text)
 			if err1 != nil {
@@ -292,8 +318,9 @@ func (this *ServerRouter) GetNodeIP() {
 				result["ipvalue"] = line.Text
 			}
 			if len(line.Text) > 0 {
+				t.Stop()
 				err := os.Remove(filePath)
-
+                
 				if err != nil {
 					fmt.Println(err)
 				}

@@ -1,8 +1,8 @@
 <div class="tab-pane active fade in p-30" id="dashboard">
-
+   <input type="hidden" id="hosthaip">
 	<div class="bg-gray-light p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
 
-		<div class="row" id="storage_selection">
+		<div class="row" id="ha_selection">
 			<div class="col-sm-8  text-center">
 				<span
 				class="text-gray-dark text-large align-with-button pos-abs"> Do you want to enable
@@ -26,21 +26,44 @@
 			</div>
 		</div>
 		<hr />
-		<div class="row" id="storage_note" style="display: none">
+		<div class="row" id="ha_note" style="display: none">
 			<div class="col-sm-12  text-center">
-				<div class="alert alert-warning">
-					We are working on it.
-					Coming soon.
-				</div>
-
-				<p
-				class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
+				<p class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
 					Please network the new server to this LAN and netboot it. when
 					your server is ready click install.
 				</p>
 			</div>
 			<div class="col-sm-12 text-center">
-				<a href="" class="btn btn-primary btn-lg m-t-10">Install</a>
+				<a href="" class="btn btn-primary btn-lg m-t-10"
+				id="HA_install_button" style="display: none">Install</a>
+				<div id="HA_waiting"></div>
+			</div>
+			<div class="col-sm-12">
+				<div class="col-sm-6">
+					<div id="HA_install_text" style="display: none">
+						<p class="text-info">
+							Installing...
+						</p>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div id="HA_waiting1"></div>
+				</div>
+				<div id="HA_success" style="display: none">
+					<p class="text-success">
+						<div class="fi-icon text-success">
+							<i class="fi-check m-10 text-large"></i>Installed
+							successfully.
+						</div>
+					</p>
+				</div>
+				<div id="HA_error" style="display: none">
+					<p class="text-danger">
+						<div class="fi-icon text-danger">
+							<i class="fi-alert m-10 text-large"></i>Install failure.
+						</div>
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>

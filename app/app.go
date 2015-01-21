@@ -106,7 +106,7 @@ func NebulaInstall() error {
 // this executes all actions for opennebula install
 //
 func OpenNebulaHostMasterInstall() error {
-	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostMasterInstall}
+	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -119,7 +119,7 @@ func OpenNebulaHostMasterInstall() error {
 // this executes all actions for opennebula install
 //
 func OpenNebulaHostNodeInstall() error {
-	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostNodeInstall}
+	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostNodeInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -131,8 +131,8 @@ func OpenNebulaHostNodeInstall() error {
 //
 // this executes all actions for opennebula install
 //
-func CephInstall() error {
-	actions := []*action.Action{&cephInstall}
+func HANodeInstall() error {
+	actions := []*action.Action{&megamInstall, &cobblerInstall, &opennebulaVerify, &opennebulaPreInstall, &opennebulaInstall, &opennebulaPostInstall, &opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {

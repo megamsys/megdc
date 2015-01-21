@@ -10,6 +10,7 @@
 
 #sh cib-ha.sh remote_ip="192.168.2.101" remote_hostname="megamslave" data_dir="/var/lib/" local_disk="/dev/sda9" remote_disk="/dev/sda9" master
 
+
 ip() {
 while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRTT; do
 		[ "$Mask" = "00000000" ] && \
