@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#haproxy.sh node1=node1:port node2=node2:port
+#haproxy.sh node1_ip=node1_ip node2_ip=node2_ip node1_host=node1_host node2_host=node2_host
 
 ip() {
 while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRTT; do
@@ -18,20 +18,33 @@ ip
 for i in "$@"
 do
 case $i in
-    node1=*)
-    node1="${i#*=}"
+    node1_ip=*)
+    node1_ip="${i#*=}"
     ;;
-    node2=*)
-    node2="${i#*=}"
+    node2_ip=*)
+    node2_ip="${i#*=}"
+    ;;
+    node1_host=*)
+    node1_host="${i#*=}"
+    ;;
+    node2_host=*)
+    node2_host="${i#*=}"
     ;;
 esac
 done
 
 
-gateway="$ipaddr:80"
+gateway="$ipaddr"
 
-address1="$node1"
-address2="$node2"
+address1="$node1_ip"
+address2="$node2_ip"
+
+host1="$node1_host"
+host2="$node2_host"
+
+username="cibadmin"
+password="cibadmin"
+auth_credential=$username:$password
 
 sudo add-apt-repository -y ppa:vbernat/haproxy-1.5
 sudo apt-get -y update || true
@@ -43,39 +56,39 @@ echo "ENABLED=1" >> /etc/default/haproxy
 mv /etc/haproxy/haproxy.cfg{,.original}
 
 cat << EOT >> /etc/haproxy/haproxy.cfg
-listen     megamnialvu         192.168.1.100:8080
+listen     megamnialvu         $gateway:8080
                  mode http
                  stats enable
-                 stats auth cibadmin:cibadmin # Change this to your own username and password!
+                 stats auth $auth_credential # Change this to your own username and password!
                  balance roundrobin
                  option httpclose
                  option forwardfor
                  cookie JSESSIONID prefix
-                 server megammaster 192.168.1.100:8080 cookie A check
-                 server megamslave 192.168.1.101:8080 cookie B check
+                 server $host1 $address1:8080 cookie A check
+                 server $host2 $address2:8080 cookie B check
 
 
-listen     opennebula         192.168.1.100:9869
+listen     opennebula         $gateway:9869
                  mode http
                  stats enable
-                 stats auth cibadmin:cibadmin # Change this to your own username and password!
+                 stats auth $auth_credential # Change this to your own username and password!
                  balance roundrobin
                  option httpclose
                  option forwardfor
                  cookie JSESSIONID prefix
-                 server megammaster 192.168.1.100:9869 cookie A check
-                 server megamslave 192.168.1.101:9869 cookie B check
+                 server $host1 $address1:9869 cookie A check
+                 server $host2 $address2:9869 cookie B check
 
-listen     apache         192.168.1.100:80
+listen     apache         $gateway:80
                  mode http
                  stats enable
-                 stats auth cibadmin:cibadmin # Change this to your own username and password!
+                 stats auth $auth_credential # Change this to your own username and password!
                  balance roundrobin
                  option httpclose
                  option forwardfor
                  cookie JSESSIONID prefix
-                 server megammaster 192.168.1.100:80 cookie A check
-                 server megamslave 192.168.1.101:80 cookie B check
+                 server $host1 $address1:80 cookie A check
+                 server $host2 $address2:80 cookie B check
 EOT
 
 service haproxy restart
