@@ -155,11 +155,7 @@ function installProcess(str) {
 			$('#' + serverID).hide();
 			$('#' + install_text).hide();
 			$('#' + errorID).show();
-			$("#" + name + "_dash_error").show();
-			//if (i == 0) {
-			//	$("." + progress).css('width', '100%');
-			//	$('#change_' + str).removeClass('progress-bar-info').addClass('progress-bar-danger');
-			//}
+			$("#" + name + "_dash_error").show();		
 		}
 	});
 	return false;
@@ -359,5 +355,96 @@ function updateNodesList(res) {
 }
 
 
-
+function dashboard(stype) {
+   
+	$('#' + stype +"_dash_waiting1").waiting({
+		className : 'waiting-circles',
+		elements : 24,
+		radius : 60,
+		auto : true
+	});
+	
+   $.ajax({
+		type : "GET",
+		url : "/dashboard/"+stype,
+		dataType : 'text',
+		async : true,
+		crossDomain : "true",
+		success : function(response) {
+		        var flag = true;
+		        var text;	
+		        $('#' + stype +"_dash_waiting1").hide();
+		        console.log(response);	       
+				var res = JSON.parse(response);
+				console.log(res.data);  
+				var jsondata = JSON.parse(res.data);				
+				 var key = jsondata.packages;
+					for(p in key)
+					{
+					    var in_verify = true;
+ 						elementArray = key[p];
+ 					//	console.log("key   "+p);
+ 					//	console.log("value   "+key[p]);
+ 						for(v in elementArray)
+					    {
+ 					 	  v1 = elementArray[v];
+ 						//  console.log("key===============>"+v);
+ 						//  console.log("value==============>"+v1);
+ 						  if(v1 == "false") {
+ 						     in_verify = false;
+ 						 //    console.log("---------------------");
+ 						  }
+					   }
+					   console.log(in_verify);
+						if(in_verify == true) {
+ 						   text = "Installed";
+ 						   badge = "timeline-badge success";
+ 						 } else {
+ 						   text = "Not Installed";
+ 						   badge = "timeline-badge danger";
+ 						 }     	
+ 						 
+ 					if(flag==true) { 						
+ 						$("#d_"+stype).append(				 
+							'<li>\
+								<div class="' + badge + '">\
+									<i class="fa fa-check"></i>\
+								</div>\
+								<div class="timeline-panel">\
+									<div class="timeline-heading">\
+										<h4 class="timeline-title">' + p + '</h4>'+										
+									'</div>\
+									<div class="timeline-body">\
+										<p>'+ text + '</p>\
+									</div>\
+								</div>\
+							</li>'); 
+							flag = false;
+					   } else {
+					      $("#d_"+stype).append(				 
+							'<li class="timeline-inverted">\
+								<div class="' + badge + '">\
+									<i class="fa fa-check"></i>\
+								</div>\
+								<div class="timeline-panel">\
+									<div class="timeline-heading">\
+										<h4 class="timeline-title">' + p + '</h4>'+										
+									'</div>\
+									<div class="timeline-body">\
+									   <p>'+ text + '</p>\
+									</div>\
+								</div>\
+							</li>'); 
+							flag = true;
+					   } 						
+					}
+				
+				           			
+				},
+				error : function(xhr, status) {
+					console.log(status);
+			}
+	});
+	
+	}
 

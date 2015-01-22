@@ -1,5 +1,37 @@
+ <script type='text/javascript'>
+		$(document).ready(function() {
+			$.ajax({
+		type : "GET",
+		url : "/servers/getHA",
+		dataType : 'text',
+		async : true,
+		crossDomain : "true",
+		success : function(response) {
+				var res = JSON.parse(response);
+				console.log(res.data);
+                $.each(res.data, function(idx, obj) {   
+                           
+                        console.log(obj);   
+						$("#ha_list").append(
+						'<tr style="height: 50px;">\
+						<td class="success">' + obj.IP + '</td>\
+						<td class="warning">' + get_install_text(obj.Install) + '</td>\
+						<td class="danger">' + obj.InstallDate + '</td>\
+						<td class="active">' + obj.UpdateDate + '</td>\
+						</tr>');
+						
+					});					
+				},
+				error : function(xhr, status) {
+					console.log(status);
+			}
+	});
+		});		
+
+	</script> 
+
 <div class="tab-pane active fade in p-30" id="dashboard">
-   <input type="hidden" id="hosthaip">
+	<input type="hidden" id="hosthaip">
 	<div class="bg-gray-light p-30 m-t-30 b-bot-2px-gray-light b-right-1px-gray-light">
 
 		<div class="row" id="ha_selection">
@@ -27,7 +59,7 @@
 		</div>
 		<hr />
 		<div class="row" id="ha_note" style="display: none">
-			<div class="col-sm-12  text-center">
+			<div class="col-sm-12  text-center" id="HA_network_warning_text">
 				<p class="m-b-30 p-b-30 lead text-warning text-uppercase text-center col-lg-8 col-lg-offset-2">
 					Please network the new server to this LAN and netboot it. when
 					your server is ready click install.
@@ -67,4 +99,29 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="col-sm-12">
+		<h1 class="text-center font-w-100"> High Availability</h1>
+		<br/>
+		<br/>
+		<div class="col-sm-12">
+			<div class="table-responsive">
+				<table class="table table-condensed">
+					<thead>
+						<tr>
+							<th>Ip</th>
+							<th>Status</th>
+							<th>Install date</th>
+							<th>Update Date</th>
+							<th>#</th>
+						</tr>
+					</thead>
+					<tbody id="ha_list">
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
 </div>

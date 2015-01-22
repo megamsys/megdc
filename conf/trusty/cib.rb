@@ -15,9 +15,7 @@ def pkg_check(pkg_array)
         pkg_array.each do |pkg|
           @packages["#{pkg}"].each_key do |k|
                 if `dpkg -s #{k}`.include? "Status: install ok installed"
-                        @packages["#{pkg}"]["#{k}"] = "true"
-                else
-                        puts "Package #{k} Not Installed"
+                        @packages["#{pkg}"]["#{k}"] = "true"               
                 end
           end
         end
@@ -46,13 +44,13 @@ def service_check(service_array)
                 if `sudo service #{k} status`.include? "not"
                          @services["#{ser}"]["#{k}"] = "false"
                 end
-                if "#{k}" == "drbd" && `sudo service #{k} status`.include? "drbd driver loaded OK"
+                if ("#{k}" == "drbd") && (`sudo service #{k} status`.include? "drbd driver loaded OK")
                          @services["#{ser}"]["#{k}"] = "true"
                 end
-                if "#{k}" == "ceph_health" && `ceph health`.include? "HEALTH_OK"
+                if ("#{k}" == "ceph_health") && (`ceph health`.include? "HEALTH_OK")
                         @services["#{ser}"]["ceph_health"] = "true"
                 end
-                if "#{k}" == "crm" && `crm status`.include? "Started"
+                if ("#{k}" == "crm") && (`crm status`.include? "Started")
                         @services["#{ser}"]["crm"] = "true"
                 end
           end

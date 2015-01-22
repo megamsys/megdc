@@ -14,16 +14,20 @@
 
 		<hr class="no-margin">
 
-		<ul class="unstyled nav">
+		<ul class="unstyled nav">		
 			<li>
 				<a href="dash" class="text-left">Dashboard</a>
 			</li>
 			<li>
-				<a href="nodes" class="text-left">Nodes</a>
+				<a href="master" class="text-left">Master</a>
+			</li>
+			<li>
+				<a href="nodes" class="text-left">Compute/Storage</a>
 			</li>
 			<li class="active">
-				<a href="ha" class="text-left">HA nodes</a>
+				<a href="ha" class="text-left">HA</a>
 			</li>
+			
 		</ul>
 	</div>
 
@@ -38,9 +42,7 @@
 		</button>
 	
 		<div class="p-30">
-			<h1 class="text-center font-w-100"> Welcome <span class="text-blue">{{.Username}}</span></h1>			
-			<br/>
-			<br/>	
+		
 			{{ template "page/step5.html" .}}
 		</div>
 	</div>

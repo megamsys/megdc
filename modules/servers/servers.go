@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/megamsys/cloudinabox/app"
-//	"github.com/megamsys/cloudinabox/models/orm"
 	"net/http"
 )
 
@@ -73,7 +72,7 @@ func InstallServers(serverName string) error {
 	return nil
 }
 
-func InstallNode(nodeip string, nodetype string) error {
+func InstallNode(nodeip string, nodetype string, name string) error {
 	if nodetype == "COMPUTE" {
 	url := "http://" + nodeip + ":8078/servernodes/nodes/install"
 	res, err := http.Get(url)
@@ -88,7 +87,7 @@ func InstallNode(nodeip string, nodetype string) error {
 		}
 	 }
 	} else {
-		url := "http://" + nodeip + ":8078/servernodes/ha/install"
+		url := "http://" + nodeip + ":8078/servernodes/ha/" + name + "/install"
 	    res, err := http.Get(url)
 	    if err != nil {
 		    return err

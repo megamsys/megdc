@@ -75,16 +75,16 @@ var megamInstall = action.Action{
 		}
 		// write server details in database
 		// insert rows - auto increment PKs will be set properly after the insert
-		db := orm.OpenDB()
+	/*	db := orm.OpenDB()
 		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("MEGAM")
+		newserver := orm.NewServer("MEGAM", "", "")
 		orm.ConnectToTable(dbmap, "servers", newserver)
 		err = dbmap.Insert(&newserver)
 		defer db.Close()
 		if err != nil {
 			fmt.Println("server insert error")
 			return &cib, err
-		}
+		}*/
 		return exec, err
 	},
 	Backward: func(ctx action.BWContext) {
@@ -114,15 +114,15 @@ var cobblerInstall = action.Action{
 		}
 		// write server details in database
 		// insert rows - auto increment PKs will be set properly after the insert
-		db := orm.OpenDB()
+	/*	db := orm.OpenDB()
 		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("COBBLER")
+		newserver := orm.NewServer("COBBLER", "", "")
 		orm.ConnectToTable(dbmap, "servers", newserver)
 		err := dbmap.Insert(&newserver)
 		if err != nil {
 			fmt.Println("server insert error======>")
 			return &cib, err
-		}
+		} */
 		return exec, err1
 
 	},
@@ -198,16 +198,16 @@ var opennebulaPostInstall = action.Action{
 		// write server details in database
 
 		// insert rows - auto increment PKs will be set properly after the insert
-		db := orm.OpenDB()
+	/*	db := orm.OpenDB()
 		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("OPENNEBULA")
+		newserver := orm.NewServer("OPENNEBULA", "", "")
 		orm.ConnectToTable(dbmap, "servers", newserver)
 		err := dbmap.Insert(&newserver)
 
 		if err != nil {
 			fmt.Println("server insert error======>")
 			return &cib, err
-		}
+		}*/
 		return exec, err1
 	},
 	Backward: func(ctx action.BWContext) {
@@ -271,16 +271,16 @@ var opennebulaHostMasterInstall = action.Action{
 		// write server details in database
 
 		// insert rows - auto increment PKs will be set properly after the insert
-		db := orm.OpenDB()
+	/*	db := orm.OpenDB()
 		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("OPENNEBULAHOST")
+		newserver := orm.NewServer("OPENNEBULAHOST", "", "")
 		orm.ConnectToTable(dbmap, "servers", newserver)
 		err := dbmap.Insert(&newserver)
 
 		if err != nil {
 			fmt.Println("server insert error======>")
 			return &cib, err
-		}
+		}*/
 		return exec, err1
 	},
 	Backward: func(ctx action.BWContext) {
