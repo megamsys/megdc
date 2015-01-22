@@ -104,10 +104,10 @@
           });
         }
       });
-      listSortable.on('click', '.remove-box', function(e) {
-        e.preventDefault();
-        return $(this).parent().remove();
-      });
+  //    listSortable.on('click', '.remove-box', function(e) {
+  //      e.preventDefault();
+  //      return $(this).parent().remove();
+  //    });
     }
     if ($('input.icheck').length > 0) {
       $('input.icheck').iCheck({

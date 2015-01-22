@@ -149,9 +149,9 @@ $(document).ready ->
           checkboxClass: "icheckbox_flat-blue"
         }
 
-    listSortable.on 'click', '.remove-box', (e)->
-      e.preventDefault()
-      $(this).parent().remove()
+ #   listSortable.on 'click', '.remove-box', (e)->
+  #    e.preventDefault()
+  #    $(this).parent().remove()
 
 
 

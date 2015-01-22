@@ -67,9 +67,9 @@ func (this *ServerRouter) Get() {
 	n := len(serversList)
 	for i := 0; i < n; i++ {
 		log.Printf("[%s] Selecting\n", serversList[i])
-		err := dbmap.SelectOne(&servers, "select * from servers where Name=?", serversList[i])
+		err := dbmap.SelectOne(&servers, "select * from servers where Stype='MASTER' and Name=?", serversList[i])
 		if err != nil {
-			tmpserver := &orm.Servers{0, serversList[i], false, "", "", ""}
+			tmpserver := &orm.Servers{0, serversList[i], false, "", "", "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
 			servers_output = append(servers_output, string(jsonMsg))
 			log.Printf("[%s] SQL select  {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
@@ -83,6 +83,53 @@ func (this *ServerRouter) Get() {
 	result["success"] = true
 	result["data"] = servers_output
 
+}
+
+// Get implemented dashboard page.
+func (this *ServerRouter) GetHA() {
+	var serverlist []orm.Servers
+	var servers_output []orm.Servers
+
+	result := map[string]interface{}{
+		"success": false,
+	}
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+
+	this.Data["IsLoginPage"] = true
+	this.Data["Username"] = this.GetUser()
+	if len(this.Ctx.GetCookie("remember")) == 0 {
+		this.Redirect("/", 302)
+	}
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	//n := len(serversList)
+	_, err := dbmap.Select(&serverlist, "select * from servers where Stype='HA'") 
+	/*for i := 0; i < n; i++ {
+		log.Printf("[%s] Selecting\n", serversList[i])
+		err := dbmap.SelectOne(&server, "select * from servers where Stype='HA' and Name=?", serversList[i])
+		if err != nil {
+			tmpserver := &orm.Servers{0, serversList[i], false, "", "", "", ""}
+			jsonMsg, _ := json.Marshal(tmpserver)
+			servers_output = append(servers_output, string(jsonMsg))
+			log.Printf("[%s] SQL select  {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
+		} else {
+			jsonMsg, _ := json.Marshal(server)
+			servers_output = append(servers_output, string(jsonMsg))
+			log.Printf("[%s] SQL select ignored {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
+			
+		}
+	}*/
+	if err != nil {
+		result["success"] = false
+		result["data"] = servers_output
+	} else {
+		result["success"] = true
+		result["data"] = serverlist
+  	}
 }
 
 func (this *ServerRouter) MasterInstall() {
@@ -106,7 +153,7 @@ func (this *ServerRouter) MasterInstall() {
 	}
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
-	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
+	err := dbmap.SelectOne(&server, "select * from servers where Stype='MASTER' and Name=?", servername)
 	fmt.Println(err)
 	if server.Install != true {
 			err := servers.InstallServers(servername)
@@ -114,14 +161,26 @@ func (this *ServerRouter) MasterInstall() {
 			if err != nil {
 				result["success"] = false
 			} else {
+				newserver := orm.NewServer(servername, "localhost", "MASTER")
+				orm.ConnectToTable(dbmap, "servers", newserver)
+				derr := dbmap.Insert(&newserver)
+
+				if derr != nil {
+					fmt.Println("server insert error======>")
+				}
+				uerr := updateServer("localhost", servername)
+				if uerr != nil {
+					fmt.Println("server insert error======>")
+					result["success"] = false
+				}
 				result["success"] = true
 			}
 	} else {
 		result["success"] = true
 	}
-	dberr := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
+	dberr := dbmap.SelectOne(&server, "select * from servers where Stype='MASTER' and Name=?", servername)
 	if dberr != nil {
-			tmpserver := &orm.Servers{0, servername, false, "", "", ""}
+			tmpserver := &orm.Servers{0, servername, false, "", "", "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
 			servers_output = string(jsonMsg)
 			log.Printf("[%s] SQL select  {%s}\n%v\n", servername, jsonMsg, servers_output)
@@ -147,21 +206,71 @@ func (this *ServerRouter) NodeInstallRequest() {
 		this.ServeJson()
 	}()
 	var nodes orm.Nodes
+	var serverlist []orm.Servers
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
-	node_err := servers.InstallNode(nodeip, nodetype)
-	fmt.Printf("%s", node_err)
-	if node_err != nil {
-		result["success"] = false
-	} else {
-		uerr := updateNode(nodeip)
-		fmt.Println(uerr)
-		err := dbmap.SelectOne(&nodes, "select * from nodes where IP=?", nodeip)
-		if err == nil {
-			jsonMsg, _ := json.Marshal(nodes)
-			result["data"] = string(jsonMsg)
+	if nodetype == "COMPUTE" {
+		node_err := servers.InstallNode(nodeip, nodetype, "")
+		fmt.Printf("%s", node_err)
+		if node_err != nil {
+			result["success"] = false
+		} else {
+			if nodetype == "COMPUTE" {
+				newnode := orm.NewNode(nodeip)
+				orm.ConnectToTable(dbmap, "nodes", newnode)
+				err := dbmap.Insert(&newnode)
+				if err != nil {
+					fmt.Println("Node insert error======>")
+					jsonMsg, _ := json.Marshal(nodes)
+					result["data"] = string(jsonMsg)
+				}
+				//uerr := updateNode(nodeip)
+				//fmt.Println(uerr)
+				nerr := dbmap.SelectOne(&nodes, "select * from nodes where IP=?", nodeip)
+				if nerr == nil {
+					jsonMsg, _ := json.Marshal(nodes)
+					result["data"] = string(jsonMsg)
+				}
+			} 
+			result["success"] = true
 		}
-		result["success"] = true
+	} else {
+		_, err := dbmap.Select(&serverlist, "select * from servers where Stype='MASTER'")      
+        
+		if err != nil {
+			result["success"] = false
+		} else {
+			for _, p := range serverlist {
+				newserver := orm.NewServer(p.Name, nodeip, "HA")
+				orm.ConnectToTable(dbmap, "servers", newserver)
+				derr := dbmap.Insert(&newserver)
+				if derr != nil {
+					fmt.Println("server insert error======>")
+				}
+    		}
+		 	for x, p := range serverlist {
+          		log.Printf("    %d: %v\n", x, p)
+          		node_err := servers.InstallNode(nodeip, nodetype, p.Name)
+				fmt.Printf("%s", node_err)
+				if node_err != nil {
+					result["success"] = false
+				} else {
+					//newserver := orm.NewServer(p.Name, nodeip, "HA")
+					//orm.ConnectToTable(dbmap, "servers", newserver)
+					//derr := dbmap.Insert(&newserver)
+					//if derr != nil {
+					//	fmt.Println("server insert error======>")
+					//	result["success"] = false
+					//}
+					uerr := updateServer(nodeip, p.Name)
+				    if uerr != nil {
+						fmt.Println("server insert error======>")
+						result["success"] = false
+					}
+					result["success"] = true
+					}
+    		}
+		 }	 
 	}
 }
 
@@ -199,9 +308,9 @@ func (this *ServerRouter) HAInstall() {
 		this.ServeJson()
 	}()
 	
-	//servername := this.Ctx.Input.Param(":nodename")
+	servername := this.Ctx.Input.Param(":name")
 	
-    servername := "HAINSTALL"
+    //servername := "HAINSTALL"
 	err := servers.InstallServers(servername)
 	fmt.Printf("%s", err)
 	if err != nil {
@@ -260,7 +369,7 @@ func (this *ServerRouter) Verify() {
 	}
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
-	err := dbmap.SelectOne(&server, "select * from servers where Name=?", servername)
+	err := dbmap.SelectOne(&server, "select * from servers where Stype='MASTER' and Name=?", servername)
 
 	if err != nil {
 		result["failure_message"] = err.Error()
@@ -306,14 +415,14 @@ func (this *ServerRouter) GetNodeIP() {
 		for line := range t.Lines {
 			err1 := dbmap.SelectOne(&node, "select * from nodes where IP=?", line.Text)
 			if err1 != nil {
-				newnode := orm.NewNode(line.Text)
-				orm.ConnectToTable(dbmap, "nodes", newnode)
-				err := dbmap.Insert(&newnode)
-				if err != nil {
-					fmt.Println("Node insert error======>")
-					result["ip"] = false
-					result["ipvalue"] = ""
-				}
+				//newnode := orm.NewNode(line.Text)
+				//orm.ConnectToTable(dbmap, "nodes", newnode)
+				//err := dbmap.Insert(&newnode)
+				//if err != nil {
+				//	fmt.Println("Node insert error======>")
+				//	result["ip"] = false
+				//	result["ipvalue"] = ""
+				//}
 				result["ip"] = true
 				result["ipvalue"] = line.Text
 			}
@@ -512,6 +621,34 @@ func updateNode(nodeip string) error {
 	
 		if err2 != nil {
 			fmt.Println("node insert error======>")
+			return err2
+		}	
+	return nil
+}	
+
+func updateServer(nodeip string, servername string) error {
+        // insert rows - auto increment PKs will be set properly after the insert
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
+
+		server := orm.Servers{}
+		err := dbmap.SelectOne(&server, "select * from servers where IP=? and Name=?", nodeip, servername)
+		if err != nil {
+			fmt.Println("select select error======>")
+			return err
+		}
+		err3 := orm.DeleteRowFromServerNameAndIP(dbmap, servername, nodeip)
+		if err3 != nil {
+			log.Printf("server delete error")
+			return err3
+		}
+		time := time.Now()
+		update_server := orm.Servers{Id: server.Id, Name: server.Name, Install: true, IP: server.IP, Stype: server.Stype, InstallDate: server.InstallDate, UpdateDate: time.Format(layout)}
+		orm.ConnectToTable(dbmap, "servers", update_server)
+		err2 := dbmap.Insert(&update_server)
+	
+		if err2 != nil {
+			fmt.Println("server insert error======>")
 			return err2
 		}	
 	return nil

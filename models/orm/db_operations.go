@@ -83,6 +83,13 @@ func DeleteRowFromNodeIP(dbmap *gorp.DbMap, nodeip string) error {
     return err
 }
 
+func DeleteRowFromServerNameAndIP(dbmap *gorp.DbMap, serverName string, nodeip string) error {
+	// delete row manually via Exec
+    _, err := dbmap.Exec("delete from servers where IP=? and Name=?", nodeip, serverName)
+    CheckErr(err, "Exec failed")
+    return err
+}
+
 func CheckErr(err error, msg string) {
     if err != nil {
         log.Fatalln(msg, err)
