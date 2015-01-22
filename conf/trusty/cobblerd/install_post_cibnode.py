@@ -6,6 +6,9 @@ import os
 import traceback
 import time
 
+import socket
+
+
 plib = distutils.sysconfig.get_python_lib()
 mod_path="%s/cobbler" % plib
 sys.path.insert(0, mod_path)
@@ -40,12 +43,16 @@ def run(api, args, logger):
     name    = args[1] # name of target or profile
     box_ip = args[2] # ip
 
+
     logging.debug("%s\tArgs are \t%s\t%s\t%s\n", time.strftime('%X %x %Z'), objtype, name, box_ip)
 
     if objtype == "system":
         target = api.find_system(name)
     else:
         target = api.find_profile(name)
+
+    logging.debug("%s\tFigured out HOSTNAME\t%s\n", time.strftime('%X %x %Z'),api.find_system(name))
+    box_host = "dummy"
 
     logging.debug("%s\tFigured out objtype\t%s\n", time.strftime('%X %x %Z'),target)
 
@@ -59,7 +66,7 @@ def run(api, args, logger):
 
 
     with open('/var/lib/megam/megamcib/boxips', 'a') as f:
-      	f.write(box_ip)
+      	f.write(box_host+"="+box_ip)
 
 
     logging.debug("%s\tI am done. Adios..Amigo\n",time.strftime('%X %x %Z'))
