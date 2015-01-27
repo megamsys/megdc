@@ -3,9 +3,9 @@
 #Dir.glob('*').select {|f| File.directory? f}
 
 #Total number of osd
-osd = `ceph osd stat`
+osd = `ceph osd stat  --format=json-pretty`
 puts "===========================> osd stat ============================="
-puts osd
+puts osd.inspect
 #Number of osd up
 
 #number of replica
