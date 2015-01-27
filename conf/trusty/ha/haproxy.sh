@@ -33,7 +33,7 @@ case $i in
 esac
 done
 
-
+HA_LOG="/var/log/megam/megamcib/ha.log"
 gateway="$ipaddr"
 
 address1="$node1_ip"
@@ -48,13 +48,14 @@ auth_credential=$username:$password
 
 sudo add-apt-repository -y ppa:vbernat/haproxy-1.5
 sudo apt-get -y update || true
-apt-get install -y haproxy
+apt-get install -y haproxy >> $HA_LOG
 
 echo "net.ipv4.ip_nonlocal_bind=1" >> /etc/sysctl.conf
 echo "ENABLED=1" >> /etc/default/haproxy
 
 mv /etc/haproxy/haproxy.cfg{,.original}
 
+echo "Writing /etc/haproxy/haproxy.conf"  >> $HA_LOG
 cat << EOT >> /etc/haproxy/haproxy.cfg
 listen     megamnialvu         $gateway:8080
                  mode http
@@ -91,5 +92,6 @@ listen     apache         $gateway:80
                  server $host2 $address2:80 cookie B check
 EOT
 
+echo "Restart haproxy service"  >> $HA_LOG
 service haproxy restart
 
