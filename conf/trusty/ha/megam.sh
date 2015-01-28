@@ -30,6 +30,7 @@ apt-get install drbd8-utils linux-image-extra-virtual -y >> $DRBD_LOG
 
 #Get ip of the two nodes as argument
 master=false
+data_dir="/var/lib/"
 for i in "$@"
 do
 case $i in
