@@ -39,6 +39,10 @@ user_home="/home/$ceph_user"
 
 host=`hostname`
 
+osd1="/storage1"
+osd2="/storage2"
+osd3="/storage3"
+
 #--------------------------------------------------------------------------
 #colored echo
 # Argument $1 = message
