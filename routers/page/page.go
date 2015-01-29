@@ -18,13 +18,12 @@ package page
 
 import (
 	"strings"
+	"encoding/json"
     "github.com/megamsys/cloudinabox/models/orm"
 	"github.com/megamsys/cloudinabox/routers/base"
- //   "os/exec"
     "bytes"
     "github.com/megamsys/libgo/exec"
    "net/http"
- //   "regexp"
    "fmt"
    "io/ioutil"
 )
@@ -37,17 +36,6 @@ type PageRouter struct {
 
 // Get implemented dashboard page.
 func (this *PageRouter) Get() {
-	//result := map[string]interface{}{
-	//	"success": true,
-	//}
-
-	//defer func() {
-	///	this.Data["json"] = result
-	//	this.ServeJson()
-	//}()
-	
-	
-	//servers := new(orm.Servers)
 	this.Data["IsLoginPage"] = true
 	this.Data["Username"] = this.GetUser()
 	this.TplNames = "page/index.html" 
@@ -76,6 +64,8 @@ func (this *PageRouter) Master() {
 
 func (this *PageRouter) MasterDashboard() {
 	var e exec.OsExecutor
+	var serverlist []orm.Servers
+	var servname string
 	var b bytes.Buffer
 
 	var commandWords []string
@@ -88,20 +78,32 @@ func (this *PageRouter) MasterDashboard() {
 		this.ServeJson()
 	}()
 	
-	cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb megam cobbler"
-	commandWords = strings.Fields(cmd)
-    err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
-    
-    fmt.Println("-------------------------------------------")
-    fmt.Println(b.String())
-    fmt.Println(err)
-    c := "{\"packages\":{\"megam\":{\"megamcommon\":\"true\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"megamsnowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"true\",\"sqlite3\":\"true\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"true\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\",\"debmirror\":\"true\"}},\"services\":{\"megam\":{\"megamcommon\":\"false\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"snowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"false\",\"sqlite3\":\"false\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"false\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\"}}}"
-    result["data"] = c
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	_, err := dbmap.Select(&serverlist, "select * from servers where Stype='MASTER'") 
+	
+	if len(serverlist) == 0 || err != nil {
+		result["success"] = false
+	} else {
+		for _, p := range serverlist {
+       	   servname = servname + " " + p.Name
+       	 }  
+		cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb" + strings.ToLower(servname)
+	//	cmd := "conf/trusty/cib.rb" + strings.ToLower(servname)
+		commandWords = strings.Fields(cmd)
+    	err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
+       	if err != nil {
+    		result["success"] = false
+    	} else {
+    		result["success"] = true
+    	    result["data"] = b.String()
+    	 }   
+    }
 }
 
 func (this *PageRouter) HADashboard() {
 	var serverlist []orm.Servers
-	
+	var servname string
 	result := map[string]interface{}{
 		"success": false,
 	}
@@ -117,29 +119,125 @@ func (this *PageRouter) HADashboard() {
 	if len(serverlist) == 0 || err != nil {
 		result["success"] = false
 	} else {
+		for _, p := range serverlist {
+       	   servname = servname + " " + p.Name
+       	 }  
 		url := "http://" + serverlist[0].IP + ":8078/dashboard/ha/request"
-	    	res, err := http.Get(url)
-				robots, err := ioutil.ReadAll(res.Body)
-				res.Body.Close()
-					if err != nil {
-					fmt.Println(err)
-					}
-				//	fmt.Printf("%s", string(robots).data)
-	   	 if err != nil {
+	    res, rerr := http.Post(url, "string", bytes.NewBufferString(servname))		
+		if rerr != nil {
 			result["success"] = false
-	   	} else {
-		 	if res.StatusCode == 200 {
-				result["success"] = true
-				c := "{\"packages\":{\"megam\":{\"megamcommon\":\"true\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"megamsnowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"true\",\"sqlite3\":\"true\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"true\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\",\"debmirror\":\"true\"}},\"services\":{\"megam\":{\"megamcommon\":\"false\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"snowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"false\",\"sqlite3\":\"false\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"false\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\"}}}"
-                result["data"] = c
+		} else {
+			if res.StatusCode == 200 {
+				resBody, derr := ioutil.ReadAll(res.Body)
+		  		if derr != nil {
+		  			result["success"] = false
+		  		} else {		  		  
+		  		    var dat map[string]interface{}
+    				if jerr := json.Unmarshal(resBody, &dat); jerr != nil {
+        				result["success"] = false
+    				} else {
+    					if dat["success"] == false {
+		  					result["success"] = false
+		  				} else {
+    						result["success"] = true
+							//c := "{\"packages\":{\"megam\":{\"megamcommon\":\"true\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"megamsnowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"true\",\"sqlite3\":\"true\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"true\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\",\"debmirror\":\"true\"}},\"services\":{\"megam\":{\"megamcommon\":\"false\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"snowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"false\",\"sqlite3\":\"false\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"false\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\"}}}"
+                			result["data"] = dat["data"]
+                		}			
+		  			} 		
+    			}			
 			} else {
 				result["success"] = false
 			}
-	  	}
+		}
+	   	res.Body.Close()
 	 }
 }
 
 func (this *PageRouter) HADashboardRequest() {
+	var e exec.OsExecutor
+	var b bytes.Buffer
+   // var servernames []orm.Servers
+    var servname string
+	var commandWords []string
+	result := map[string]interface{}{
+		"success": false,
+	}
+	req := this.Ctx.Request     //in beego this.Ctx.Request points to the Http#Request
+	p := make([]byte, req.ContentLength)    
+	ps, _ := this.Ctx.Request.Body.Read(p)
+	fmt.Println(ps)
+	
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+
+    servname = strings.ToLower(string(p))
+	cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb" + servname
+	//cmd := "conf/trusty/cib.rb" + servname
+	commandWords = strings.Fields(cmd)
+   	err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
+   	if err != nil {
+    	result["success"] = false
+    } else {
+    	result["success"] = true
+  		//  c := "{\"packages\":{\"megam\":{\"megamcommon\":\"true\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"megamsnowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"true\",\"sqlite3\":\"true\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"true\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\",\"debmirror\":\"true\"}},\"services\":{\"megam\":{\"megamcommon\":\"false\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"snowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"false\",\"sqlite3\":\"false\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"false\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\"}}}"
+    	result["data"] = b.String()
+    }
+}
+
+func (this *PageRouter) CSDashboard() {
+	var nodelist []orm.Nodes
+	
+	result := map[string]interface{}{
+		"success": false,
+	}
+	
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	_, err := dbmap.Select(&nodelist, "select * from nodes") 
+	
+	if len(nodelist) == 0 || err != nil {
+		result["success"] = false
+	} else {
+		for _, n := range nodelist {
+			url := "http://" + n.IP + ":8078/dashboard/cs/request"
+	    	res, rerr := http.Get(url)			
+			if rerr != nil {
+				result["success"] = false
+			} else {
+				if res.StatusCode == 200 {
+					resBody, derr := ioutil.ReadAll(res.Body)
+		  			if derr != nil {
+		  				result["success"] = false
+		  			} else {		  		  
+		  		 	   var dat map[string]interface{}
+    					if jerr := json.Unmarshal(resBody, &dat); jerr != nil {
+        					result["success"] = false
+    					} else {
+    						if dat["success"] == false {
+		  						result["success"] = false
+		  					} else {
+    							result["success"] = true
+								//c := "{\"packages\":{\"megam\":{\"megamcommon\":\"true\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"megamsnowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"true\",\"sqlite3\":\"true\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"true\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\",\"debmirror\":\"true\"}},\"services\":{\"megam\":{\"megamcommon\":\"false\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"snowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"false\",\"sqlite3\":\"false\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"false\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\"}}}"
+                				result["data"] = dat["data"]
+                			}			
+		  				} 		
+    				}			
+				} else {
+					result["success"] = false
+				}
+			}
+	   	res.Body.Close()
+	  } 	
+	 }
+}
+
+func (this *PageRouter) CSDashboardRequest() {
 	var e exec.OsExecutor
 	var b bytes.Buffer
 
@@ -153,23 +251,20 @@ func (this *PageRouter) HADashboardRequest() {
 		this.ServeJson()
 	}()
 	
-	cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb megam cobbler"
+	cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb opennebula_host ceph"
 	commandWords = strings.Fields(cmd)
     err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
-    
-    fmt.Println("-------------------------------------------")
-    fmt.Println(b.String())
-    fmt.Println(err)
-    result["success"] = true
-    c := "{\"packages\":{\"megam\":{\"megamcommon\":\"true\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"megamsnowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"true\",\"sqlite3\":\"true\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"true\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\",\"debmirror\":\"true\"}},\"services\":{\"megam\":{\"megamcommon\":\"false\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"snowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"false\",\"sqlite3\":\"false\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"false\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\"}}}"
-    result["data"] = c
-   /*return &http.Response{
-    Status:     "200 OK",
-    StatusCode: 200,
-    Body: ioutil.NopCloser(bytes.NewBufferString(c)),
-   }*/
+    if err != nil {
+    	result["success"] = false
+    } else {
+    	fmt.Println("-------------------------------------------")
+    	fmt.Println(b.String())
+    	fmt.Println(err)
+    	result["success"] = true
+  		//  c := "{\"packages\":{\"megam\":{\"megamcommon\":\"true\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"megamsnowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"true\",\"sqlite3\":\"true\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"true\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\",\"debmirror\":\"true\"}},\"services\":{\"megam\":{\"megamcommon\":\"false\",\"megamcib\":\"false\",\"megamcibn\":\"false\",\"megamnilavu\":\"false\",\"snowflake\":\"true\",\"megamgateway\":\"false\",\"megamd\":\"false\",\"megamchefnative\":\"false\",\"megamanalytics\":\"false\",\"megamdesigner\":\"false\",\"megammonitor\":\"false\",\"riak\":\"true\",\"rabbitmq-server\":\"true\",\"nodejs\":\"false\",\"sqlite3\":\"false\",\"ruby2.0\":\"false\",\"openjdk-7-jdk\":\"false\"},\"cobbler\":{\"cobbler\":\"true\",\"dnsmasq\":\"true\",\"apache2\":\"true\"}}}"
+    	result["data"] = b.String()
+    }
 }
-
 
 
 

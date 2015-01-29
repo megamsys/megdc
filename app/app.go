@@ -6,8 +6,6 @@ import (
 	"fmt"
 )
 
-
-
 type App struct {
     Email              string `json:"email"`
 	ApiKey             string `json:"api_key"`
@@ -18,10 +16,6 @@ type App struct {
 	NodeName           string `json:"node_name"`
 	Action             string `json:"action"`
 	Command            string
-}
-
-type CIB struct {
-	Command    string
 }
 
 // MarshalJSON marshals the app in json format. It returns a JSON object with
@@ -56,6 +50,18 @@ func (a *App) UnmarshalJSON(b []byte) error {
     a.Action  =  m["action"].(string)
 
     return nil
+}
+
+
+type CIB struct {
+	Command    	  	string
+	LocalIP       	string   `json:"localip"`
+	LocalHost     	string   `json:"localhost"`
+	LocalDisk     	string   `json:"localdisk"`
+	RemoteIP       	string   `json:"remoteip"`
+	RemoteHost     	string   `json:"remotehost"`  
+	RemoteDisk     	string   `json:"remotedisk"`
+	Master          bool     `json:"master"`
 }
 
 
@@ -150,6 +156,27 @@ func SCPSSHInstall() error {
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func HAProxyInstall(cib *CIB, Stype string) error {
+	if Stype == "MASTER" {
+		actions := []*action.Action{&haHooksInstall, &haProxyInstall, &haMegamInstall}
+
+		pipeline := action.NewPipeline(actions...)
+		err := pipeline.Execute(cib)
+		if err != nil {
+			return err
+		}
+	} else {
+		actions := []*action.Action{&haMegamInstall}
+
+		pipeline := action.NewPipeline(actions...)
+		err := pipeline.Execute(cib)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/megamsys/cloudinabox/app"
+	"github.com/megamsys/cloudinabox/models/orm"
 	"net/http"
 )
 
@@ -100,3 +101,21 @@ func InstallNode(nodeip string, nodetype string, name string) error {
 	  }
 	}
 }
+
+func InstallProxy(haserver *orm.HAServers, Stype string) error {
+	cib := &app.CIB{}
+	if Stype == "MASTER" {
+		cib = &app.CIB{LocalIP: haserver.NodeIP1, LocalHost: haserver.NodeHost1, LocalDisk: haserver.NodeDisk1, RemoteIP: haserver.NodeIP2, RemoteHost: haserver.NodeHost2, RemoteDisk: haserver.NodeDisk2, Master: true}
+	} else {
+		cib = &app.CIB{LocalIP: haserver.NodeIP2, LocalHost: haserver.NodeHost2, LocalDisk: haserver.NodeDisk2, RemoteIP: haserver.NodeIP1, RemoteHost: haserver.NodeHost1, RemoteDisk: haserver.NodeDisk1, Master: false}
+	}
+	err := app.HAProxyInstall(cib, Stype)
+		if err != nil {
+			fmt.Printf("Error: Install error for HAProxy")
+			fmt.Println(err)
+			return err
+		}
+   return nil			
+}
+
+

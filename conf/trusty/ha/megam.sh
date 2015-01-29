@@ -8,7 +8,7 @@
 
 #megam_drbd_cookbook process
 
-#sh cib-ha.sh remote_ip="192.168.2.101" remote_hostname="megamslave" data_dir="/var/lib/" local_disk="/dev/sda9" remote_disk="/dev/sda9" master
+#sh megam.sh remote_ip="192.168.2.101" remote_hostname="megamslave" data_dir="/var/lib/" local_disk="/dev/sda9" remote_disk="/dev/sda9" master
 
 
 ip() {

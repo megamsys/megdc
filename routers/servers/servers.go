@@ -20,6 +20,7 @@ import (
 	"container/list"
 	"encoding/json"
 	"fmt"
+	"bytes"
 	"github.com/ActiveState/tail"
 	"github.com/astaxie/beego"
 	"github.com/gorilla/websocket"
@@ -27,12 +28,14 @@ import (
 	"github.com/megamsys/cloudinabox/models/orm"
 	"github.com/megamsys/cloudinabox/modules/servers"
 	"github.com/megamsys/cloudinabox/routers/base"
+	"github.com/megamsys/libgo/exec"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"strconv"
 	"time"
+	"io/ioutil"
 )
 
 var serversList = [...]string{"MEGAM", "COBBLER", "OPENNEBULA", "OPENNEBULAHOST"}
@@ -69,7 +72,7 @@ func (this *ServerRouter) Get() {
 		log.Printf("[%s] Selecting\n", serversList[i])
 		err := dbmap.SelectOne(&servers, "select * from servers where Stype='MASTER' and Name=?", serversList[i])
 		if err != nil {
-			tmpserver := &orm.Servers{0, serversList[i], false, "", "", "", ""}
+			tmpserver := &orm.Servers{0, serversList[i], false, "", "", "", "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
 			servers_output = append(servers_output, string(jsonMsg))
 			log.Printf("[%s] SQL select  {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
@@ -107,22 +110,7 @@ func (this *ServerRouter) GetHA() {
 	db := orm.OpenDB()
 	dbmap := orm.GetDBMap(db)
 	//n := len(serversList)
-	_, err := dbmap.Select(&serverlist, "select * from servers where Stype='HA'") 
-	/*for i := 0; i < n; i++ {
-		log.Printf("[%s] Selecting\n", serversList[i])
-		err := dbmap.SelectOne(&server, "select * from servers where Stype='HA' and Name=?", serversList[i])
-		if err != nil {
-			tmpserver := &orm.Servers{0, serversList[i], false, "", "", "", ""}
-			jsonMsg, _ := json.Marshal(tmpserver)
-			servers_output = append(servers_output, string(jsonMsg))
-			log.Printf("[%s] SQL select  {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
-		} else {
-			jsonMsg, _ := json.Marshal(server)
-			servers_output = append(servers_output, string(jsonMsg))
-			log.Printf("[%s] SQL select ignored {%s}\n%v\n", serversList[i], jsonMsg, servers_output)
-			
-		}
-	}*/
+	_, err := dbmap.Select(&serverlist, "select * from servers where Stype='HA' GROUP BY IP") 
 	if err != nil {
 		result["success"] = false
 		result["data"] = servers_output
@@ -161,7 +149,7 @@ func (this *ServerRouter) MasterInstall() {
 			if err != nil {
 				result["success"] = false
 			} else {
-				newserver := orm.NewServer(servername, "localhost", "MASTER")
+				newserver := orm.NewServer(servername, "localhost", "MASTER", "")
 				orm.ConnectToTable(dbmap, "servers", newserver)
 				derr := dbmap.Insert(&newserver)
 
@@ -180,7 +168,7 @@ func (this *ServerRouter) MasterInstall() {
 	}
 	dberr := dbmap.SelectOne(&server, "select * from servers where Stype='MASTER' and Name=?", servername)
 	if dberr != nil {
-			tmpserver := &orm.Servers{0, servername, false, "", "", "", ""}
+			tmpserver := &orm.Servers{0, servername, false, "", "", "", "", ""}
 			jsonMsg, _ := json.Marshal(tmpserver)
 			servers_output = string(jsonMsg)
 			log.Printf("[%s] SQL select  {%s}\n%v\n", servername, jsonMsg, servers_output)
@@ -192,15 +180,126 @@ func (this *ServerRouter) MasterInstall() {
 	result["data"] = servers_output
 }
 
-
 func (this *ServerRouter) NodeInstallRequest() {
+	result := map[string]interface{}{
+		"success": false,
+	}
+	nodeip := this.Ctx.Input.Param(":nodeip")
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	var nodes orm.Nodes
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	node_err := servers.InstallNode(nodeip, "COMPUTE", "")
+	fmt.Printf("%s", node_err)
+	if node_err != nil {
+		result["success"] = false
+	} else {
+		    nodename := "" 
+			newnode := orm.NewNode(nodeip, nodename)
+			orm.ConnectToTable(dbmap, "nodes", newnode)
+			err := dbmap.Insert(&newnode)
+			if err != nil {
+				fmt.Println("Node insert error======>")
+				jsonMsg, _ := json.Marshal(nodes)
+				result["data"] = string(jsonMsg)
+			}
+			//uerr := updateNode(nodeip)
+			//fmt.Println(uerr)
+			nerr := dbmap.SelectOne(&nodes, "select * from nodes where IP=?", nodeip)
+			if nerr == nil {
+				jsonMsg, _ := json.Marshal(nodes)
+				result["data"] = string(jsonMsg)
+			}
+		result["success"] = true
+	}
+}
+
+
+func (this *ServerRouter) HANodeInstallRequest() {
+	result := map[string]interface{}{
+		"success": false,
+	}
+	nodeip := this.Ctx.Input.Param(":nodeip")
+	
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	var serverlist []orm.Servers
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	
+		_, err := dbmap.Select(&serverlist, "select * from servers where Stype='MASTER'")      
+        
+		if err != nil {
+			result["success"] = false
+		} else {
+			nodename := ""
+			for _, p := range serverlist {
+				newserver := orm.NewServer(p.Name, nodeip, "HA", nodename)
+				orm.ConnectToTable(dbmap, "servers", newserver)
+				derr := dbmap.Insert(&newserver)
+				if derr != nil {
+					fmt.Println("server insert error======>")
+				}
+    		}
+		 	for x, p := range serverlist {
+          		log.Printf("    %d: %v\n", x, p)
+          		node_err := servers.InstallNode(nodeip, "HA", p.Name)
+				fmt.Printf("%s", node_err)
+				if node_err != nil {
+					result["success"] = false
+				} else {
+					uerr := updateServer(nodeip, p.Name)
+				    if uerr != nil {
+						fmt.Println("server insert error======>")
+						result["success"] = false
+					}
+					result["success"] = true
+					}
+    		}
+		 	var haserver orm.HAServers
+		 	nerr := dbmap.SelectOne(&haserver, "select * from haservers where nodeip2=?", nodeip)
+			if nerr != nil {
+				result["success"] = false
+			} else {
+				masterproxyerr := servers.InstallProxy(&haserver, "MASTER")
+				if masterproxyerr != nil {
+					result["success"] = false
+				} 
+				
+				jsonMsg, _ := json.Marshal(haserver)
+				
+		 		url := "http://" + nodeip + ":8078/servernodes/haproxy/install"
+		 		res, rerr := http.Post(url, "string", bytes.NewBufferString(string(jsonMsg)))		
+	    		if rerr != nil {
+		  	 	 	result["success"] = false
+	    		} else {
+		 			if res.StatusCode > 299 {
+						result["success"] = false
+					} else {
+						result["success"] = true
+					}
+	  			}
+	    	}
+	}
+}
+
+/*func (this *ServerRouter) NodeInstallRequest() {
 	result := map[string]interface{}{
 		"success": false,
 	}
 	req := this.Ctx.Input.Param(":nodeip")
 	s := strings.Split(req, "-")
-    nodeip := s[1]
+    nodedata := s[1]
     nodetype := s[0]
+    ns := strings.Split(nodedata, "=")
+    nodeip := ns[1]
+    nodename := ns[0]
 	defer func() {
 		this.Data["json"] = result
 		this.ServeJson()
@@ -216,7 +315,7 @@ func (this *ServerRouter) NodeInstallRequest() {
 			result["success"] = false
 		} else {
 			if nodetype == "COMPUTE" {
-				newnode := orm.NewNode(nodeip)
+				newnode := orm.NewNode(nodeip, nodename)
 				orm.ConnectToTable(dbmap, "nodes", newnode)
 				err := dbmap.Insert(&newnode)
 				if err != nil {
@@ -241,7 +340,7 @@ func (this *ServerRouter) NodeInstallRequest() {
 			result["success"] = false
 		} else {
 			for _, p := range serverlist {
-				newserver := orm.NewServer(p.Name, nodeip, "HA")
+				newserver := orm.NewServer(p.Name, nodeip, "HA", nodename)
 				orm.ConnectToTable(dbmap, "servers", newserver)
 				derr := dbmap.Insert(&newserver)
 				if derr != nil {
@@ -255,13 +354,6 @@ func (this *ServerRouter) NodeInstallRequest() {
 				if node_err != nil {
 					result["success"] = false
 				} else {
-					//newserver := orm.NewServer(p.Name, nodeip, "HA")
-					//orm.ConnectToTable(dbmap, "servers", newserver)
-					//derr := dbmap.Insert(&newserver)
-					//if derr != nil {
-					//	fmt.Println("server insert error======>")
-					//	result["success"] = false
-					//}
 					uerr := updateServer(nodeip, p.Name)
 				    if uerr != nil {
 						fmt.Println("server insert error======>")
@@ -270,9 +362,33 @@ func (this *ServerRouter) NodeInstallRequest() {
 					result["success"] = true
 					}
     		}
+		 	var haserver orm.HAServers
+		 	nerr := dbmap.SelectOne(&haserver, "select * from haservers where NodeIP2=?", nodeip)
+			if nerr == nil {
+				result["success"] = false
+			} else {
+				masterproxyerr := servers.InstallProxy(&haserver, "MASTER")
+				if masterproxyerr != nil {
+					result["success"] = false
+				} 
+				
+				jsonMsg, _ := json.Marshal(haserver)
+				
+		 		url := "http://" + nodeip + ":8078/servernodes/haproxy/install"
+		 		res, rerr := http.Post(url, "string", bytes.NewBufferString(string(jsonMsg)))		
+	    		if rerr != nil {
+		  	 	 	result["success"] = false
+	    		} else {
+		 			if res.StatusCode > 299 {
+						result["success"] = false
+					} else {
+						result["success"] = true
+					}
+	  			}
+	    	}
 		 }	 
 	}
-}
+}*/
 
 
 func (this *ServerRouter) NodeInstall() {
@@ -318,7 +434,35 @@ func (this *ServerRouter) HAInstall() {
 	} else {
 		result["success"] = true
 	}
+}
 
+func (this *ServerRouter) ProxyInstall() {
+	result := map[string]interface{}{
+		"success": false,
+	}
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	req := this.Ctx.Request     //in beego this.Ctx.Request points to the Http#Request
+	p := make([]byte, req.ContentLength)    
+	ps, _ := this.Ctx.Request.Body.Read(p)
+	fmt.Println(ps)
+	
+	var r orm.HAServers
+    if haerr := json.Unmarshal(p, &r); haerr != nil {
+    	result["success"] = false
+    } else {
+		slaveproxyerr := servers.InstallProxy(&r, "SLAVE")
+		if slaveproxyerr != nil {
+			result["success"] = false
+		} else {
+			result["success"] = true
+		} 
+	 }
+    
 }
 
 func (this *ServerRouter) Log() {
@@ -382,6 +526,198 @@ func (this *ServerRouter) Verify() {
 	}
 }
 
+type Device struct {
+	Name  		string  `json:"name"` 
+	Size  		string  `json:"size"`
+	State 		string  `json:"state"`
+	MountPoint	string  `json:"mountpoint"`
+}
+
+type DeviceList struct {
+	//Key		string  `json:"key"` 
+	Key		*Device  `json:"key"` 
+}
+
+type Response struct {
+	Data		[]*DeviceList  `json:"data"` 
+	Host        string         `json:host"`
+	Success		bool           `json:"success"` 
+}
+
+func (this *ServerRouter) GetHAOptions() {
+	
+	result := map[string]interface{}{
+		"success": false,
+	}
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	masterDevice := getDeviceDetails()
+	
+	ip := this.Ctx.Input.Param(":ip")
+	url := "http://" + ip + ":8078/servernodes/devicedetails"
+	res, err := http.Get(url)
+	if err != nil {
+		result["success"] = false
+	} else {
+		if res.StatusCode > 299 {
+			result["success"] = false
+		} else {
+			haDevice, derr := ioutil.ReadAll(res.Body)
+			if derr != nil {
+		  		result["success"] = false
+		  	} else {
+		  		var r Response
+    			if haerr := json.Unmarshal(haDevice, &r); haerr != nil {
+        			result["success"] = false
+    			} else {
+    				fmt.Println(masterDevice)
+    				disk1 := ""
+    				disk2 := ""
+    				for _, mk := range masterDevice {
+    					for _, hav := range r.Data {
+    						if mk.Key.Size == hav.Key.Size && mk.Key.State != "running" && hav.Key.State != "running" && mk.Key.MountPoint == "" && hav.Key.MountPoint == "" {
+    						    if mk.Key.Size[len(mk.Key.Size)-1:] == "G" && hav.Key.Size[len(hav.Key.Size)-1:] == "G" {
+    								disk1 = "/dev/"+mk.Key.Name
+    								disk2 = "/dev/"+hav.Key.Name
+    							}	
+    						}
+    				    }
+    				}
+    				details := getMasterDetails()
+    				if details != "" {
+    					detail := strings.Split(details, "=-=")
+    					db := orm.OpenDB()
+						dbmap := orm.GetDBMap(db)
+    					newhaserver := orm.HAServers{NodeIP1: detail[0], NodeHost1: detail[1], NodeDisk1: disk1, NodeIP2: ip, NodeHost2: r.Host, NodeDisk2: disk2 }
+						orm.ConnectToTable(dbmap, "haservers", newhaserver)
+						derr := dbmap.Insert(&newhaserver)
+						if derr != nil {
+							fmt.Println("HA server insert error======>")
+							result["success"] = false
+						}
+						result["success"] = true
+    				} else {
+    					result["success"] = false
+    				}
+    				
+    			}		  		
+		  	}
+		}
+	 }
+	res.Body.Close()
+}
+
+func getMasterDetails() string {
+	var e exec.OsExecutor
+	var b bytes.Buffer
+	var c bytes.Buffer
+	var commandWords []string
+	cmd := "bash conf/trusty/ip.sh"
+	commandWords = strings.Fields(cmd)
+   	err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
+   	if err != nil {
+    	return ""
+    } else {
+    	cmd1 := "hostname"
+		commandWords = strings.Fields(cmd1)
+   		err := e.Execute(commandWords[0], commandWords[1:], nil, &c, &c)
+   		if err != nil {
+    		return ""
+	    } else {
+    		return strings.TrimSpace(b.String())+"=-="+strings.TrimSpace(c.String())
+    	}    		
+    }
+}
+
+func (this *ServerRouter) HADeviceDetails() {
+	var e exec.OsExecutor
+	var b bytes.Buffer
+	var commandWords []string
+	result := map[string]interface{}{
+		"success": false,
+		"host": "",
+	}
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+	cmd := "hostname"
+	commandWords = strings.Fields(cmd)
+   	err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
+   	if err != nil {
+    	result["success"] = false 
+    } else {
+    	result["host"] = strings.TrimSpace(b.String())
+    }
+	
+	haDevice := getDeviceDetails()
+    result["data"] = haDevice
+}
+
+
+
+func getDeviceDetails() []*DeviceList {
+	var e exec.OsExecutor
+	var b bytes.Buffer
+	var commandWords []string
+	//devicelist := make([]string, 0)
+	devicelist := make([]*DeviceList, 0)
+	
+	cmd := "lsblk -o NAME,SIZE,STATE,MOUNTPOINT -nl"
+	commandWords = strings.Fields(cmd)
+   	err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
+   	if err != nil {
+    	return devicelist
+    } else {
+    	testlines := "sda   232.9G running \n" +
+                     "sda1   46.7G         / \n"+ 
+					 "sda2    5.6G         [SWAP] \n" +
+					 "sda3    244M         /boot \n" +
+					 "sda4      1K         \n"+
+					 "sda5   18.6G         /var \n"+
+					 "sda6    4.7G         /usr \n"+
+					 "sda7    4.7G         /home \n"+
+					 "sda8    4.7G         /tmp \n"+
+					 "sda9   18.6G         \n"+        
+					 "sda10 129.2G         /storage1 \n"+
+					 "sdb   232.9G running \n"+
+					 "sdb1  116.4G         /storage2 \n"+
+					 "sdb2  116.5G         /storage3 \n"+
+					 "drbd0  18.6G         /var/lib/megam"  
+    	//lines := strings.Split(b.String(), "\n")
+    	lines := strings.Split(testlines, "\n")
+    	devicelist = make([]*DeviceList, len(lines))
+    	for c, l := range lines {
+    		line := strings.Split(l, " ")
+    	    var s string
+    		for _, n := range line {    		  
+    		  if len(n) > 0 {
+    		   	s = s + n + "-"
+    		  }
+    		}
+    	  if len(s) > 0 { 	
+    	  	listSplit := strings.Split(s, "-")
+    	  	state := ""
+    	  	mountpoint := "" 
+    	  	if listSplit[2] == "running" {
+    	  		state = listSplit[2]
+    	  		mountpoint = listSplit[3]
+    	  	} else {
+    	  		state = ""
+    	  		mountpoint = listSplit[2]
+    	  	}
+    	    devicelist[c] = &DeviceList{Key: &Device{Name: listSplit[0], Size: listSplit[1], State: state, MountPoint: mountpoint}}
+    	  }
+    	} 
+    	fmt.Println(devicelist)
+    }
+	return devicelist
+}
+
 func (this *ServerRouter) GetNodeIP() {
 	var node orm.Nodes
 	//nodename := this.Ctx.Input.Param(":nodename")
@@ -413,16 +749,9 @@ func (this *ServerRouter) GetNodeIP() {
 			log.Printf("ERROR LOG READ ==> : %s", err.Error())
 		}
 		for line := range t.Lines {
-			err1 := dbmap.SelectOne(&node, "select * from nodes where IP=?", line.Text)
+			ip := strings.Split(line.Text, "=")
+			err1 := dbmap.SelectOne(&node, "select * from nodes where IP=?", ip)
 			if err1 != nil {
-				//newnode := orm.NewNode(line.Text)
-				//orm.ConnectToTable(dbmap, "nodes", newnode)
-				//err := dbmap.Insert(&newnode)
-				//if err != nil {
-				//	fmt.Println("Node insert error======>")
-				//	result["ip"] = false
-				//	result["ipvalue"] = ""
-				//}
 				result["ip"] = true
 				result["ipvalue"] = line.Text
 			}
@@ -615,7 +944,7 @@ func updateNode(nodeip string) error {
 			return err3
 		}
 		time := time.Now()
-		update_node := orm.Nodes{Id: node.Id, Install: true, IP: node.IP, InstallDate: node.InstallDate, UpdateDate: time.Format(layout)}
+		update_node := orm.Nodes{Id: node.Id, Install: true, IP: node.IP, HostName: node.HostName, InstallDate: node.InstallDate, UpdateDate: time.Format(layout)}
 		orm.ConnectToTable(dbmap, "nodes", update_node)
 		err2 := dbmap.Insert(&update_node)
 	
@@ -643,7 +972,7 @@ func updateServer(nodeip string, servername string) error {
 			return err3
 		}
 		time := time.Now()
-		update_server := orm.Servers{Id: server.Id, Name: server.Name, Install: true, IP: server.IP, Stype: server.Stype, InstallDate: server.InstallDate, UpdateDate: time.Format(layout)}
+		update_server := orm.Servers{Id: server.Id, Name: server.Name, Install: true, IP: server.IP, Stype: server.Stype, HostName: server.HostName, InstallDate: server.InstallDate, UpdateDate: time.Format(layout)}
 		orm.ConnectToTable(dbmap, "servers", update_server)
 		err2 := dbmap.Insert(&update_server)
 	

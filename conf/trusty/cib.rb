@@ -30,7 +30,7 @@ end
 
 @services = {
 "megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "snowflake" => "false", "megamgateway" => "false", "megamd" => "false", "megamchefnative" => "false", "megamanalytics" => "false", "megamdesigner" => "false", "megammonitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
-"cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false"},
+"cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false", "debmirror" => "false"},
 "opennebula" => {"opennebula" => "false", "opennebula-sunstone" => "false"},
 "opennebula_host" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
 "ceph" => {"ceph-all" => "false", "ceph_health" => "false"},

@@ -3,11 +3,12 @@
 	{{ template "base/nav.html" .}}
 
 	<script type='text/javascript'>
-	$('.collapse').collapse();
-	$(document).ready(function() {			
-		
-		  dashboard("master");
-		  dashboard("ha");
+		$('.collapse').collapse();
+		$(document).ready(function() {
+
+			dashboard("master");
+			dashboard("ha");
+			// dashboard("cs");
 		});
 	</script>
 
@@ -65,18 +66,14 @@
 						</div>
 					</div>
 					<div class="panel-body">
-					<div id="master_dash_waiting1"></div>
-						<ul class="timeline" id="d_master">
-						</ul>
+						<div id="master_dash_waiting1"></div>
+						<ul class="timeline" id="d_master"></ul>
 					</div>
-					<a data-toggle="collapse" href="#collapseMaster" aria-expanded="false" aria-controls="collapseMaster">
+					<a data-toggle="collapse" href="#collapsemaster" aria-expanded="false" aria-controls="collapsemaster">
 					<div class="panel-footer">
 						<span class="pull-left">View Details</span>
 						<div class="clearfix"></div>
 					</div> </a>
-					<div class="collapse" id="collapseMaster">
-						ghjghjghjghjnghjn
-					</div>
 				</div>
 			</div>
 			<div class="col-sm-4">
@@ -97,46 +94,14 @@
 						</div>
 					</div>
 					<div class="panel-body">
-						<ul class="timeline">							
-							<li>
-								<div class="timeline-badge danger">
-									<i class="fa fa-bomb"></i>
-								</div>
-								<div class="timeline-panel">
-									<div class="timeline-heading">
-										<h4 class="timeline-title">Opennebula host</h4>										
-									</div>
-									<div class="timeline-body">
-										<p>
-											Installed
-										</p>
-									</div>
-								</div>
-							</li>
-							<li class="timeline-inverted">
-								<div class="timeline-panel">
-									<div class="timeline-heading">
-										<h4 class="timeline-title">Ceph</h4>										
-									</div>
-									<div class="timeline-body">
-										<p>
-											Installed
-										</p>
-									</div>
-								</div>
-							</li>
-						</ul>
+						<div id="cs_dash_waiting1"></div>
+						<ul class="timeline" id="d_cs"></ul>
 					</div>
-					<a data-toggle="collapse" href="#collapseNodes" aria-expanded="false" aria-controls="collapseNodes">
+					<a data-toggle="collapse" href="#collapsecs" aria-expanded="false" aria-controls="collapsecs">
 					<div class="panel-footer">
 						<span class="pull-left">View Details</span>
 						<div class="clearfix"></div>
 					</div></a>
-					<div class="collapse" id="collapseNodes">
-						<div class="well">
-							...
-						</div>
-					</div>
 				</div>
 			</div>
 			<div class="col-sm-4">
@@ -157,24 +122,31 @@
 						</div>
 					</div>
 					<div class="panel-body">
-					    <div id="ha_dash_waiting1"></div>
-						<ul class="timeline" id="d_ha">
-						</ul>
+						<div id="ha_dash_waiting1"></div>
+						<ul class="timeline" id="d_ha"></ul>
 					</div>
-					<a data-toggle="collapse" href="#collapseHA" aria-expanded="false" aria-controls="collapseHA">
+					<a data-toggle="collapse" href="#collapseha" aria-expanded="false" aria-controls="collapseha">
 					<div class="panel-footer">
 						<span class="pull-left">View Details</span>
 						<div class="clearfix"></div>
 					</div></a>
-					<div class="collapse" id="collapseHA">
-						<div class="well">
-							...
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
 
+		<div class="collapse" id="collapsemaster">
+			<div class="row well" id="collmaster">				
+			</div>
+		</div>
+		<div class="collapse" id="collapsecs">
+			<div class="row well" id="collcs">				
+			</div>
+		</div>
+		<div class="collapse" id="collapseha">
+			<div class="row well" id="collha">
+				
+			</div>
+		</div>
 	</div>
 
 </div>
