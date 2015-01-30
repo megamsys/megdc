@@ -1,13 +1,12 @@
 require 'json'
-require 'open3'
 
 #Packages list
 @packages = {
-"megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "megamsnowflake" => "false", "megamgateway" => "false", "megamd" => "false", "megamchefnative" => "false", "megamanalytics" => "false", "megamdesigner" => "false", "megammonitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
+"megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "megamsnowflake" => "false", "megamgateway" => "false", "megamd" => "false", "chef-server" => "false", "megamanalytics" => "false", "megamvarai" => "false", "megammonitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
 "cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false", "debmirror" => "false"},
 "opennebula" => {"opennebula" => "false", "opennebula-sunstone" => "false"},
 "opennebula_host" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
-"ceph" => {"ceph-deploy" => "false", "ceph-common" => "flase", "ceph-mds" => "false"},
+"ceph" => {"ceph-deploy" => "false", "ceph-common ceph-mds" => "false"},
 "drbd" => {"drbd8-utils" => "false", "linux-image-extra-virtual" => "false", "pacemaker" => "false", "heartbeat" => "false"}
 }
 
@@ -15,22 +14,26 @@ require 'open3'
 def pkg_check(pkg_array)
         pkg_array.each do |pkg|
           @packages["#{pkg}"].each_key do |k|
-             stdin, stdout, stderr = Open3.popen3("dpkg -s #{k}")
-                if stdout.readlines.count > 0
+                dpkg_res = `dpkg -s #{k}`
+                if "#{dpkg_res}".include? "Status: install ok installed"
                         @packages["#{pkg}"]["#{k}"] = "true"
+                else
+                        puts "Package #{k} Not Installed"
                 end
           end
         end
-return @packages.select{|k, _| pkg_array.include?(k)}
+@packages.select{|k, _| pkg_array.include?(k)}
 end
 
 #pkg_check(["megam", "ceph"])
 
 #puts @packages
 
+#Some of the packages don't have services
+#megamcommon, megamsnowflake(but snowflake),megammonitor(but ganglia-monitor), nodejs, sqlite3, ruby2.0, openjdk-7-jdk, debmirror
 @services = {
-"megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "snowflake" => "false", "megamgateway" => "false", "megamd" => "false", "megamchefnative" => "false", "megamanalytics" => "false", "megamdesigner" => "false", "megammonitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
-"cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false", "debmirror" => "false"},
+"megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "snowflake" => "false", "megamgateway" => "false", "megamd" => "false", "chef-server-ctl" => "false", "megamanalytics" => "false", "megamvarai" => "false", "ganglia-monitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
+"cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false"},
 "opennebula" => {"opennebula" => "false", "opennebula-sunstone" => "false"},
 "opennebula_host" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
 "ceph" => {"ceph-all" => "false", "ceph_health" => "false"},
@@ -40,26 +43,30 @@ end
 def service_check(service_array)
         service_array.each do |ser|
           @services["#{ser}"].each_key do |k|
-                stdin, stdout, stderr = Open3.popen3("sudo service #{k} status")
-                ser_out = stdout.readlines.map { |i| "" + i.to_s + "" }.join("")
-                if ser_out.include? "running"
+                if `sudo service #{k} status`.include? "running"
                          @services["#{ser}"]["#{k}"] = "true"
                 end
-                if ser_out.include? "not"
+                if `sudo service #{k} status`.include? "not"
                          @services["#{ser}"]["#{k}"] = "false"
                 end
-               if ("#{k}" == "drbd") && ("#{@packages["drbd"]["drbd8-utils"]}" == "true") && (ser_out.include? "drbd driver loaded OK")
+                if ("#{k}" == "riak") && (`sudo riak ping`.include? "pong")
                          @services["#{ser}"]["#{k}"] = "true"
                 end
-                if ("#{k}" == "ceph_health") && ("#{@packages["ceph"]["ceph-common"]}" == "true") && (`ceph health`.include? "HEALTH_OK")
+                if ("#{k}" == "chef-server-ctl") && (`sudo chef-server-ctl status`.include? "run")
+                         @services["#{ser}"]["#{k}"] = "true"
+                end
+                if ("#{k}" == "drbd") && (`sudo service #{k} status`.include? "drbd driver loaded OK")
+                         @services["#{ser}"]["#{k}"] = "true"
+                end
+                if ("#{k}" == "ceph_health") && (`ceph health`.include? "HEALTH_OK")
                         @services["#{ser}"]["ceph_health"] = "true"
                 end
-                if ("#{k}" == "crm") && ("#{@packages["drbd"]["pacemaker"]}" == "true") && (`sudo crm status`.include? "Started")
+                if ("#{k}" == "crm") && (`crm status`.include? "Started")
                         @services["#{ser}"]["crm"] = "true"
                 end
           end
         end
-return @services.select{|k, _| service_array.include?(k)}
+@services.select{|k, _| service_array.include?(k)}
 end
 
 #service_check(["megam", "ceph"])
@@ -78,6 +85,7 @@ end
 
 
 cib_json = check_cib(ARGV)
-
+puts "==========================cib json ==========================="
 puts cib_json
+
 

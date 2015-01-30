@@ -39,6 +39,10 @@ user_home="/home/$ceph_user"
 
 host=`hostname`
 
+osd1="/storage1"
+osd2="/storage2"
+osd3="/storage3"
+
 #--------------------------------------------------------------------------
 #colored echo
 # Argument $1 = message
@@ -126,23 +130,25 @@ echo $ipaddr
 
 install_ceph() {
 #ceph user as sudoer 
+echo "Make ceph user as sudoer" >> $COBBLER_LOG
 echo "$ceph_user ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ceph_user
 sudo chmod 0440 /etc/sudoers.d/$ceph_user
 
 #Ceph install
+echo "Started installing ceph" >> $COBBLER_LOG
 sudo echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
-sudo apt-get -y update
-sudo apt-get -y install ceph-deploy ceph-common ceph-mds
-sudo apt-get -y install dnsmasq openssh-server ntp sshpass
+sudo apt-get -y update >> $COBBLER_LOG
+sudo apt-get -y install ceph-deploy ceph-common ceph-mds  >> $COBBLER_LOG
+sudo apt-get -y install dnsmasq openssh-server ntp sshpass  >> $COBBLER_LOG
 
 IP_ADDR=$( getip )
 
 #edit /etc/hosts to access osd nodes
-
+echo "Adding entry in /etc/hosts" >> $COBBLER_LOG
 echo "$IP_ADDR $host" >> /etc/hosts
 
-
+echo "Processing ssh-keygen" >> $COBBLER_LOG
 sudo -u $ceph_user bash << EOF
 #Create ssh files
 ssh-keygen -N '' -t rsa -f $user_home/.ssh/id_rsa
@@ -162,7 +168,7 @@ Host $host
    User $ceph_user
 EOF"
 
-
+echo "Making directory inside osd drive " >> $COBBLER_LOG
 mkdir $osd1/osd
 mkdir $osd2/osd
 mkdir $osd3/osd
@@ -170,7 +176,7 @@ mkdir $osd3/osd
   #GET first three values of ip
   ip3=`echo $IP_ADDR| cut -d'.' -f 1,2,3`
 
-
+echo "Ceph configuration started..." >> $COBBLER_LOG
 sudo -u $ceph_user bash << EOF
 mkdir $user_home/ceph-cluster
 cd $user_home/ceph-cluster
