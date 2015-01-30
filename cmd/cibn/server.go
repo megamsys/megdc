@@ -29,9 +29,12 @@ func handlerNode() {
 	beego.Router("/servernodes/verify/:name", server, "get:Verify")
 	beego.Router("/servernodes/nodes/install", server, "get:NodeInstall")
 	beego.Router("/servernodes/ha/:name/install", server, "get:HAInstall")
+	beego.Router("/servernodes/haproxy/install", server, "post:ProxyInstall")
+	beego.Router("/servernodes/devicedetails", server, "get:HADeviceDetails")
 	//	beego.Router("/servernodes/streamlog", server, "get:StreamLog")
 	user := new(page.PageRouter)
-	beego.Router("/dashboard/ha/request", user, "get:HADashboardRequest")
+	beego.Router("/dashboard/ha/request", user, "post:HADashboardRequest")
+	beego.Router("/dashboard/cs/request", user, "get:CSDashboardRequest")
 
 
 	port, _ := config.GetString("beego:http_port")

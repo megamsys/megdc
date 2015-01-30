@@ -45,17 +45,7 @@ $(document).ready(function() {
 		nodeInstall("HA");
 		return false;
 		// for good measure
-	});
-
-	$("#ha_selection input:radio").on("ifClicked", function() {
-		if ($(this).attr("value") == "yes") {
-			$("#ha_note").show();
-		} else {
-			$("#ha_note").hide();
-		}
-		$(this).attr('disabled', true);
-
-	});
+	});	
 
 	$("#storage_selection input:radio").on("ifClicked", function() {
 		if ($(this).attr("value") == "yes") {
@@ -166,11 +156,16 @@ function nodeInstall(str) {
 	successID = str.concat("_success");
 	errorID = str.concat("_error");
 	buttonID = str.concat("_install_button");
+	var urlvalue = "";
 	
 	if(str == "COMPUTE") {	
         str_ip = $("#hostip").val();
+        ip = str_ip.split("="); 
+        urlvalue = "/nodes/request/" + ip[1];
     } else {
-        str_ip = $("#hosthaip").val();
+        ip = $("#hosthaip").val();      
+     //   ip = str_ip.split("=");
+        urlvalue = "/nodes/harequest/" + ip;
     }
     
 	$('#' + serverID).waiting({
@@ -184,10 +179,10 @@ function nodeInstall(str) {
 	$('#' + serverID).show();
 	install_text = str.concat("_install_text");
 	$('#' + install_text).show();
-
+    
 	$.ajax({
 		type : "GET",
-		url : "/nodes/request/" + str + "-" + str_ip,
+	    url : urlvalue,
 		data : str,
 		dataType : 'text',
 		async : true,
@@ -323,15 +318,34 @@ function waiting_nodes_connectionha(nodes) {
 		dataType : 'text',
 		async : true,
 		success : function(response) {
-			var res = JSON.parse(response);
-			if (res.ip) {
-				$('#' + serverNodeID).hide();
-				$('#' + buttonNodeID).show();
-				$('#' + networkSuccessTextID).show();
-				$('#' + networkWarningTextID).hide();
-			//	$("#hostip").val(res.ipvalue);
-				$("#hosthaip").val(res.ipvalue);
-			}
+			var res = JSON.parse(response);		
+			var r = (res.ipvalue).split("=");
+			console.log(r[1]);
+			$.ajax({
+				type : "GET",
+				url : "/servers/getHAOptions/"+ r[1],
+				data : r[1],
+				dataType : 'text',
+				async : true,
+				success : function(response) {
+					console.log(response);	
+					var res = JSON.parse(response);
+					if (res.success) {
+					$('#' + serverNodeID).hide();
+					$('#' + buttonNodeID).show();
+					$('#' + networkSuccessTextID).show();
+					$('#' + networkWarningTextID).hide();
+			//		$("#hostip").val(res.ipvalue);
+					$("#hosthaip").val(r[1]);
+				}				
+				},
+				error : function(xhr, status) {
+			        $('#' + serverNodeID).show();
+					$('#' + buttonNodeID).hide();
+					$('#' + networkSuccessTextID).hide();
+					$('#' + networkWarningTextID).show();
+				}
+			});			
 		},
 		error : function(xhr, status) {
 			$('#' + serverNodeID).show();
@@ -342,6 +356,24 @@ function waiting_nodes_connectionha(nodes) {
 	});
 	return false;
 }
+
+function getHADatas(nodes) {
+console.log("------------------------entry");
+  $.ajax({
+		type : "GET",
+		url : "/servers/getHAOptions",
+		data : nodes,
+		dataType : 'text',
+		async : true,
+		success : function(response) {
+			console.log(response);
+		},
+		error : function(xhr, status) {
+			
+		}
+	});
+}
+
 
 function updateNodesList(res) {
    var obj = JSON.parse(res);
@@ -376,24 +408,47 @@ function dashboard(stype) {
 		        $('#' + stype +"_dash_waiting1").hide();
 		        console.log(response);	       
 				var res = JSON.parse(response);
+				if(res.success) {
 				console.log(res.data);  
 				var jsondata = JSON.parse(res.data);				
-				 var key = jsondata.packages;
-					for(p in key)
+				 var installkey = jsondata.packages;
+		 
+					for(p in installkey)
 					{
+					    $("#coll"+stype).append(
+					    '<div class="col-sm-6">\
+				    		<h4>' + p + '</h4>\
+							<table class="features-table">\
+							<thead>\
+							<tr>\
+								<td></td>\
+								<td>Install Status</td>\
+								<td>Running Status</td>\
+							</tr>\
+							</thead>\
+							<tbody id="t_'+stype+'_'+p+'">\
+							</tbody>\
+					      </table>\
+						</div>');	
+						
 					    var in_verify = true;
- 						elementArray = key[p];
- 					//	console.log("key   "+p);
- 					//	console.log("value   "+key[p]);
+					    var img;
+ 						elementArray = installkey[p];
  						for(v in elementArray)
 					    {
- 					 	  v1 = elementArray[v];
- 						//  console.log("key===============>"+v);
- 						//  console.log("value==============>"+v1);
+ 					 	  v1 = elementArray[v]; 					
  						  if(v1 == "false") {
  						     in_verify = false;
- 						 //    console.log("---------------------");
+ 						     img = "cross";
+ 						  } else { 						    
+ 						     img = "check";
  						  }
+ 						  $("#t_"+stype+'_'+p).append('\
+ 						        <tr>\
+									<td>' + v + '</td>\
+									<td><img src="/static_source/images/'+ img +'.png" width="16" height="16" alt="'+img+'"></td>\
+									<td id="running_status_'+stype+'_'+v+'"></td>\
+								</tr>');
 					   }
 					   console.log(in_verify);
 						if(in_verify == true) {
@@ -417,6 +472,9 @@ function dashboard(stype) {
 									<div class="timeline-body">\
 										<p>'+ text + '</p>\
 									</div>\
+									<div class="timeline-body">\
+										<p id="' + stype + '_' + p + '_status"></p>\
+									</div>\
 								</div>\
 							</li>'); 
 							flag = false;
@@ -433,13 +491,16 @@ function dashboard(stype) {
 									<div class="timeline-body">\
 									   <p>'+ text + '</p>\
 									</div>\
+									<div class="timeline-body">\
+										<p id="' + stype + '_' + p + '_status"></p>\
+									</div>\
 								</div>\
 							</li>'); 
 							flag = true;
-					   } 						
+					   } 	
 					}
-				
-				           			
+				 setStatus(jsondata, stype);
+			   }        			
 				},
 				error : function(xhr, status) {
 					console.log(status);
@@ -447,4 +508,62 @@ function dashboard(stype) {
 	});
 	
 	}
+	
 
+function setStatus(json, stype) {
+    var servicekey = json.services;
+	var status;			 
+	for(p in servicekey)
+	{
+		var in_verify = true;
+		var img;
+ 		elementArray = servicekey[p];
+ 		for(v in elementArray)
+		{	
+ 		  v1 = elementArray[v]; 					
+ 		   if(v1 == "false") {
+ 		     in_verify = false;
+ 			 img = "cross";
+ 		  } else {
+ 			 img = "check";
+ 		  }
+ 		  if(getService(v) == true) {
+ 		  	if(v == "snowflake") {
+ 		    	v = "megamsnowflake";
+ 		  	}  
+ 		  	$("#running_status_"+stype+"_"+v).html('<img src="/static_source/images/'+ img +'.png" width="16" height="16" alt="'+img+'">');
+		 }	else {
+		   $("#running_status_"+stype+"_"+v).html('No service');
+		 }
+		if(in_verify == true) {
+ 		   status = "Running";
+ 		   badge = "timeline-badge success";
+ 		} else {
+ 		   status = "Not Running";
+ 		   badge = "timeline-badge danger";
+ 		}     						 
+ 		$("#"+stype+"_"+p+"_status").text(status);	
+ 		
+	} 
+ }	
+}
+
+function getService(serviceName) {
+ var value;
+ console.log(serviceName);
+ switch (serviceName) {
+    case "megamcommon":
+        value = false;
+        break;
+    case "ruby2.0":
+        value = false;
+        break;
+    case "debmirror":
+        value = false;
+        break;
+   default:
+        value = true;
+        break;
+  }
+  return value;
+}

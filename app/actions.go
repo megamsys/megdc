@@ -8,8 +8,10 @@ import (
 	"github.com/megamsys/libgo/exec"
 	"log"
 	"strings"
+	"strconv"
 	"crypto/rand"
     "math/big"
+    "errors"
 //	"time"
 )
 
@@ -25,9 +27,13 @@ const (
 	opennebulahostinstall = "bash conf/trusty/opennebulahost/host_install.sh"
 	megam                 = "bash conf/trusty/megam/megam.sh"
 	cobbler               = "bash conf/trusty/cobblerd/cobbler.sh install"
-	ceph                  = "bash conf/trusty/ceph/ceph_install.sh install osd1="/storage1" osd2="/storage2" osd3="/storage3""
+	ceph                  = "bash conf/trusty/ceph/ceph_install.sh install"
 	cephone               = "bash conf/trusty/ceph/ceph_one_install.sh"
+	haproxy               = "bash conf/trusty/ha/haproxy.sh"
+	hahooks               = "bash conf/trusty/ha/ha_hooks.sh"
+	hamegam               = "bash conf/trusty/ha/megam.sh"
 	*/
+
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -39,6 +45,9 @@ const (
 	cobbler               = "bash conf/trusty/cobblerd/cobbler_test.sh"
 	ceph                  = "bash conf/trusty/ceph/ceph_install_test.sh"
 	cephone               = "bash conf/trusty/ceph/ceph_one_install_test.sh"
+	haproxy               = "bash conf/trusty/ha/haproxy_test.sh"
+	hahooks               = "bash conf/trusty/ha/ha_hooks_test.sh"
+	hamegam               = "bash conf/trusty/ha/megam_test.sh"
    
 )
 
@@ -73,18 +82,6 @@ var megamInstall = action.Action{
 			fmt.Println("server insert error")
 			return &cib, err
 		}
-		// write server details in database
-		// insert rows - auto increment PKs will be set properly after the insert
-	/*	db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("MEGAM", "", "")
-		orm.ConnectToTable(dbmap, "servers", newserver)
-		err = dbmap.Insert(&newserver)
-		defer db.Close()
-		if err != nil {
-			fmt.Println("server insert error")
-			return &cib, err
-		}*/
 		return exec, err
 	},
 	Backward: func(ctx action.BWContext) {
@@ -112,17 +109,6 @@ var cobblerInstall = action.Action{
 			fmt.Println("server insert error")
 			return &cib, err1
 		}
-		// write server details in database
-		// insert rows - auto increment PKs will be set properly after the insert
-	/*	db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("COBBLER", "", "")
-		orm.ConnectToTable(dbmap, "servers", newserver)
-		err := dbmap.Insert(&newserver)
-		if err != nil {
-			fmt.Println("server insert error======>")
-			return &cib, err
-		} */
 		return exec, err1
 
 	},
@@ -195,19 +181,6 @@ var opennebulaPostInstall = action.Action{
 			fmt.Println("server insert error")
 			return &cib, err1
 		}
-		// write server details in database
-
-		// insert rows - auto increment PKs will be set properly after the insert
-	/*	db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("OPENNEBULA", "", "")
-		orm.ConnectToTable(dbmap, "servers", newserver)
-		err := dbmap.Insert(&newserver)
-
-		if err != nil {
-			fmt.Println("server insert error======>")
-			return &cib, err
-		}*/
 		return exec, err1
 	},
 	Backward: func(ctx action.BWContext) {
@@ -268,19 +241,6 @@ var opennebulaHostMasterInstall = action.Action{
 			fmt.Println("server insert error")
 			return &cib, err1
 		}
-		// write server details in database
-
-		// insert rows - auto increment PKs will be set properly after the insert
-	/*	db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		newserver := orm.NewServer("OPENNEBULAHOST", "", "")
-		orm.ConnectToTable(dbmap, "servers", newserver)
-		err := dbmap.Insert(&newserver)
-
-		if err != nil {
-			fmt.Println("server insert error======>")
-			return &cib, err
-		}*/
 		return exec, err1
 	},
 	Backward: func(ctx action.BWContext) {
@@ -315,61 +275,6 @@ var opennebulaHostNodeInstall = action.Action{
 	MinParams: 1,
 }
 
-/*var opennebulaHostInstall = action.Action{
-	Name: "opennebulaHostInstall",
-	Forward: func(ctx action.FWContext) (action.Result, error) {
-		var cib CIB
-		var server orm.Servers
-		cib.Command = opennebulahostinstall
-		exec, err1 := CIBExecutor(&cib)
-		if err1 != nil {
-			fmt.Println("server insert error")
-			return &cib, err1
-		}
-		// write server details in database
-
-		// insert rows - auto increment PKs will be set properly after the insert
-		db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		nodename := "OPENNEBULAHOST"
-
-		server = orm.NewServer("OPENNEBULAHOST")
-		err := dbmap.SelectOne(&server, "select * from servers where Name=?", nodename)
-		if err != nil {
-			fmt.Println("server select error======>")
-			return &cib, err
-		}
-		err3 := orm.DeleteRowFromServerName(dbmap, nodename)
-		if err3 != nil {
-			log.Printf("Server delete error")
-			return &cib, err3
-		}
-		time := time.Now()
-		update_server := orm.Servers{Id: server.Id, Name: server.Name, Install: true, IP: server.IP, InstallDate: server.InstallDate, UpdateDate: time.Format(layout)}
-		orm.ConnectToTable(dbmap, "servers", update_server)
-		err2 := dbmap.Insert(&update_server)
-		//server.Install = true
-		//_, err2 := dbmap.Update(&server)
-		if err2 != nil {
-			fmt.Println("server insert error======>")
-			return &cib, err2
-		}
-
-		return exec, err1
-	},
-	Backward: func(ctx action.BWContext) {
-		db := orm.OpenDB()
-		dbmap := orm.GetDBMap(db)
-		err := orm.DeleteRowFromServerName(dbmap, "OPENNEBULAHOST")
-		if err != nil {
-			log.Printf("Server delete error")
-			///return &cib, err
-		}
-		log.Printf(" Nothing to recover")
-	},
-	MinParams: 1,
-}*/
-
 
 /*
 * Step 4: Install Ceph Storage
@@ -377,8 +282,51 @@ var opennebulaHostNodeInstall = action.Action{
 var cephInstall = action.Action{
 	Name: "cephInstall",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var e exec.OsExecutor
+		var b bytes.Buffer
+		var commandWords []string
 		var cib CIB
-		cib.Command = ceph
+		storages := make([]string, 0)
+		scmd := ""
+		cmd := "lsblk -o MOUNTPOINT -nl"
+		commandWords = strings.Fields(cmd)
+   		err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
+   		if err != nil {
+    		return &cib, err
+    	} else {
+    		i := 0
+    		/*testlines := " \n" +
+                     	 "/ \n"+ 
+					 	 "[SWAP] \n" +
+					 	 "/boot \n" +
+						 " \n"+
+					 	 "/var \n"+
+					 	 "/usr \n"+
+					 	 "/home \n"+
+					 	 "/tmp \n"+
+					 	 " \n"+        
+					 	 "/storage1 \n"+
+					 	 " \n"+
+					 	 "/storage2 \n"+
+					 	 "/storage3 \n"+
+					 	 "/var/lib/megam"  
+			lines := strings.Split(testlines, "\n")		*/ 
+    		lines := strings.Split(b.String(), "\n")
+    		storages = make([]string, len(lines))
+    		for _, v := range lines {
+    			if strings.HasPrefix(v, "/storage") {
+    				storages[i] = strings.TrimSpace(v)
+    				i++
+    			}
+    		}
+    	}
+		
+		for ii, kv := range storages {
+			if len(kv) > 1 {
+				scmd = scmd + " osd" + strconv.Itoa(ii+1) + "=" + kv 
+			} 
+		}
+		cib.Command = ceph + " install" + scmd
 		exec, err := CIBExecutor(&cib)
 		if err != nil {
 			fmt.Println("server insert error")
@@ -409,6 +357,74 @@ var cephOneInstall = action.Action{
 	},
 	MinParams: 1,
 }
+
+var haHooksInstall = action.Action{
+	Name: "haHooksInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		switch ctx.Params[0].(type) {
+		case CIB:
+			cib = ctx.Params[0].(CIB)
+		case *CIB:
+			cib = *ctx.Params[0].(*CIB)
+		default:
+			return nil, errors.New("First parameter must be App or *CIB.")
+		}
+		cib.Command = hahooks
+		return CIBExecutor(&cib)
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var haProxyInstall = action.Action{
+	Name: "haProxyInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		switch ctx.Params[0].(type) {
+		case CIB:
+			cib = ctx.Params[0].(CIB)
+		case *CIB:
+			cib = *ctx.Params[0].(*CIB)
+		default:
+			return nil, errors.New("First parameter must be App or *CIB.")
+		}
+		cib.Command = haproxy + " node1_ip="+cib.LocalIP+" node2_ip="+cib.RemoteIP+" node1_host="+cib.LocalHost+" node2_host="+cib.RemoteHost  
+		return CIBExecutor(&cib)
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var haMegamInstall = action.Action{
+	Name: "haMegamInstall",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		switch ctx.Params[0].(type) {
+		case CIB:
+			cib = ctx.Params[0].(CIB)
+		case *CIB:
+			cib = *ctx.Params[0].(*CIB)
+		default:
+			return nil, errors.New("First parameter must be App or *CIB.")
+		}
+		if cib.Master {
+		   cib.Command = hamegam + " remote_ip="+cib.RemoteIP+" remote_hostname="+cib.RemoteHost+" local_disk="+cib.LocalDisk+" remote_disk="+cib.RemoteDisk+" master"                
+		} else {
+		   cib.Command = hamegam + " remote_ip="+cib.RemoteIP+" remote_hostname="+cib.RemoteHost+" local_disk="+cib.LocalDisk+" remote_disk="+cib.RemoteDisk  
+		}
+		return CIBExecutor(&cib)
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
 
 func randString(n int) string {
     const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"

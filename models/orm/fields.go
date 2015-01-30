@@ -47,6 +47,7 @@ type Servers struct {
 	Install         bool       `db:"Install"`
 	IP              string     `db:"IP"`
 	Stype           string     `db:"Stype"`
+	HostName        string     `db:"HostName"`
 	InstallDate     string     `db:"InstallDate"`
 	UpdateDate      string     `db:"UpdateDate"`
 }
@@ -55,31 +56,53 @@ type Nodes struct {
 	Id              int64      `db:"Id"`
 	Install         bool       `db:"Install"`
 	IP              string     `db:"IP"`
+	HostName        string     `db:"HostName"`
 	InstallDate     string     `db:"InstallDate"`
 	UpdateDate      string     `db:"UpdateDate"`
 }
 
-func NewServer(serverName string, ip string, stype string) Servers {
+func NewServer(serverName string, ip string, stype string, hostname string) Servers {
 	time := time.Now()
 	return Servers{
 		Name:   serverName,
 		Install: false,
 		IP: ip,
 		Stype: stype,
+		HostName: hostname,
 		InstallDate: time.Format(layout),
 		UpdateDate: time.Format(layout),
 	}
 }
 
 
-func NewNode(ip string) Nodes {
+func NewNode(ip string, hostname string) Nodes {
 	time := time.Now()
 	return Nodes{
 		Install: true,
 		IP: ip,
+		HostName: hostname,
 		InstallDate: time.Format(layout),
 		UpdateDate: time.Format(layout),
 	}
+}
+
+type HAServers struct {
+	Id            int64    `db:"id"`
+	NodeIP1       string   `db:"nodeip1"`
+	NodeHost1     string   `db:"nodehost1"`
+	NodeDisk1     string   `db:"nodedisk1"`
+	NodeIP2       string   `db:"nodeip2"`
+	NodeHost2     string   `db:"nodehost2"`  
+	NodeDisk2     string   `db:"nodedisk2"`
+}
+
+
+type Storages struct {
+	Id           int64    `db:"Id"`
+	IP       	 string   `db:"ip"`
+	Storage1     string   `db:"storage1"`
+	Storage2     string   `db:"storage2"`
+	Storage3     string   `db:"storage3"`
 }
 
 
