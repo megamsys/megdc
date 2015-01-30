@@ -88,8 +88,8 @@ func (this *PageRouter) MasterDashboard() {
 		for _, p := range serverlist {
        	   servname = servname + " " + p.Name
        	 }  
-		cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb" + strings.ToLower(servname)
-	//	cmd := "conf/trusty/cib.rb" + strings.ToLower(servname)
+		//cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb" + strings.ToLower(servname)
+		cmd := "ruby conf/trusty/cib.rb" + strings.ToLower(servname)
 		commandWords = strings.Fields(cmd)
     	err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
        	if err != nil {
@@ -173,8 +173,8 @@ func (this *PageRouter) HADashboardRequest() {
 	}()
 
     servname = strings.ToLower(string(p))
-	cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb" + servname
-	//cmd := "conf/trusty/cib.rb" + servname
+	//cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb" + servname
+	cmd := "ruby conf/trusty/cib.rb" + servname
 	commandWords = strings.Fields(cmd)
    	err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
    	if err != nil {
@@ -251,7 +251,8 @@ func (this *PageRouter) CSDashboardRequest() {
 		this.ServeJson()
 	}()
 	
-	cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb opennebula_host ceph"
+	//cmd := "/home/rajthilak/.rvm/rubies/ruby-2.2.0/bin/ruby conf/trusty/cib.rb opennebula_host ceph"
+	cmd := "ruby conf/trusty/cib.rb opennebula_host ceph"
 	commandWords = strings.Fields(cmd)
     err := e.Execute(commandWords[0], commandWords[1:], nil, &b, &b)
     if err != nil {

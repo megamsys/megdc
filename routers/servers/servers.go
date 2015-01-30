@@ -161,6 +161,12 @@ func (this *ServerRouter) MasterInstall() {
 					fmt.Println("server insert error======>")
 					result["success"] = false
 				}
+				
+				haerr := servers.CheckHAInstall(servername)
+				if haerr != nil {
+					result["success"] = false
+				}
+				
 				result["success"] = true
 			}
 	} else {
@@ -673,7 +679,7 @@ func getDeviceDetails() []*DeviceList {
    	if err != nil {
     	return devicelist
     } else {
-    	testlines := "sda   232.9G running \n" +
+    	/*testlines := "sda   232.9G running \n" +
                      "sda1   46.7G         / \n"+ 
 					 "sda2    5.6G         [SWAP] \n" +
 					 "sda3    244M         /boot \n" +
@@ -687,9 +693,10 @@ func getDeviceDetails() []*DeviceList {
 					 "sdb   232.9G running \n"+
 					 "sdb1  116.4G         /storage2 \n"+
 					 "sdb2  116.5G         /storage3 \n"+
-					 "drbd0  18.6G         /var/lib/megam"  
-    	//lines := strings.Split(b.String(), "\n")
-    	lines := strings.Split(testlines, "\n")
+					 "drbd0  18.6G         /var/lib/megam"      	
+    	lines := strings.Split(testlines, "\n")*/
+    	
+    	lines := strings.Split(b.String(), "\n")
     	devicelist = make([]*DeviceList, len(lines))
     	for c, l := range lines {
     		line := strings.Split(l, " ")

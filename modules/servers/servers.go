@@ -18,11 +18,14 @@ package servers
 
 import (
 	"errors"
+	"time"
 	"fmt"
 	"github.com/megamsys/cloudinabox/app"
 	"github.com/megamsys/cloudinabox/models/orm"
 	"net/http"
 )
+
+const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
 func InstallServers(serverName string) error {
 	var err error
@@ -73,6 +76,43 @@ func InstallServers(serverName string) error {
 	return nil
 }
 
+func CheckHAInstall(servername string) error {
+	var serverlist []orm.Servers
+	db := orm.OpenDB()
+	dbmap := orm.GetDBMap(db)
+	_, err := dbmap.Select(&serverlist, "select * from servers where Stype='HA' GROUP BY IP") 
+	if err != nil {
+		return err
+	} else {
+		if len(serverlist) > 0 {
+			for _, v := range serverlist {
+				newserver := orm.NewServer(servername, v.IP, "HA", "")
+				orm.ConnectToTable(dbmap, "servers", newserver)
+				derr := dbmap.Insert(&newserver)
+				if derr != nil {
+					fmt.Println("server insert error======>")
+				}
+				
+					url := "http://" + v.IP + ":8078/servernodes/ha/" + servername + "/install"
+	    			res, err := http.Get(url)
+	    			if err != nil {
+		    			return err
+	   				 } else {
+		 				if res.StatusCode > 299 {
+							return errors.New(res.Status)
+						}
+		 				uerr := updateServer(v.IP, servername)
+						if uerr != nil {
+							fmt.Println("server insert error======>")
+							return uerr
+						} 
+	  				}
+			}
+		}
+  	}
+	return nil
+}
+
 func InstallNode(nodeip string, nodetype string, name string) error {
 	if nodetype == "COMPUTE" {
 	url := "http://" + nodeip + ":8078/servernodes/nodes/install"
@@ -118,4 +158,30 @@ func InstallProxy(haserver *orm.HAServers, Stype string) error {
    return nil			
 }
 
+func updateServer(nodeip string, servername string) error {
+        // insert rows - auto increment PKs will be set properly after the insert
+		db := orm.OpenDB()
+		dbmap := orm.GetDBMap(db)
 
+		server := orm.Servers{}
+		err := dbmap.SelectOne(&server, "select * from servers where IP=? and Name=?", nodeip, servername)
+		if err != nil {
+			fmt.Println("select select error======>")
+			return err
+		}
+		err3 := orm.DeleteRowFromServerNameAndIP(dbmap, servername, nodeip)
+		if err3 != nil {
+			fmt.Println("server delete error")
+			return err3
+		}
+		time := time.Now()
+		update_server := orm.Servers{Id: server.Id, Name: server.Name, Install: true, IP: server.IP, Stype: server.Stype, HostName: server.HostName, InstallDate: server.InstallDate, UpdateDate: time.Format(layout)}
+		orm.ConnectToTable(dbmap, "servers", update_server)
+		err2 := dbmap.Insert(&update_server)
+	
+		if err2 != nil {
+			fmt.Println("server insert error======>")
+			return err2
+		}	
+	return nil
+}	

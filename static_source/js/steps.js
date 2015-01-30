@@ -159,9 +159,9 @@ function nodeInstall(str) {
 	var urlvalue = "";
 	
 	if(str == "COMPUTE") {	
-        ip = $("#hostip").val();
-      //  ip = str_ip.split("="); 
-        urlvalue = "/nodes/request/" + ip;
+        str_ip = $("#hostip").val();
+        ip = str_ip.split("="); 
+        urlvalue = "/nodes/request/" + ip[1];
     } else {
         ip = $("#hosthaip").val();      
      //   ip = str_ip.split("=");
@@ -408,6 +408,7 @@ function dashboard(stype) {
 		        $('#' + stype +"_dash_waiting1").hide();
 		        console.log(response);	       
 				var res = JSON.parse(response);
+				if(res.success) {
 				console.log(res.data);  
 				var jsondata = JSON.parse(res.data);				
 				 var installkey = jsondata.packages;
@@ -499,7 +500,7 @@ function dashboard(stype) {
 					   } 	
 					}
 				 setStatus(jsondata, stype);
-				           			
+			   }        			
 				},
 				error : function(xhr, status) {
 					console.log(status);
