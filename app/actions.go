@@ -16,8 +16,7 @@ import (
 )
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
-const (
-  /* 
+const (  
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -32,8 +31,8 @@ const (
 	haproxy               = "bash conf/trusty/ha/haproxy.sh"
 	hahooks               = "bash conf/trusty/ha/ha_hooks.sh"
 	hamegam               = "bash conf/trusty/ha/megam.sh"
-	*/
-
+	
+   /*
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -48,7 +47,7 @@ const (
 	haproxy               = "bash conf/trusty/ha/haproxy_test.sh"
 	hahooks               = "bash conf/trusty/ha/ha_hooks_test.sh"
 	hamegam               = "bash conf/trusty/ha/megam_test.sh"
-   
+   */
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
