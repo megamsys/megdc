@@ -114,7 +114,7 @@ help() {
   cecho  "uninstall: uninstalls ceph and remove the setup" $blue
 }
 #--------------------------------------------------------------------------
-# Install cobbler in trusty or debian
+# Install ceph in trusty or debian
 #--------------------------------------------------------------------------
 getip(){
 while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRTT; do
@@ -130,25 +130,25 @@ echo $ipaddr
 
 install_ceph() {
 #ceph user as sudoer 
-echo "Make ceph user as sudoer" >> $COBBLER_LOG
+echo "Make ceph user as sudoer" >> $CEPH_LOG
 echo "$ceph_user ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ceph_user
 sudo chmod 0440 /etc/sudoers.d/$ceph_user
 
 #Ceph install
-echo "Started installing ceph" >> $COBBLER_LOG
+echo "Started installing ceph" >> $CEPH_LOG
 sudo echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
-sudo apt-get -y update >> $COBBLER_LOG
-sudo apt-get -y install ceph-deploy ceph-common ceph-mds  >> $COBBLER_LOG
-sudo apt-get -y install dnsmasq openssh-server ntp sshpass  >> $COBBLER_LOG
+sudo apt-get -y update >> $CEPH_LOG
+sudo apt-get -y install ceph-deploy ceph-common ceph-mds  >> $CEPH_LOG
+sudo apt-get -y install dnsmasq openssh-server ntp sshpass  >> $CEPH_LOG
 
 IP_ADDR=$( getip )
 
 #edit /etc/hosts to access osd nodes
-echo "Adding entry in /etc/hosts" >> $COBBLER_LOG
+echo "Adding entry in /etc/hosts" >> $CEPH_LOG
 echo "$IP_ADDR $host" >> /etc/hosts
 
-echo "Processing ssh-keygen" >> $COBBLER_LOG
+echo "Processing ssh-keygen" >> $CEPH_LOG
 sudo -u $ceph_user bash << EOF
 #Create ssh files
 ssh-keygen -N '' -t rsa -f $user_home/.ssh/id_rsa
@@ -168,7 +168,7 @@ Host $host
    User $ceph_user
 EOF"
 
-echo "Making directory inside osd drive " >> $COBBLER_LOG
+echo "Making directory inside osd drive " >> $CEPH_LOG
 mkdir $osd1/osd
 mkdir $osd2/osd
 mkdir $osd3/osd
@@ -176,7 +176,7 @@ mkdir $osd3/osd
   #GET first three values of ip
   ip3=`echo $IP_ADDR| cut -d'.' -f 1,2,3`
 
-echo "Ceph configuration started..." >> $COBBLER_LOG
+echo "Ceph configuration started..." >> $CEPH_LOG
 sudo -u $ceph_user bash << EOF
 mkdir $user_home/ceph-cluster
 cd $user_home/ceph-cluster
@@ -221,7 +221,7 @@ install_complete() {
 }
 
 #--------------------------------------------------------------------------
-#This function will uninstall cobblerd
+#This function will uninstall ceph
 #--------------------------------------------------------------------------
 
 uninstall_ceph() {
