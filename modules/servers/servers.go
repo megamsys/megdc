@@ -19,7 +19,11 @@ package servers
 import (
 	"errors"
 	"time"
+	"reflect"
+    "unsafe"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"github.com/megamsys/cloudinabox/app"
 	"github.com/megamsys/cloudinabox/models/orm"
 	"net/http"
@@ -113,18 +117,40 @@ func CheckHAInstall(servername string) error {
 	return nil
 }
 
+type Response struct {
+	Success		bool           `json:"success"` 
+	Error       string         `json:"errordata"`
+}
+
+func BytesToString(b []byte) string {
+    bh := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+    sh := reflect.StringHeader{bh.Data, bh.Len}
+    return *(*string)(unsafe.Pointer(&sh))
+}
+
 func InstallNode(nodeip string, nodetype string, name string) error {
 	if nodetype == "COMPUTE" {
 	url := "http://" + nodeip + ":8078/servernodes/nodes/install"
 	res, err := http.Get(url)
+    	
 	if err != nil {
 		return err
 	} else {
 		if res.StatusCode > 299 {
 			return errors.New(res.Status)
 		} else {
-			err = app.SCPSSHInstall()
-			return err
+			body, _ := ioutil.ReadAll(res.Body)
+			var r Response
+    		if haerr := json.Unmarshal(body, &r); haerr != nil {
+    			return haerr
+    		} else {
+    			if r.Success {
+    				err = app.SCPSSHInstall()
+					return err
+    			} else {
+    				return errors.New(r.Error)
+    			}
+    		}			
 		}
 	 }
 	} else {

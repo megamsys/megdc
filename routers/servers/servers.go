@@ -203,6 +203,7 @@ func (this *ServerRouter) NodeInstallRequest() {
 	fmt.Printf("%s", node_err)
 	if node_err != nil {
 		result["success"] = false
+		result["error"] = node_err.Error()
 	} else {
 		    nodename := "" 
 			newnode := orm.NewNode(nodeip, nodename)
@@ -411,9 +412,9 @@ func (this *ServerRouter) NodeInstall() {
 	
     servername := "NODEINSTALL"
 	err := servers.InstallServers(servername)
-	fmt.Printf("%s", err)
 	if err != nil {
 		result["success"] = false
+		result["errordata"] = err.Error()
 	} else {
 		result["success"] = true
 	}
@@ -582,33 +583,43 @@ func (this *ServerRouter) GetHAOptions() {
     				fmt.Println(masterDevice)
     				disk1 := ""
     				disk2 := ""
-    				for _, mk := range masterDevice {
-    					for _, hav := range r.Data {
-    						if mk.Key.Size == hav.Key.Size && mk.Key.State != "running" && hav.Key.State != "running" && mk.Key.MountPoint == "" && hav.Key.MountPoint == "" {
-    						    if mk.Key.Size[len(mk.Key.Size)-1:] == "G" && hav.Key.Size[len(hav.Key.Size)-1:] == "G" {
-    								disk1 = "/dev/"+mk.Key.Name
-    								disk2 = "/dev/"+hav.Key.Name
-    							}	
+    					for mkx, mk := range masterDevice {
+    						if len(masterDevice) != (mkx + 1) {
+    					  	for hax, hav := range r.Data {
+    							if len(r.Data) != (hax + 1) {
+    								if mk.Key.Size == hav.Key.Size && mk.Key.State != "running" && hav.Key.State != "running" && mk.Key.MountPoint == "" && hav.Key.MountPoint == "" {
+    						    		if mk.Key.Size[len(mk.Key.Size)-1:] == "G" && hav.Key.Size[len(hav.Key.Size)-1:] == "G" {
+    										disk1 = "/dev/"+mk.Key.Name
+    										disk2 = "/dev/"+hav.Key.Name
+    									}	
+    							 	}
+    						  	}	
+    				      		}
     						}
-    				    }
-    				}
-    				details := getMasterDetails()
-    				if details != "" {
-    					detail := strings.Split(details, "=-=")
-    					db := orm.OpenDB()
-						dbmap := orm.GetDBMap(db)
-    					newhaserver := orm.HAServers{NodeIP1: detail[0], NodeHost1: detail[1], NodeDisk1: disk1, NodeIP2: ip, NodeHost2: r.Host, NodeDisk2: disk2 }
-						orm.ConnectToTable(dbmap, "haservers", newhaserver)
-						derr := dbmap.Insert(&newhaserver)
-						if derr != nil {
-							fmt.Println("HA server insert error======>")
-							result["success"] = false
-						}
-						result["success"] = true
-    				} else {
-    					result["success"] = false
-    				}
-    				
+    					}
+    					details := getMasterDetails()
+    					if disk1 == "" && disk2 == "" {
+    					   result["success"] = false
+    					   result["error"] = "Could not find partition of the same size master and slave, or No unmounted partitions found master and slave."
+    					} else {
+    					if details != "" {
+    						detail := strings.Split(details, "=-=")
+    						db := orm.OpenDB()
+							dbmap := orm.GetDBMap(db)
+    						newhaserver := orm.HAServers{NodeIP1: detail[0], NodeHost1: detail[1], NodeDisk1: disk1, NodeIP2: ip, NodeHost2: r.Host, NodeDisk2: disk2 }
+							orm.ConnectToTable(dbmap, "haservers", newhaserver)
+							derr := dbmap.Insert(&newhaserver)
+							if derr != nil {
+								fmt.Println("HA server insert error======>")
+								result["success"] = false
+								result["error"] = "Server insertion error, please contact Megam."
+							}
+							result["success"] = true
+    					} else {
+    						result["success"] = false
+    						result["error"] = "Orchestrator doesn't get the master hostname and IP, Please set hostname or contact Megam."
+    					  }
+    					}
     			}		  		
 		  	}
 		}

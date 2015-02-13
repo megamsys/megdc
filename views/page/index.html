@@ -1,6 +1,6 @@
 {{template "base/base.html" .}} {{ define "body" }}
 
-<body id="dashboard-page" class="bg-gray-light" style="overflow:hidden; margin:0">
+<body id="dashboard-page" class="bg-gray-light" style="overflow:scroll; margin:0">
 	{{ template "base/nav.html" .}}
 
 	<script type='text/javascript'>
@@ -64,7 +64,7 @@
 			});
 		});
 	</script>
-
+    <button class="menu-btn btn btn-bordered text-gray-alt text-bold top-left-corner">&#9776; MENU</button>
 	<div class="fuelux">
 		<div class="well wizard-example">
 			<div id="MyWizard" class="wizard">

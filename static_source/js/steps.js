@@ -188,7 +188,7 @@ function nodeInstall(str) {
 		async : true,
 		crossDomain : "true",
 		success : function(response) {
-			var res = JSON.parse(response);			
+			var res = JSON.parse(response);	
 			if (res.success) {
 			//	var ser = JSON.parse(res.data);
 				$('#' + serverID).hide();
@@ -201,7 +201,9 @@ function nodeInstall(str) {
 				$('#' + serverID).hide();
 				$('#' + install_text).hide();
 				$('#' + errorID).show();
-				$("#" + name + "_dash_error").show();				
+				$("#" + name + "_dash_error").show();		
+				     $("#myNodesModal").modal('show');
+				     $("#res_nodes_msg").text(res.error);
 			}
 		},
 		error : function(xhr, status) {
@@ -279,7 +281,7 @@ function waiting_nodes_connection(nodes) {
 		success : function(response) {
 			var res = JSON.parse(response);
 			console.log(res);
-		
+		   
 			if (res.ip) {
 				$('#' + serverNodeID).hide();
 				$('#' + buttonNodeID).show();
@@ -328,7 +330,8 @@ function waiting_nodes_connectionha(nodes) {
 				dataType : 'text',
 				async : true,
 				success : function(response) {
-					console.log(response);	
+					console.log(response);			
+					
 					var res = JSON.parse(response);
 					if (res.success) {
 					$('#' + serverNodeID).hide();
@@ -337,7 +340,10 @@ function waiting_nodes_connectionha(nodes) {
 					$('#' + networkWarningTextID).hide();
 			//		$("#hostip").val(res.ipvalue);
 					$("#hosthaip").val(r[1]);
-				}				
+				   } else {
+				     $("#myModal").modal('show');
+				     $("#res_msg").text(res.error);
+				   }				
 				},
 				error : function(xhr, status) {
 			        $('#' + serverNodeID).show();
@@ -358,7 +364,6 @@ function waiting_nodes_connectionha(nodes) {
 }
 
 function getHADatas(nodes) {
-console.log("------------------------entry");
   $.ajax({
 		type : "GET",
 		url : "/servers/getHAOptions",
@@ -366,10 +371,11 @@ console.log("------------------------entry");
 		dataType : 'text',
 		async : true,
 		success : function(response) {
+			console.log("-------------------");
 			console.log(response);
 		},
 		error : function(xhr, status) {
-			
+			console.log("-------------------");
 		}
 	});
 }
