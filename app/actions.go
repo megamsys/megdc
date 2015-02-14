@@ -30,10 +30,10 @@ const (
 	cephone               = "bash conf/trusty/ceph/ceph_one_install.sh"
 	haproxy               = "bash conf/trusty/ha/haproxy.sh"
 	hahooks               = "bash conf/trusty/ha/ha_hooks.sh"
-	hamegam               = "bash conf/trusty/ha/megam.sh"
+	hamegam               = "bash conf/trusty/ha/megam.sh" 
 	
-   /*
-	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
+   
+	/*opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
 	opennebulainstall     = "bash conf/trusty/opennebula/one_install_test.sh"
@@ -47,7 +47,7 @@ const (
 	haproxy               = "bash conf/trusty/ha/haproxy_test.sh"
 	hahooks               = "bash conf/trusty/ha/ha_hooks_test.sh"
 	hamegam               = "bash conf/trusty/ha/megam_test.sh"
-   */
+  */
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -319,7 +319,9 @@ var cephInstall = action.Action{
     			}
     		}
     	}
-		
+		if len(storages) > 0 {
+			return &cib, errors.New("Could not found mounted storages, or No found storages have name like storage1, 2, 3... ") 
+		}
 		for ii, kv := range storages {
 			if len(kv) > 1 {
 				scmd = scmd + " osd" + strconv.Itoa(ii+1) + "=" + kv 
