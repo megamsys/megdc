@@ -45,24 +45,12 @@ echo "Creating ceph osd pool... $poolname " >> $CEPH_INSTALL_LOG
 sudo -H -u $ceph_user bash -c "ceph osd pool create $poolname 256"
 
 
-
-sudo -H -u oneadmin bash -c "cat > /var/lib/one/ds.conf <<EOF
-NAME = \"cephds\"
-DS_MAD = ceph
-TM_MAD = ceph
-DISK_TYPE = RBD
-POOL_NAME = $poolname
-BRIDGE_LIST = $host
-CEPH_HOST = $host
-EOF"
-
-sudo -H -u oneadmin bash -c 'onedatastore create /var/lib/one/ds.conf'
-echo "Setting up datastore for ceph in opennebula" >> $CEPH_INSTALL_LOG
-
 cd /tmp
 
 echo "processing get-or-create auth user..." >> $CEPH_INSTALL_LOG
 ceph auth get-or-create client.libvirt mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=$poolname'
+#ceph auth del 
+
 ceph auth get-key client.libvirt | tee client.libvirt.key
 ceph auth get client.libvirt -o ceph.client.libvirt.keyring
 
@@ -88,8 +76,12 @@ sudo apt-get -y install libvirt-bin >> $CEPH_INSTALL_LOG
 echo "virsh secret-define secret.xml" >> $CEPH_INSTALL_LOG
 sudo virsh secret-define secret.xml >> $CEPH_INSTALL_LOG
 
+# sudo virsh secret-undefine 6e7fff42-b12b-4a10-9767-981ea6ba0fc2
+
 echo "virsh secret-define secret.xml" >> $CEPH_INSTALL_LOG
 sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
+
+#sudo virsh secret-set-value --secret 85c080e0-ef4f-40f5-9205-3a8fe0c81118 --base64 $(cat client.libvirt.key)
 
 #Update datastore for ceph
 #onedatastore show cephds | grep "ID "
@@ -98,6 +90,21 @@ sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
 #CEPH_SECRET="$UUID"
 #CEPH_HOST="<list of ceph mon hosts"
 
+
+sudo -H -u oneadmin bash -c "cat > /var/lib/one/ds.conf <<EOF
+NAME = \"cephds\"
+DS_MAD = ceph
+TM_MAD = ceph
+DISK_TYPE = RBD
+CEPH_USER = libvirt
+CEPH_SECRET = $uid
+POOL_NAME = $poolname
+BRIDGE_LIST = $host
+CEPH_HOST = $host
+EOF"
+
+sudo -H -u oneadmin bash -c 'onedatastore create /var/lib/one/ds.conf'
+echo "Setting up datastore for ceph in opennebula" >> $CEPH_INSTALL_LOG
 
 
 

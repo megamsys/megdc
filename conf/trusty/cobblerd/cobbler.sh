@@ -96,6 +96,19 @@ help() {
 #--------------------------------------------------------------------------
 # Install cobbler in trusty or debian
 #--------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------
+#This function will restart the services
+#--------------------------------------------------------------------------
+restart_all() {
+  echo "Restarting services ..." >> $COBBLER_LOG
+  service xinetd restart
+  service dnsmasq restart
+  service cobbler restart
+  service apache2 restart
+  echo "Restarted services..." >> $COBBLER_LOG
+}
+
 install_cobbler() {
   ping -c 1 us.archive.ubuntu.com &> /dev/null
 
@@ -327,17 +340,6 @@ setup_profile_cephnode() {
 }
 
 
-#--------------------------------------------------------------------------
-#This function will restart the services
-#--------------------------------------------------------------------------
-restart_all() {
-  echo "Restarting services ..." >> $COBBLER_LOG
-  service xinetd restart
-  service dnsmasq restart
-  service cobbler restart
-  service apache2 restart
-  echo "Restarted services..." >> $COBBLER_LOG
-}
 #--------------------------------------------------------------------------
 #This function will print out an install report
 #--------------------------------------------------------------------------

@@ -27,7 +27,7 @@ end
 
 #pkg_check(["megam", "ceph"])
 
-#puts @packages
+
 
 #Some of the packages don't have services
 #megamcommon, megamsnowflake(but snowflake),megammonitor(but ganglia-monitor), nodejs, sqlite3, ruby2.0, openjdk-7-jdk, debmirror
@@ -71,8 +71,6 @@ end
 
 #service_check(["megam", "ceph"])
 
-#puts @services
-
 
 def check_cib(array)
         cib_check = {"packages" => {}, "services" => {}}
@@ -85,7 +83,6 @@ end
 
 
 cib_json = check_cib(ARGV)
-puts "==========================cib json ==========================="
 puts cib_json
 
 
