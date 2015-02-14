@@ -40,7 +40,7 @@ echo "Oneadmin Authenticated. Oneadmin can access hosts without password "
 
 #onehost create 192.168.2.129 -i kvm -v kvm -n dummy
 #su oneadmin
-sudo -H -u oneadmin bash -c 'onehost create $1 -i kvm -v kvm -n dummy'
+
 
 
 

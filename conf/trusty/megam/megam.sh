@@ -18,6 +18,8 @@ apt-get -y install megamnilavu >> $MEGAM_LOG
 
 apt-get -y install megamgateway >> $MEGAM_LOG
 
+apt-get -y install chef-server >> $MEGAM_LOG
+
 apt-get -y install megamd >> $MEGAM_LOG
 
 apt-get -y install megamanalytics >> $MEGAM_LOG
