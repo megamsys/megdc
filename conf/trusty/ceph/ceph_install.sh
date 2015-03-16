@@ -132,15 +132,17 @@ install_ceph() {
 #ceph user as sudoer 
 echo "Make ceph user as sudoer" >> $CEPH_LOG
 echo "$ceph_user ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ceph_user
+#echo "cibadmin ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/cibadmin
 sudo chmod 0440 /etc/sudoers.d/$ceph_user
+#sudo chmod 0440 /etc/sudoers.d/cibadmin
 
 #Ceph install
 echo "Started installing ceph" >> $CEPH_LOG
 sudo echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
 sudo apt-get -y update >> $CEPH_LOG
-sudo apt-get -y install ceph-deploy ceph-common ceph-mds  >> $CEPH_LOG
-sudo apt-get -y install dnsmasq openssh-server ntp sshpass  >> $CEPH_LOG
+sudo apt-get -y install ceph-deploy ceph-common ceph-mds dnsmasq openssh-server ntp sshpass >> $CEPH_LOG
+#sudo apt-get -y install dnsmasq openssh-server ntp sshpass  >> $CEPH_LOG
 
 IP_ADDR=$( getip )
 
@@ -152,7 +154,7 @@ echo "Processing ssh-keygen" >> $CEPH_LOG
 sudo -u $ceph_user bash << EOF
 #Create ssh files
 ssh-keygen -N '' -t rsa -f $user_home/.ssh/id_rsa
-cp $user_home/.ssh/id_rsa $user_home/.ssh/authorized_keys
+cp $user_home/.ssh/id_rsa.pub $user_home/.ssh/authorized_keys
 EOF
 
 #No prompt on "Add ip to known_hosts list"
@@ -185,12 +187,19 @@ ceph-deploy new $host
 
 echo "osd crush chooseleaf type = 0" >> ceph.conf
 echo "public network = $ip3.0/24" >> ceph.conf
+#echo "public network = 7.7.9.0/24" >> ceph.conf
 echo "cluster network = $ip3.0/24" >> ceph.conf
+
+#echo "cluster network = 192.168.6.0/24" >> ceph.conf
 
 ceph-deploy install $host
 #PROMPT  Are you sure you want to continue connecting (yes/no)? yes    for the first time          cephuser@hostname's password: 
 
 ceph-deploy mon create-initial
+
+#ceph-deploy  --overwrite-conf osd prepare megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd 
+#ceph-deploy  --overwrite-conf osd activate megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd
+#ceph-deploy osd prepare megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd
 
 ceph-deploy osd prepare $host:$osd1/osd $host:$osd2/osd $host:$osd3/osd
 ceph-deploy osd activate $host:$osd1/osd $host:$osd2/osd $host:$osd3/osd
@@ -199,11 +208,11 @@ ceph-deploy admin $host
 sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 
 sleep 180
-ceph osd pool set rbd pg_num 256
+ceph osd pool set rbd pg_num 192
 #It takes some more time
 #better sleep 2 mins
 sleep 180
-ceph osd pool set rbd pgp_num 256
+ceph osd pool set rbd pgp_num 192
 
 EOF
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt-get install openvswitch-common openvswitch-switch
+sudo apt-get -y install openvswitch-common openvswitch-switch bridge-utils
 
 sudo ovs-vsctl add-br one
 
@@ -52,4 +52,6 @@ EOF
 ifconfig eth0 0			#=====> Connection will be cleared
 
 #System needs to be restarted
+
+
 

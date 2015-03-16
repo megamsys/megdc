@@ -54,7 +54,7 @@ sunstone-server restart
 econe-server restart
 occi-server restart
 onegate-server restart
-one restart
+sudo -H -u oneadmin bash -c "one restart"
 sudo service opennebula restart
 }
 
