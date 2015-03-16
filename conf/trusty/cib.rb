@@ -14,11 +14,10 @@ require 'json'
 def pkg_check(pkg_array)
         pkg_array.each do |pkg|
           @packages["#{pkg}"].each_key do |k|
-                dpkg_res = `dpkg -s #{k}`
-                if "#{dpkg_res}".include? "Status: install ok installed"
+
+                dpkg_res = `dpkg -s #{k} >/dev/null 2>&1 && { printf "success"; } || { printf "fail";}`
+                if "#{dpkg_res}".include? "success"
                         @packages["#{pkg}"]["#{k}"] = "true"
-                else
-                        puts "Package #{k} Not Installed"
                 end
           end
         end
@@ -27,7 +26,7 @@ end
 
 #pkg_check(["megam", "ceph"])
 
-
+#puts @packages
 
 #Some of the packages don't have services
 #megamcommon, megamsnowflake(but snowflake),megammonitor(but ganglia-monitor), nodejs, sqlite3, ruby2.0, openjdk-7-jdk, debmirror
@@ -43,19 +42,10 @@ end
 def service_check(service_array)
         service_array.each do |ser|
           @services["#{ser}"].each_key do |k|
-                if `sudo service #{k} status`.include? "running"
+                if `sudo service #{k} status >/dev/null 2>&1 && { printf "success"; } || { printf "fail";}`.include? "success"
                          @services["#{ser}"]["#{k}"] = "true"
                 end
-                if `sudo service #{k} status`.include? "not"
-                         @services["#{ser}"]["#{k}"] = "false"
-                end
-                if ("#{k}" == "riak") && (`sudo riak ping`.include? "pong")
-                         @services["#{ser}"]["#{k}"] = "true"
-                end
-                if ("#{k}" == "chef-server-ctl") && (`sudo chef-server-ctl status`.include? "run")
-                         @services["#{ser}"]["#{k}"] = "true"
-                end
-                if ("#{k}" == "drbd") && (`sudo service #{k} status`.include? "drbd driver loaded OK")
+                if ("#{k}" == "chef-server-ctl") && (`sudo chef-server-ctl status >/dev/null 2>&1 && { printf "success"; } || { printf "fail";}`.include? "success")
                          @services["#{ser}"]["#{k}"] = "true"
                 end
                 if ("#{k}" == "ceph_health") && (`ceph health`.include? "HEALTH_OK")
@@ -70,6 +60,8 @@ def service_check(service_array)
 end
 
 #service_check(["megam", "ceph"])
+
+#puts @services
 
 
 def check_cib(array)
