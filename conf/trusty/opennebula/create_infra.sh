@@ -4,6 +4,8 @@
 ###############################
 sudo -H -u oneadmin bash -c 'onehost create $1 -i kvm -v kvm -n dummy'
 
+#sudo -H -u oneadmin bash -c 'onehost create 192.168.1.100 -i kvm -v kvm -n dummy'
+
 ipaddr = $1
 
 #Get first 3 values of ip4 eg:192.168.1 in 192.168.1.100

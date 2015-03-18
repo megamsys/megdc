@@ -412,10 +412,8 @@ function dashboard(stype) {
 		        var flag = true;
 		        var text;	
 		        $('#' + stype +"_dash_waiting1").hide();
-		        console.log(response);	       
 				var res = JSON.parse(response);
 				if(res.success) {
-				console.log(res.data);  
 				var jsondata = JSON.parse(res.data);				
 				 var installkey = jsondata.packages;
 		 

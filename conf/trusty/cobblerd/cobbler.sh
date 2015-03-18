@@ -201,8 +201,8 @@ configure_with_ip() {
 		break
 	done < /proc/net/route
 
-echo "127.0.0.1 localhost" > /etc/hosts
-echo "$ipaddr megamubuntu" > /etc/hosts
+echo "127.0.0.1 localhost" >> /etc/hosts
+echo "$ipaddr megamubuntu" >> /etc/hosts
 
 	#grep -qs "^127.0.0.1.*.localhost$" /etc/hosts || sudo sed '$ a\
 	#127.0.0.1 localhost' /etc/hosts > /etc/hosts

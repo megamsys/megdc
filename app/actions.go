@@ -17,6 +17,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (  
+	
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -32,8 +33,8 @@ const (
 	hahooks               = "bash conf/trusty/ha/ha_hooks.sh"
 	hamegam               = "bash conf/trusty/ha/megam.sh" 
 	
-   
-	/*opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
+   /*
+	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
 	opennebulainstall     = "bash conf/trusty/opennebula/one_install_test.sh"
