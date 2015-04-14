@@ -72,6 +72,13 @@ sudo cat > secret.xml <<EOF
 </secret>
 EOF
 
+#<secret ephemeral='no' private='no'>
+#  <uuid>1957f4a8-a5db-483b-ad53-3ebdce460c36</uuid>
+#  <usage type='ceph'>
+#          <name>client.libvirt secret</name>
+#  </usage>
+#</secret>
+
 #sudo ceph auth list
 #REFERENCE http://archives.opennebula.org/documentation:rel4.4:ceph_ds
 
@@ -79,14 +86,14 @@ EOF
 sudo apt-get -y install libvirt-bin >> $CEPH_INSTALL_LOG
 
 echo "virsh secret-define secret.xml" >> $CEPH_INSTALL_LOG
-sudo virsh secret-define secret.xml >> $CEPH_INSTALL_LOG
+sudo virsh secret-define secret.xml >> $CEPH_INSTALL_LOG			#Run in all nodes
 
 # sudo virsh secret-undefine 6e7fff42-b12b-4a10-9767-981ea6ba0fc2
 
 echo "virsh secret-define secret.xml" >> $CEPH_INSTALL_LOG
 sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
 
-#sudo virsh secret-set-value --secret 3d74a4a1-e6fc-4905-a6c6-3e3e3b826937 --base64 $(cat client.libvirt.key)
+#sudo virsh secret-set-value --secret 1957f4a8-a5db-483b-ad53-3ebdce460c36 --base64 $(cat client.libvirt.key)		RUN In all nodes
 
 #Update datastore for ceph
 #onedatastore show cephds | grep "ID "
@@ -95,6 +102,9 @@ sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
 #CEPH_SECRET="$UUID"
 #CEPH_HOST="<list of ceph mon hosts"
 
+
+
+#sshpass -p "cibadmin" scp -o StrictHostKeyChecking=no /home/cibadmin/ceph-one/*.keyring cibadmin@megamslave:/home/cibadmin/ceph-one/
 
 sudo -H -u oneadmin bash -c "cat > /var/lib/one/ds.conf <<EOF
 NAME = \"cephds\"

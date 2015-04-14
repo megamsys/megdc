@@ -208,11 +208,11 @@ ceph-deploy admin $host
 sudo chmod +r /etc/ceph/ceph.client.admin.keyring
 
 sleep 180
-ceph osd pool set rbd pg_num 192
+ceph osd pool set rbd pg_num 150
 #It takes some more time
 #better sleep 2 mins
 sleep 180
-ceph osd pool set rbd pgp_num 192
+ceph osd pool set rbd pgp_num 150
 
 EOF
 
