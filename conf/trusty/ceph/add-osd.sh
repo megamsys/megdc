@@ -23,7 +23,7 @@ sudo mkdir /storage5/osd
 ########### IN FIRST NODE #################
 
 #osd_number=`ceph osd create`
-sudo apt-get -y install sshpass
+sudo apt-get -y install sshpass ntp
 #add entry to /etc/hosts
 echo "192.168.1.101 megamslave" > /etc/hosts
 
@@ -37,9 +37,11 @@ sshpass -p "cibadmin" scp -o StrictHostKeyChecking=no /home/cibadmin/.ssh/id_rsa
 sshpass -p "cibadmin" scp -o StrictHostKeyChecking=no /home/cibadmin/.ssh/id_rsa.pub cibadmin@megamaathi:/home/cibadmin/.ssh/authorized_keys
 sshpass -p "cibadmin" scp -o StrictHostKeyChecking=no /home/cibadmin/.ssh/id_rsa.pub cibadmin@megamsaaral:/home/cibadmin/.ssh/authorized_keys
 
-ceph-deploy --overwrite-conf osd prepare megamslave:/storage4/osd megamslave:/storage5/osd
+ceph-deploy --overwrite-conf osd prepare megamslave:/storage3/osd
 #ceph-deploy --overwrite-conf osd prepare megamaathi:/storage7/osd megamaathi:/storage8/osd
 #ceph-deploy --overwrite-conf osd prepare megamsaaral:/storage9/osd megamsaaral:/storage10/osd
+#ceph-deploy --overwrite-conf osd prepare megamkatru:/storage13/osd megamkatru:/storage14/osd
+#ceph-deploy --overwrite-conf osd prepare megamalam:/storage11/osd megamalam:/storage12/osd
 ceph-deploy osd activate megamslave:/storage4/osd megamslave:/storage5/osd
 
 
@@ -53,6 +55,7 @@ scp /home/cibadmin/ceph-cluster/ceph.bootstrap-osd.keyring cibadmin@megamslave:/
 #scp /home/cibadmin/ceph-cluster/ceph.bootstrap-osd.keyring cibadmin@megamaathi:/home/cibadmin/ceph.keyring
 #scp /home/cibadmin/ceph-cluster/ceph.bootstrap-osd.keyring cibadmin@megamsaaral:/home/cibadmin/ceph.keyring
 ssh cibadmin@megamslave 'sudo mv /home/cibadmin/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
+#ssh cibadmin@megamkatru 'sudo mv /home/cibadmin/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
 #ssh cibadmin@megamaathi 'sudo mv /home/cibadmin/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
 #ssh cibadmin@megamsaaral 'sudo mv /home/cibadmin/ceph.keyring /var/lib/ceph/bootstrap-osd/; sudo chmod 600 /var/lib/ceph/bootstrap-osd/ceph.keyring'
 #sudo ceph-osd -i 3 --mkfs --mkkey

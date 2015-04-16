@@ -28,7 +28,7 @@ fi
 
 echo "Transfering auth_keys to megamcib_node " >> $ONE_INSTALL_LOG
 sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@$1:/var/lib/one/.ssh/authorized_keys
-#sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@192.168.6.201:/var/lib/one/.ssh/authorized_keys
+#sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@192.168.1.101:/var/lib/one/.ssh/authorized_keys
 
 #No prompt on "Add ip to known_hosts list"
 sudo -H -u oneadmin bash -c "cat > //var/lib/one/.ssh/ssh_config <<EOF
@@ -39,7 +39,7 @@ EOF"
 
 echo "Oneadmin Authenticated. Oneadmin can access hosts without password "
 
-#onehost create 192.168.6.201 -i kvm -v kvm -n dummy
+#onehost create 192.168.1.101 -i kvm -v kvm -n dummy
 #su oneadmin
 
 

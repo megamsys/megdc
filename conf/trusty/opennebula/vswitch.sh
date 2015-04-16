@@ -49,7 +49,7 @@ bridge_ports eth0
 dns-nameservers 8.8.8.8 8.8.4.4
 EOF
 
-ifconfig eth0 0			#=====> Connection will be cleared
+#ifconfig eth0 0			#=====> Connection will be cleared
 
 #System needs to be restarted
 
