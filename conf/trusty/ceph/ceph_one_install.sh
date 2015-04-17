@@ -42,7 +42,7 @@ CEPH_INSTALL_LOG="/var/log/megam/megamcib/ceph.log"
 
 
 echo "Creating ceph osd pool... $poolname " >> $CEPH_INSTALL_LOG
-sudo -H -u $ceph_user bash -c "ceph osd pool create $poolname 256"
+sudo -H -u $ceph_user bash -c "ceph osd pool create $poolname 150"
 #sudo -H -u cibadmin bash -c "ceph osd pool create one 256"
 
 
@@ -105,6 +105,8 @@ sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
 
 
 #sshpass -p "cibadmin" scp -o StrictHostKeyChecking=no /home/cibadmin/ceph-one/*.keyring cibadmin@megamslave:/home/cibadmin/ceph-one/
+
+sudo -H -u oneadmin bash -c 'onehost create $host -i kvm -v kvm -n dummy'
 
 sudo -H -u oneadmin bash -c "cat > /var/lib/one/ds.conf <<EOF
 NAME = \"cephds\"

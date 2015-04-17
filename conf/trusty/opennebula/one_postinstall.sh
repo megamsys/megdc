@@ -46,19 +46,21 @@ sudo -H -u oneadmin bash -c "onedatastore update 0 /tmp/ds_tm_mad"
 sudo -H -u oneadmin bash -c "onedatastore update 1 /tmp/ds_tm_mad"
 sudo -H -u oneadmin bash -c "onedatastore update 2 /tmp/ds_tm_mad"
 
+echo "One Datastore updates with TM_MAD=ssh =======> " >> $ONE_INSTALL_LOG
+
 #Edit clone file for scp problem
 sed -i '/SRC=$1/a SRC=${SRC#*:}' /var/lib/one/remotes/tm/ssh/clone
 
 service_restart() {
-sunstone-server restart
-econe-server restart
+sunstone-server start
+econe-server start
 occi-server restart
 onegate-server restart
 sudo -H -u oneadmin bash -c "one restart"
 sudo service opennebula restart
 }
 
-service_restart
+service_restart >> $ONE_INSTALL_LOG
 
 
 

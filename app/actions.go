@@ -320,7 +320,7 @@ var cephInstall = action.Action{
     			}
     		}
     	}
-		if len(storages) > 0 {
+		if len(storages) == 0 {
 			return &cib, errors.New("Could not found mounted storages, or No found storages have name like storage1, 2, 3... ") 
 		}
 		for ii, kv := range storages {
