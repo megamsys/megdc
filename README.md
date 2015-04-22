@@ -41,7 +41,7 @@ Refer [documentation] (http://www.gomegam.com/docs)
 
 We are glad to help if you have questions, or request for new features..
 
-[twitter @megamsys](http://twitter.com/megamsys) [email support@megam.co.in](<support@megam.co.in>)
+[twitter @megamsys](http://twitter.com/megamsys) [email support@megam.io](<support@megam.io>)
 
 
 
@@ -51,9 +51,9 @@ We are glad to help if you have questions, or request for new features..
 
 |                      |                                          |
 |:---------------------|:-----------------------------------------|
-| **Author:**          | Rajthilak (<rajthilak@megam.co.in>)
-| 	                   | KishorekumarNeelamegam (<nkishore@megam.co.in>)
-| 	                   | Thomas Alrin (<alrin@megam.co.in>)
+| **Author:**          | Rajthilak (<rajthilak@megam.io>)
+| 	                   | KishorekumarNeelamegam (<nkishore@megam.io>)
+| 	                   | Thomas Alrin (<thomasalrin@megam.io>)
 | **Copyright:**       | Copyright (c) 2012-2014 Megam Systems.
 | **License:**         | Apache License, Version 2.0
 

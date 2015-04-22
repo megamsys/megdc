@@ -2,10 +2,10 @@
 
 MEGAM_LOG="/var/log/megam/megamcib/megam.log"
 
-ping -c 1 get.megam.co &> /dev/null
+ping -c 1 get.megam.io &> /dev/null
 
 if [ $? -ne 0 ]; then
-	echo "`date`: check your network connection. get.megam.co is down or not reachable!" >> $MEGAM_LOG
+	echo "`date`: check your network connection. get.megam.io is down or not reachable!" >> $MEGAM_LOG
   exit 1
 fi
 
