@@ -335,7 +335,7 @@ EOF
 #This function will add profile for ceph
 #--------------------------------------------------------------------------
 setup_profile_cephnode() {
-  wget -O /var/lib/cobbler/kickstarts/megamceph.seed http://get.megam.co/cephpreseed.cfg
+  wget -O /var/lib/cobbler/kickstarts/megamceph.seed http://get.megam.io/cephpreseed.cfg
   cobbler profile add --name=trusty-megamceph --distro=trusty-megamnode-x86-64 --kickstart=/var/lib/cobbler/kickstarts/megamceph.seed
 }
 
