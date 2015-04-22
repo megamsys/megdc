@@ -5,7 +5,7 @@ require 'json'
 "megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "megamsnowflake" => "false", "megamgateway" => "false", "megamd" => "false", "chef-server" => "false", "megamanalytics" => "false", "megamvarai" => "false", "megammonitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
 "cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false", "debmirror" => "false"},
 "opennebula" => {"opennebula" => "false", "opennebula-sunstone" => "false"},
-"opennebula_host" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
+"opennebulahost" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
 "ceph" => {"ceph-deploy" => "false", "ceph-common ceph-mds" => "false"},
 "drbd" => {"drbd8-utils" => "false", "linux-image-extra-virtual" => "false", "pacemaker" => "false", "heartbeat" => "false"}
 }
@@ -34,7 +34,7 @@ end
 "megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "snowflake" => "false", "megamgateway" => "false", "megamd" => "false", "chef-server-ctl" => "false", "megamanalytics" => "false", "megamvarai" => "false", "ganglia-monitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
 "cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false"},
 "opennebula" => {"opennebula" => "false", "opennebula-sunstone" => "false"},
-"opennebula_host" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
+"opennebulahost" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
 "ceph" => {"ceph-all" => "false", "ceph_health" => "false"},
 "drbd" => {"drbd" => "false", "pacemaker" => "false", "heartbeat" => "false", "crm" => "false"}
 }

@@ -28,3 +28,5 @@ sudo apt-get -y install opennebula-node >> $ONE_INSTALL_LOG
 
 echo "Changing password for oneadmin user(Password = oneadmin)" >> $ONE_INSTALL_LOG
 sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin
+
+

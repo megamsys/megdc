@@ -216,6 +216,8 @@ ceph osd pool set rbd pgp_num 150
 
 EOF
 
+cp $user_home/ceph-cluster/*.keyring /etc/ceph/
+
 install_complete
 
 }

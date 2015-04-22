@@ -112,7 +112,7 @@ func NebulaInstall() error {
 // this executes all actions for opennebula install
 //
 func OpenNebulaHostMasterInstall() error {
-	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
+	actions := []*action.Action{&opennebulaSCPSSH, &opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -124,8 +124,10 @@ func OpenNebulaHostMasterInstall() error {
 //
 // this executes all actions for opennebula install
 //
+//MEGAM CHANGE
+//Add a new script for installing only ceph without configuration inside slave system
 func OpenNebulaHostNodeInstall() error {
-	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostNodeInstall, &cephInstall, &cephOneInstall}
+	actions := []*action.Action{&opennebulaSCPSSH, &opennebulaHostMasterVerify, &opennebulaHostNodeInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
