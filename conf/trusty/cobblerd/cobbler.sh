@@ -136,7 +136,7 @@ install_cobbler() {
   import_trustynode_iso
 
   setup_profile_trustynode
-  setup_profile_cephnode
+  #setup_profile_cephnode
   cecho "Running Synchronisation..." $yellow
   echo "Running Synchronisation..." >> $COBBLER_LOG
   sleep 3
@@ -309,7 +309,7 @@ setup_profile_trustynode() {
   cat > //etc/cobbler/pxe/pxedefault.template << 'EOF'
 DEFAULT menu
 PROMPT 0
-MENU TITLE Megam Cloud In a Box(Node) | www.gomegam.com/cloudinabox
+MENU TITLE Megam Cloud In a Box(Node) | www.megam.io
 TIMEOUT 200
 TOTALTIMEOUT 6000
 ONTIMEOUT $pxe_timeout_profile
@@ -319,7 +319,7 @@ $pxe_menu_items
 MENU end
 EOF
 
-  wget -O /var/lib/cobbler/kickstarts/megamnode.seed http://get.megam.co/npreseed.cfg
+  wget -O /var/lib/cobbler/kickstarts/megamnode.seed http://get.megam.io/npreseed.cfg
 
   cp /usr/share/megam/megamcib/conf/trusty/cobblerd/install_post_cibnode.py /usr/lib/python2.7/dist-packages/cobbler/modules/
   cp /usr/share/megam/megamcib/conf/trusty/cobblerd/preseed_early_ub1404 /var/lib/cobbler/scripts/

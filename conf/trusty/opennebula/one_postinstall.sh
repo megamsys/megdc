@@ -51,6 +51,8 @@ echo "One Datastore updates with TM_MAD=ssh =======> " >> $ONE_INSTALL_LOG
 #Edit clone file for scp problem
 sed -i '/SRC=$1/a SRC=${SRC#*:}' /var/lib/one/remotes/tm/ssh/clone
 
+sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin
+
 service_restart() {
 sunstone-server start
 econe-server start

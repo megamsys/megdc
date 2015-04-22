@@ -32,6 +32,13 @@ const (
 	haproxy               = "bash conf/trusty/ha/haproxy.sh"
 	hahooks               = "bash conf/trusty/ha/ha_hooks.sh"
 	hamegam               = "bash conf/trusty/ha/megam.sh" 
+
+//Write functions for these scripts
+	cephaddosd            = "bash conf/trusty/ceph/add_osd.sh" 	//From slave
+	cephaddosdmaster      = "bash conf/trusty/ceph/add_osd_master.sh" 	//From master, pass slave_ip_Address
+	cephoneinstallslave   = "bash conf/trusty/ceph/ceph_one_install_slave.sh" 	//From slave
+	opennebulaaddnodehost = "bash conf/trusty/opennebula/add_slave_host.sh" 	//From master, pass slave_ip_Address
+
 	
    /*
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
@@ -215,6 +222,28 @@ var opennebulaSCPSSH = action.Action{
 	},
 	MinParams: 1,
 }
+
+//MEGAM CHANGES TO DO
+var cephaddosdmaster = action.Action{
+	Name: "cephaddosdmaster",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		var server orm.Servers
+		db := orm.OpenDB()
+	    dbmap := orm.GetDBMap(db)
+	    err := dbmap.SelectOne(&server, "select * from servers where Name=?", "OPENNEBULAHOST")
+	    fmt.Println(err)
+		cib.Command = cephaddosdmaster + " " + server.IP
+		exec, err1 := CIBExecutor(&cib)
+
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
 
 var opennebulaHostMasterVerify = action.Action{
 	Name: "opennebulaHostVerify",

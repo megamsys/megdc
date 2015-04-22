@@ -46,7 +46,7 @@ sudo -H -u $ceph_user bash -c "ceph osd pool create $poolname 150"
 #sudo -H -u cibadmin bash -c "ceph osd pool create one 256"
 
 
-cd /tmp
+cd $user_home/ceph-cluster
 
 echo "processing get-or-create auth user..." >> $CEPH_INSTALL_LOG
 ceph auth get-or-create client.libvirt mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=$poolname'
@@ -61,7 +61,9 @@ sudo cp ceph.client.* /etc/ceph
 
 uid=`uuidgen`
 
-echo "creating secret.xml file in /tmp dir..." >> $CEPH_INSTALL_LOG
+echo $uid > uid
+
+echo "creating secret.xml file in $user_home/ceph-cluster dir..." >> $CEPH_INSTALL_LOG
 
 sudo cat > secret.xml <<EOF
 <secret ephemeral='no' private='no'>
@@ -102,29 +104,6 @@ sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
 #CEPH_SECRET="$UUID"
 #CEPH_HOST="<list of ceph mon hosts"
 
-
-
-#sshpass -p "cibadmin" scp -o StrictHostKeyChecking=no /home/cibadmin/ceph-one/*.keyring cibadmin@megamslave:/home/cibadmin/ceph-one/
-
-sudo -H -u oneadmin bash -c 'onehost create $host -i kvm -v kvm -n dummy'
-
-sudo -H -u oneadmin bash -c "cat > /var/lib/one/ds.conf <<EOF
-NAME = \"cephds\"
-DS_MAD = ceph
-TM_MAD = ceph
-DISK_TYPE = RBD
-CEPH_USER = libvirt
-CEPH_SECRET = $uid
-POOL_NAME = $poolname
-BRIDGE_LIST = $host
-CEPH_HOST = $host
-EOF"
-
-sudo -H -u oneadmin bash -c 'onedatastore create /var/lib/one/ds.conf'
-echo "Setting up datastore for ceph in opennebula" >> $CEPH_INSTALL_LOG
-
-
-
-
-
+#Create opennebula infra
+bash ./../opennebula/create_infra.sh "$uid"
 

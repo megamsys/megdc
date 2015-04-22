@@ -112,7 +112,7 @@ func NebulaInstall() error {
 // this executes all actions for opennebula install
 //
 func OpenNebulaHostMasterInstall() error {
-	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
+	actions := []*action.Action{&opennebulaSCPSSH, &opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
