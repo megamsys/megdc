@@ -17,7 +17,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (  
-	
+/*	
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -38,10 +38,9 @@ const (
 	cephaddosdmaster      = "bash conf/trusty/ceph/add_osd_master.sh" 	//From master, pass slave_ip_Address
 	cephoneinstallslave   = "bash conf/trusty/ceph/ceph_one_install_slave.sh" 	//From slave
 	opennebulaaddnodehost = "bash conf/trusty/opennebula/add_slave_host.sh" 	//From master, pass slave_ip_Address
-
+*/
 	
-   /*
-	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
+   opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
 	opennebulainstall     = "bash conf/trusty/opennebula/one_install_test.sh"
@@ -55,7 +54,10 @@ const (
 	haproxy               = "bash conf/trusty/ha/haproxy_test.sh"
 	hahooks               = "bash conf/trusty/ha/ha_hooks_test.sh"
 	hamegam               = "bash conf/trusty/ha/megam_test.sh"
-  */
+    cephaddosd            = "bash conf/trusty/ceph/add_osd_test.sh" 	//From slave
+	cephaddosdmaster      = "bash conf/trusty/ceph/add_osd_master_test.sh" 	//From master, pass slave_ip_Address
+	cephoneinstallslave   = "bash conf/trusty/ceph/ceph_one_install_slave_test.sh" 	//From slave
+	opennebulaaddnodehost = "bash conf/trusty/opennebula/add_slave_host_test.sh" 	
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -224,16 +226,19 @@ var opennebulaSCPSSH = action.Action{
 }
 
 //MEGAM CHANGES TO DO
-var cephaddosdmaster = action.Action{
+var cephaddosdmasterInstall = action.Action{
 	Name: "cephaddosdmaster",
 	Forward: func(ctx action.FWContext) (action.Result, error) {
 		var cib CIB
-		var server orm.Servers
-		db := orm.OpenDB()
-	    dbmap := orm.GetDBMap(db)
-	    err := dbmap.SelectOne(&server, "select * from servers where Name=?", "OPENNEBULAHOST")
-	    fmt.Println(err)
-		cib.Command = cephaddosdmaster + " " + server.IP
+		switch ctx.Params[0].(type) {
+		case CIB:
+			cib = ctx.Params[0].(CIB)
+		case *CIB:
+			cib = *ctx.Params[0].(*CIB)
+		default:
+			return nil, errors.New("First parameter must be App or *CIB.")
+		}
+		cib.Command = cephaddosdmaster + " " + cib.RemoteIP
 		exec, err1 := CIBExecutor(&cib)
 
 		return exec, err1
@@ -244,6 +249,59 @@ var cephaddosdmaster = action.Action{
 	MinParams: 1,
 }
 
+
+var cephaddosdInstall = action.Action{
+	Name: "cephaddosd",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = cephaddosd
+		exec, err1 := CIBExecutor(&cib)
+
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var cephoneinstallslaveInstall = action.Action{
+	Name: "cephoneinstallslave",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		cib.Command = cephoneinstallslave
+		exec, err1 := CIBExecutor(&cib)
+
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
+
+var opennebulaaddnodehostInstall = action.Action{
+	Name: "opennebulaaddnodehost",
+	Forward: func(ctx action.FWContext) (action.Result, error) {
+		var cib CIB
+		switch ctx.Params[0].(type) {
+		case CIB:
+			cib = ctx.Params[0].(CIB)
+		case *CIB:
+			cib = *ctx.Params[0].(*CIB)
+		default:
+			return nil, errors.New("First parameter must be App or *CIB.")
+		}
+		cib.Command = opennebulaaddnodehost + " " + cib.RemoteIP
+		exec, err1 := CIBExecutor(&cib)
+
+		return exec, err1
+	},
+	Backward: func(ctx action.BWContext) {
+		log.Printf("[%s] Nothing to recover")
+	},
+	MinParams: 1,
+}
 
 var opennebulaHostMasterVerify = action.Action{
 	Name: "opennebulaHostVerify",
