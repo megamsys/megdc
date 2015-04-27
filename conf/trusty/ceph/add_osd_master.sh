@@ -9,8 +9,12 @@
 ceph_user="cibadmin"
 ceph_password="cibadmin"
 user_home="/home/$ceph_user"
+CEPH_LOG="/var/log/megam/megamcib/ceph.log"
 
-sudo apt-get -y install sshpass ntp
+echo "add_osd_master.sh start execution ====>" >> $CEPH_LOG
+echo "Remote osd ip $1 ====>" >> $CEPH_LOG
+
+sudo apt-get -y install sshpass ntp >> $CEPH_LOG
 
 sshpass -p "$ceph_password" scp -o StrictHostKeyChecking=no /home/$ceph_user/.ssh/id_rsa.pub $ceph_user@$1:/home/$ceph_user/.ssh/authorized_keys
 
@@ -26,10 +30,11 @@ for d in $remote_osd ; do
 	ceph_osds="$ceph_osds $REMHOST:$d/osd"
 done
 
-ceph-deploy --overwrite-conf osd prepare $ceph_osds
-ceph-deploy --overwrite-conf osd activate $ceph_osds
+ceph-deploy --overwrite-conf osd prepare $ceph_osds >> $CEPH_LOG
+ceph-deploy --overwrite-conf osd activate $ceph_osds >> $CEPH_LOG
 
 #IN FIRST HOST
+echo "Transfering keys to $1 ====>" >> $CEPH_LOG
 scp $user_home/ceph-cluster/ceph.bootstrap-osd.keyring $ceph_user@$1:$user_home/ceph.keyring
 scp $user_home/ceph-cluster/*.keyring $ceph_user@$1:$user_home/
 
@@ -43,3 +48,4 @@ scp $user_home/ceph-cluster/uid $ceph_user@$1:$user_home/ceph-cluster/
 
 #After this execution ends, run ceph_one_install_slave.sh in slave system.
 
+echo "add_osd_master.sh end execution ====>" >> $CEPH_LOG

@@ -17,7 +17,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (  
-/*	
+	
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -32,14 +32,12 @@ const (
 	haproxy               = "bash conf/trusty/ha/haproxy.sh"
 	hahooks               = "bash conf/trusty/ha/ha_hooks.sh"
 	hamegam               = "bash conf/trusty/ha/megam.sh" 
-
-//Write functions for these scripts
 	cephaddosd            = "bash conf/trusty/ceph/add_osd.sh" 	//From slave
 	cephaddosdmaster      = "bash conf/trusty/ceph/add_osd_master.sh" 	//From master, pass slave_ip_Address
 	cephoneinstallslave   = "bash conf/trusty/ceph/ceph_one_install_slave.sh" 	//From slave
 	opennebulaaddnodehost = "bash conf/trusty/opennebula/add_slave_host.sh" 	//From master, pass slave_ip_Address
-*/
-	
+
+	/*
    opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -58,6 +56,7 @@ const (
 	cephaddosdmaster      = "bash conf/trusty/ceph/add_osd_master_test.sh" 	//From master, pass slave_ip_Address
 	cephoneinstallslave   = "bash conf/trusty/ceph/ceph_one_install_slave_test.sh" 	//From slave
 	opennebulaaddnodehost = "bash conf/trusty/opennebula/add_slave_host_test.sh" 	
+*/
 )
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
@@ -225,7 +224,6 @@ var opennebulaSCPSSH = action.Action{
 	MinParams: 1,
 }
 
-//MEGAM CHANGES TO DO
 var cephaddosdmasterInstall = action.Action{
 	Name: "cephaddosdmaster",
 	Forward: func(ctx action.FWContext) (action.Result, error) {

@@ -2,6 +2,8 @@
 
 ONE_VERIFY_LOG="/var/log/megam/megamcib/opennebulahost.log"
 
+echo "host_verify.sh start execution ====>" >> $ONE_VERIFY_LOG
+
 sudo apt-get -y install qemu-system-x86 qemu-kvm cpu-checker
 
 #Enable virtual Technology in your sytem
@@ -17,3 +19,7 @@ then # Fail
      echo "KVM isn't capable of running hw accelerate KVM virtual machines." >> $ONE_VERIFY_LOG
      exit 2
 fi
+
+
+
+echo "host_verify.sh ends execution ====>" >> $ONE_VERIFY_LOG

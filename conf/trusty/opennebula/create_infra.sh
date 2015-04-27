@@ -1,10 +1,15 @@
 #!/bin/bash
 
 #bash create_infra.sh UID
+ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 host=`hostname`
 #### HOST CREATION ############
-sudo -H -u oneadmin bash -c 'onehost create $host -i kvm -v kvm -n dummy'
+echo "create_infra.sh start execution ====>" >> $ONE_INSTALL_LOG
 
+sudo -H -u oneadmin bash -c "onehost create $host -i kvm -v kvm -n dummy"
+echo "Host $host created in one ====>" >> $ONE_INSTALL_LOG
+
+sudo apt-get install opennebula-tools
 
 #### DATASTORE CREATION ############
 sudo -H -u oneadmin bash -c "cat > /var/lib/one/ds.conf <<EOF
@@ -19,8 +24,8 @@ BRIDGE_LIST = $host
 CEPH_HOST = $host
 EOF"
 
-sudo -H -u oneadmin bash -c 'onedatastore create /var/lib/one/ds.conf'
-echo "Setting up datastore for ceph in opennebula" >> $CEPH_INSTALL_LOG
+sudo -H -u oneadmin bash -c "onedatastore create /var/lib/one/ds.conf"
+echo "Setting up datastore for ceph in opennebula" >> $ONE_INSTALL_LOG
 
 
 #### NETWORK CREATION #########
@@ -39,18 +44,18 @@ done < /proc/net/route
 ip3=`echo $ipaddr| cut -d'.' -f 1,2,3`
 
 
-cat > //var/lib/one/vn.net <<EOF
+sudo -H -u oneadmin bash -c "cat > //var/lib/one/vn.net <<EOF
 NAME   = "open-vs"
 TYPE   = FIXED
 BRIDGE = one
 AR = [ TYPE = "IP4", IP   = "$ip3.206", SIZE = "50" ]
 DNS = "8.8.8.8 8.8.4.4"
 GATEWAY    = "$ip3.1"
-EOF
+EOF"
 
-sudo chown oneamdin:oneamdin /var/lib/one/vn.net
+sudo -H -u oneadmin bash -c "onevnet create /var/lib/one/vn.net"
 
-sudo -H -u oneadmin bash -c 'onevnet create /var/lib/one/vn.net'
+echo "Setting up nirtual network in  opennebula" >> $ONE_INSTALL_LOG
 
-
+echo "create_infra.sh end execution ====>" >> $ONE_INSTALL_LOG
 

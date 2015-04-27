@@ -40,6 +40,7 @@ user_home="/home/cibadmin"
 
 CEPH_INSTALL_LOG="/var/log/megam/megamcib/ceph.log"
 
+echo "ceph_one_install.sh start execution ====>" >> $CEPH_INSTALL_LOG
 
 echo "Creating ceph osd pool... $poolname " >> $CEPH_INSTALL_LOG
 sudo -H -u $ceph_user bash -c "ceph osd pool create $poolname 150"
@@ -95,7 +96,7 @@ sudo virsh secret-define secret.xml >> $CEPH_INSTALL_LOG			#Run in all nodes
 echo "virsh secret-define secret.xml" >> $CEPH_INSTALL_LOG
 sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
 
-#sudo virsh secret-set-value --secret 1957f4a8-a5db-483b-ad53-3ebdce460c36 --base64 $(cat client.libvirt.key)		RUN In all nodes
+#sudo virsh secret-set-value --secret 15a15f01-a1ab-4391-8118-f031c8c29cb2 --base64 $(cat client.libvirt.key)		RUN In all nodes
 
 #Update datastore for ceph
 #onedatastore show cephds | grep "ID "
@@ -105,5 +106,8 @@ sudo virsh secret-set-value --secret $uid --base64 $(cat client.libvirt.key)
 #CEPH_HOST="<list of ceph mon hosts"
 
 #Create opennebula infra
+echo "Calling ./../opennebula/create_infra.sh with $uid" >> $CEPH_INSTALL_LOG
 bash ./../opennebula/create_infra.sh "$uid"
+
+echo "ceph_one_install.sh end execution ====>" >> $CEPH_INSTALL_LOG
 

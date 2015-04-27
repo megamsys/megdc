@@ -2,6 +2,8 @@
 
 ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 
+echo "one_postinstall.sh start execution ====>" >> $ONE_INSTALL_LOG
+
 echo "oneadmin ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/oneadmin            #all-nodes
 
 sudo apt-get -y install ntp                                                                  #all-nodes
@@ -54,17 +56,17 @@ sed -i '/SRC=$1/a SRC=${SRC#*:}' /var/lib/one/remotes/tm/ssh/clone
 sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin
 
 service_restart() {
-sunstone-server start
-econe-server start
-occi-server restart
-onegate-server restart
-sudo -H -u oneadmin bash -c "one restart"
-sudo service opennebula restart
+sunstone-server start >> $ONE_INSTALL_LOG
+econe-server start >> $ONE_INSTALL_LOG
+occi-server restart >> $ONE_INSTALL_LOG
+onegate-server restart >> $ONE_INSTALL_LOG
+sudo -H -u oneadmin bash -c "one restart" >> $ONE_INSTALL_LOG
+sudo service opennebula restart >> $ONE_INSTALL_LOG
 }
 
 service_restart >> $ONE_INSTALL_LOG
 
-
+echo "one_postinstall.sh end execution ====>" >> $ONE_INSTALL_LOG
 
 
 
