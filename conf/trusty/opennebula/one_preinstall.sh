@@ -1,6 +1,8 @@
 #!/bin/bash
 ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 
+echo "one_preinstall.sh start execution ====>" >> $ONE_INSTALL_LOG
+
 ping -c 1 us.archive.ubuntu.com &> /dev/null
 
 if [ $? -ne 0 ]; then
@@ -23,3 +25,4 @@ then # Fail
      echo "An error occured during the install of ssh and bridge-utils.\n"
      exit 2
 fi
+echo "one_preinstall.sh end execution ====>" >> $ONE_INSTALL_LOG

@@ -204,12 +204,7 @@ configure_with_ip() {
 echo "127.0.0.1 localhost" >> /etc/hosts
 echo "$ipaddr megamubuntu" >> /etc/hosts
 
-	#grep -qs "^127.0.0.1.*.localhost$" /etc/hosts || sudo sed '$ a\
-	#127.0.0.1 localhost' /etc/hosts > /etc/hosts
-	  
-	#grep -qs "^$ipaddr.*.megamubuntu$" /etc/hosts || sudo sed '$ a\
-	#127.0.0.1 megamubuntu' /etc/hosts > /etc/hosts
-	  	  
+  	  
 	  
     if grep -qs "^next_server: *..*..*..*$" /etc/cobbler/settings; then
         sed -i "s/^next_server: *..*..*..*$/next_server: $ipaddr/" /etc/cobbler/settings

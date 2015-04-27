@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
+echo "one_install.sh start execution ====>" >> $ONE_INSTALL_LOG
 
 ping -c 1 downloads.opennebula.org &> /dev/null
 
@@ -19,3 +20,5 @@ sudo apt-get -y update >> $ONE_INSTALL_LOG
 
 
 sudo apt-get -y install opennebula opennebula-sunstone >> $ONE_INSTALL_LOG
+
+echo "one_install.sh ends execution ====>" >> $ONE_INSTALL_LOG

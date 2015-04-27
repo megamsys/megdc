@@ -138,7 +138,7 @@ sudo chmod 0440 /etc/sudoers.d/$ceph_user
 
 #Ceph install
 echo "Started installing ceph" >> $CEPH_LOG
-sudo echo deb http://ceph.com/debian-giant/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
+sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -
 sudo apt-get -y update >> $CEPH_LOG
 sudo apt-get -y install ceph-deploy ceph-common ceph-mds dnsmasq openssh-server ntp sshpass >> $CEPH_LOG

@@ -3,7 +3,7 @@
 ONE_INSTALL_LOG="/var/log/megam/megamcib/opennebula.log"
 
 echo "Installing sshpass " >> $ONE_INSTALL_LOG
-sudo apt-get -y install sshpass
+sudo apt-get -y install sshpass >> $ONE_INSTALL_LOG
 
 
 ip() {
@@ -42,7 +42,7 @@ EOF"
 
 echo "Transfering auth_keys to megamcib_node " >> $ONE_INSTALL_LOG
 sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@$1:/var/lib/one/.ssh/authorized_keys
-#sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@192.168.1.100:/var/lib/one/.ssh/authorized_keys
+#sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@192.168.1.102:/var/lib/one/.ssh/authorized_keys
 
 echo "Oneadmin Authenticated. Oneadmin can access hosts without password "
 
