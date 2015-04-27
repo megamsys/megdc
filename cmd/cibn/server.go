@@ -35,7 +35,7 @@ func handlerNode() {
 	user := new(page.PageRouter)
 	beego.Router("/dashboard/ha/request", user, "post:HADashboardRequest")
 	beego.Router("/dashboard/cs/request", user, "get:CSDashboardRequest")
-
+    beego.Router("/servernodes/nodes/cephoneinstallslave", server, "get:CephOneSlaveInstall")
 
 	port, _ := config.GetString("beego:http_port")
 	if port == "" {

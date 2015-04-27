@@ -112,7 +112,7 @@ func NebulaInstall() error {
 // this executes all actions for opennebula install
 //
 func OpenNebulaHostMasterInstall() error {
-	actions := []*action.Action{&opennebulaSCPSSH, &opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
+	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -127,7 +127,7 @@ func OpenNebulaHostMasterInstall() error {
 //MEGAM CHANGE
 //Add a new script for installing only ceph without configuration inside slave system
 func OpenNebulaHostNodeInstall() error {
-	actions := []*action.Action{&opennebulaSCPSSH, &opennebulaHostMasterVerify, &opennebulaHostNodeInstall, &cephInstall, &cephOneInstall}
+	actions := []*action.Action{&opennebulaHostMasterVerify, &opennebulaHostNodeInstall, &cephInstall, &cephOneInstall, &cephaddosdInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
 	if err != nil {
@@ -143,6 +143,36 @@ func HANodeInstall() error {
 	actions := []*action.Action{&megamInstall, &cobblerInstall, &opennebulaVerify, &opennebulaPreInstall, &opennebulaInstall, &opennebulaPostInstall, &opennebulaHostMasterVerify, &opennebulaHostMasterInstall, &cephInstall, &cephOneInstall}
 	pipeline := action.NewPipeline(actions...)
 	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func CephOneSlaveInstall() error {
+	actions := []*action.Action{&cephoneinstallslaveInstall}
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(&CIB{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func CephAddOSDMaster(cib *CIB) error {
+	actions := []*action.Action{&cephaddosdmasterInstall}
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(cib)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func OpennebulaAddNodeHOST(cib *CIB) error {
+	actions := []*action.Action{&opennebulaaddnodehostInstall}
+	pipeline := action.NewPipeline(actions...)
+	err := pipeline.Execute(cib)
 	if err != nil {
 		return err
 	}

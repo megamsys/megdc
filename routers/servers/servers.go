@@ -421,6 +421,27 @@ func (this *ServerRouter) NodeInstall() {
 
 }
 
+func (this *ServerRouter) CephOneSlaveInstall() {
+	result := map[string]interface{}{
+		"success": false,
+	}
+
+	defer func() {
+		this.Data["json"] = result
+		this.ServeJson()
+	}()
+	
+    servername := "CephOneSlaveInstall"
+	err := servers.InstallServers(servername)
+	if err != nil {
+		result["success"] = false
+		result["errordata"] = err.Error()
+	} else {
+		result["success"] = true
+	}
+
+}
+
 func (this *ServerRouter) HAInstall() {
 	result := map[string]interface{}{
 		"success": false,

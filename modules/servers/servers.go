@@ -76,6 +76,13 @@ func InstallServers(serverName string) error {
 			fmt.Println(err)
 			return err
 		}	
+	 case "CephOneSlaveInstall":	
+	 	err = app.CephOneSlaveInstall()
+		if err != nil {
+			fmt.Printf("Error: Install error for [%s]", serverName)
+			fmt.Println(err)
+			return err
+		}	
 	}
 	return nil
 }
@@ -145,8 +152,24 @@ func InstallNode(nodeip string, nodetype string, name string) error {
     			return haerr
     		} else {
     			if r.Success {
-    				err = app.SCPSSHInstall()
-					return err
+					cib := &app.CIB{RemoteIP: nodeip}
+					osderr := app.CephAddOSDMaster(cib)
+					if osderr != nil {
+						return osderr
+					}
+					url := "http://" + nodeip + ":8078/servernodes/nodes/cephoneinstallslave"
+	                cepherr := execute(url)
+	                if cepherr != nil {
+	                	return cepherr
+	                }
+	                err := app.OpennebulaAddNodeHOST(cib)
+					if err != nil {
+						return err
+					}
+					scperr := app.SCPSSHInstall()
+    				if scperr != nil {
+    					return scperr
+    				}
     			} else {
     				return errors.New(r.Error)
     			}
@@ -155,7 +178,13 @@ func InstallNode(nodeip string, nodetype string, name string) error {
 	 }
 	} else {
 		url := "http://" + nodeip + ":8078/servernodes/ha/" + name + "/install"
-	    res, err := http.Get(url)
+	    return execute(url)
+	}
+	return nil
+}
+
+func execute(url string) error {
+	 res, err := http.Get(url)
 	    if err != nil {
 		    return err
 	    } else {
@@ -165,7 +194,7 @@ func InstallNode(nodeip string, nodetype string, name string) error {
 			return nil
 		}
 	  }
-	}
+	return nil
 }
 
 func InstallProxy(haserver *orm.HAServers, Stype string) error {
