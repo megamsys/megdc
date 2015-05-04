@@ -26,17 +26,10 @@ echo "Generating ssh_key for oneadmin user " >> $ONE_INSTALL_LOG
 fi
 
 #No prompt on "Add ip to known_hosts list"
-sudo -H -u oneadmin bash -c "cat > //var/lib/one/.ssh/ssh_config <<EOF
+sudo -H -u oneadmin bash -c "cat > //var/lib/one/.ssh/config <<EOF
 ConnectTimeout 5
 Host *
 StrictHostKeyChecking no
-EOF"
-
-#No prompt on "Add ip to known_hosts list"
-sudo -H -u oneadmin bash -c "cat > //var/lib/one/.ssh/config <<EOF
-Host `hostname`
-    Hostname $1
-    StrictHostKeyChecking no
 EOF"
 
 
