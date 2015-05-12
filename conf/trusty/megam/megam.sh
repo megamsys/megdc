@@ -40,9 +40,11 @@ sudo apt-get -y install openjdk-8-jdk >> $MEGAM_LOG
 
 apt-get -y install megamgateway >> $MEGAM_LOG
 
+apt-get -y install rabbitmq-server >> $MEGAM_LOG
+
 apt-get -y install chef-server >> $MEGAM_LOG
 
-apt-get -y install rabbitmq-server >> $MEGAM_LOG
+bash megamd-preinst.sh >> $MEGAM_LOG
 
 apt-get -y install megamd >> $MEGAM_LOG
 
