@@ -1,21 +1,15 @@
 package utils
 
 import (
-//	"crypto/x509"
 	"errors"
 	"fmt"
-//	"github.com/tsuru/config"
 	"io/ioutil"
 	"net/http"
-//	"net/url"
 	"strconv"
 	"strings"
 )
 
-//const (
-	
-  //target = "https://api.megam.co"
-  //)
+
 
 type User struct {
   Username string
@@ -25,9 +19,6 @@ type User struct {
 type Context struct {
 	username string
 	api_key string
-//	Stdout io.Writer
-//	Stderr io.Writer
-//	Stdin  io.Reader
 }
 
 type Client struct {
@@ -39,9 +30,7 @@ type Client struct {
 	versionHeader  string
 }
 
-//func NewClient(client *http.Client, context *Context, manager *Manager) *Client {
 func NewClient(client *http.Client, data *User) *Client {
-//func NewClient(client *http.Client, manager *Manager) *Client {
 context := &Context{data.Username, data.Api_key}
 	return &Client{
 		HTTPClient:     client,
@@ -54,18 +43,6 @@ context := &Context{data.Username, data.Api_key}
 }
 
 func (c *Client) detectClientError(err error) error {
-//	urlErr, _ := err.(*url.Error)	
-	//if !ok {
-	//	fmt.Println("=================>7===============")
-	//	fmt.Println(err)
-	//	return err
-	//}
-	//switch urlErr.Err.(type) {
-	//case x509.UnknownAuthorityError:
-		//target, _ := config.GetString("api:server")
-	//	return fmt.Errorf("Failed to connect to api server (%s): %s", target, urlErr.Err)
-	//}
-	//target, _ := config.GetString("api:server")
 	return fmt.Errorf("Failed to connect to api server.")
 }
 
@@ -76,8 +53,7 @@ func (c *Client) Do(request *http.Request) (*http.Response, error) {
 
 	request.Close = true
 	response, err := c.HTTPClient.Do(request)
-	
-	//err = c.detectClientError(err)
+
 	if err != nil {
 		return nil, err
 	}
@@ -89,16 +65,12 @@ WARNING: You're using an unsupported version of %s.
 You must have at least version %s, your current
 version is %s.
 
-Please go to http://docs.tsuru.io/en/latest/install/client.html
-and download the last version.
-
 ################################################################
 
 `
 	if !validateVersion(supported, c.currentVersion) {
 	    fmt.Println(format)
 	    fmt.Println(supported)
-		//fmt.Fprintf(format, c.progname, supported, c.currentVersion)
 	}
 	if response.StatusCode > 399 {
 		defer response.Body.Close()
@@ -107,35 +79,6 @@ and download the last version.
 	}
 	return response, nil
 
-	/*
-			import (
-		    "bytes"
-		    "fmt"
-		    "net/http"
-		    "net/url"
-		)
-
-		func main() {
-		    apiUrl := "https://api.com"
-		    resource := "/user/"
-		    data := url.Values{}
-		    data.Set("name", "foo")
-		    data.Add("surname", "bar")
-
-		    u, _ := url.ParseRequestURI(apiUrl)
-		    u.Path = resource
-		    urlStr := fmt.Sprintf("%v", u) // "https://api.com/user/"
-
-		    client := &http.Client{}
-		    r, _ := http.NewRequest("POST", urlStr, bytes.NewBufferString(data.Encode())) // <-- URL-encoded payload
-		    r.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")
-		    r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-		    r.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
-
-		    resp, _ := client.Do(r)
-		    fmt.Println(resp.Status)
-		}
-	*/
 
 }
 
