@@ -22,15 +22,34 @@ echo "Adding entries in /etc/hosts" >> $MEGAM_LOG
 		break
 	done < /proc/net/route
 
+#ADD /etc/hosts entries
 echo "127.0.0.1 `hostname` localhost" >> /etc/hosts
 echo "$ipaddr `hostname` localhost" >> /etc/hosts
 
+#For apt-add-repository command
+sudo apt-get -y install software-properties-common python-software-properties >> $MEGAM_LOG
 
 apt-get -y install megamcommon >> $MEGAM_LOG
 
+########################################################################################################################################
+#####################################################Install and configure riak#########################################################
+########################################################################################################################################
+apt-get -y install riak >> $MEGAM_LOG
+
+sed -i 's/^[ \t]*storage_backend .*/storage_backend = leveldb/' /etc/riak/riak.conf
+sed -i 's/^[ \t]*listener.http.internal =.*/listener.http.internal = $ipaddr:8098/' /etc/riak/riak.conf
+sed -i 's/^[ \t]*listener.protobuf.internal =.*/listener.protobuf.internal = $ipaddr:8087/' /etc/riak/riak.conf
+
+riak start
+
+########################################################################################################################################33
+
 apt-get -y install megamnilavu >> $MEGAM_LOG
 
-sudo apt-get -y install software-properties-common python-software-properties >> $MEGAM_LOG
+cd /usr/share/megam/megamnilavu/
+./nilavu install >> $MEGAM_LOG
+
+./nilavu start >> $MEGAM_LOG
 
 sudo apt-add-repository -y ppa:openjdk-r/ppa >> $MEGAM_LOG
 
@@ -50,6 +69,6 @@ apt-get -y install megamd >> $MEGAM_LOG
 
 apt-get -y install megamanalytics >> $MEGAM_LOG
 
-apt-get -y install megamchefnative >> $MEGAM_LOG
+apt-get -y install megammonitor >> $MEGAM_LOG
 
 echo "`date`: Step1: megam installed successfully." >> $MEGAM_LOG

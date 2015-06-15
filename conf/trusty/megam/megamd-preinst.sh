@@ -5,19 +5,10 @@ gem install chef --no-ri --no-rdoc
 mkdir -p /var/lib/megam/gems
 cd /var/lib/megam/gems
 
-: <<'END'
-set -- https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-ec2.gem https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-gogrid-0.1.0.gem https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-google-1.3.1.gem https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-hp.gem https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-opennebula-0.2.0.gem https://s3-ap-southeast-1.amazonaws.com/megampub/gems/profitbricks-1.1.0.20130930123843.gem https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-profitbricks-0.3.0.gem
-while [ $# -gt 0 ]
-do
-        wget $1
-        gem install ${1##*/} --no-ri --no-rdoc
-        shift;
-done
-END
+wget https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-opennebula-0.3.0.gem
 
-wget https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-opennebula-0.2.0.gem
+gem install knife-opennebula-0.3.0.gem
 
-gem install knife-opennebula-0.2.0.gem
 
 if [ -d "/opt/chef-server" ]; then
 
@@ -54,11 +45,8 @@ getip
 
 cat > //etc/chef-server/chef-server.rb <<EOF
 nginx['url']="https://$ipaddr"
-lb['api_fqdn']="$ipaddr"
-lb['web_ui_fqdn']="$ipaddr"
 nginx['server_name']="$ipaddr"
 nginx['non_ssl_port'] = 90
-
 EOF
 
 sudo chef-server-ctl reconfigure
