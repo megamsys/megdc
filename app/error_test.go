@@ -2,20 +2,20 @@ package app
 
 import (
 	"errors"
-	"launchpad.net/gocheck"
+	"gopkg.in/check.v1"
 	"testing"
 )
 
 func Test(t *testing.T) {
-	gocheck.TestingT(t)
+	check.TestingT(t)
 }
 
 type S struct{}
 
-var _ = gocheck.Suite(&S{})
+var _ = check.Suite(&S{})
 
-func (s *S) TestAppLifecycleError(c *gocheck.C) {
+func (s *S) TestAppLifecycleError(c *check.C) {
 	e := AppLifecycleError{app: "myapp", Err: errors.New("failure in app")}
 	expected := `gulpd failed to apply the lifecle to the app "myapp": failure in app`
-	c.Assert(e.Error(), gocheck.Equals, expected)
+	c.Assert(e.Error(), check.Equals, expected)
 }
