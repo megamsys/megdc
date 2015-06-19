@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/megamsys/libgo/cmd"
-	"launchpad.net/gocheck"
+	"gopkg.in/check.v1"
 )
 
-func (s *S) TestCIBNodeStart(c *gocheck.C) {
+func (s *S) TestCIBNodeStart(c *check.C) {
 	desc := `starts the cib node daemon.
 
 
@@ -17,5 +17,5 @@ func (s *S) TestCIBNodeStart(c *gocheck.C) {
 		MinArgs: 0,
 	}
 	command := CIBNodeStart{}
-	c.Assert(command.Info(), gocheck.DeepEquals, expected)
+	c.Assert(command.Info(), check.DeepEquals, expected)
 }

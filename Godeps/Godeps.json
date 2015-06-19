@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/megamsys/cloudinabox",
-	"GoVersion": "go1.4beta1",
+	"GoVersion": "go1.4.1",
 	"Packages": [
 		"./..."
 	],
@@ -65,6 +65,10 @@
 			"Rev": "96579b79a0a66b9b6c95a8ff7c344aa512b41288"
 		},
 		{
+			"ImportPath": "gopkg.in/check.v1",
+			"Rev": "8d49746f13e4c654088c52685541fcf4cbc8fa59"
+		},
+		{
 			"ImportPath": "gopkg.in/tomb.v1",
 			"Rev": "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
 		},
@@ -74,13 +78,8 @@
 		},
 		{
 			"ImportPath": "launchpad.net/gnuflag",
-			"Comment": "13",
+			"Comment": "14",
 			"Rev": "roger.peppe@canonical.com-20140716064605-pk32dnmfust02yab"
-		},
-		{
-			"ImportPath": "launchpad.net/gocheck",
-			"Comment": "87",
-			"Rev": "gustavo@niemeyer.net-20140225173054-xu9zlkf9kxhvow02"
 		}
 	]
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"github.com/megamsys/libgo/cmd"
-	"launchpad.net/gocheck"
+	"gopkg.in/check.v1"
 	"os"
 	"testing"
 )
@@ -13,13 +13,13 @@ type S struct {
 }
 
 
-var _ = gocheck.Suite(&S{})
+var _ = check.Suite(&S{})
 
 var manager *cmd.Manager
 
-func Test(t *testing.T) { gocheck.TestingT(t) }
+func Test(t *testing.T) { check.TestingT(t) }
 
-func (s *S) SetUpTest(c *gocheck.C) {
+func (s *S) SetUpTest(c *check.C) {
 	var stdout, stderr bytes.Buffer
 	manager = cmd.NewManager("cibn", version, header, &stdout, &stderr, os.Stdin)
 }
