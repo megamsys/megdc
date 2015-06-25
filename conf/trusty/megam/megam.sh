@@ -169,6 +169,8 @@ apt-get -y install megamd >> $MEGAM_LOG
 
 apt-get -y install megamanalytics >> $MEGAM_LOG
 
+export DEBIAN_FRONTEND=noninteractive
+
 apt-get -y install megammonitor >> $MEGAM_LOG
 
 service_restart
