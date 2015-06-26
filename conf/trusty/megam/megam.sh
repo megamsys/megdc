@@ -54,7 +54,7 @@ rm /usr/bin/gem
 ln -s /usr/bin/ruby2.0 /usr/bin/ruby
 ln -s /usr/bin/gem2.0 /usr/bin/gem
 
-rvm use system
+#rvm use system
 echo "System ruby used" >> $MEGAM_LOG
 }
 
@@ -70,28 +70,11 @@ wget https://s3-ap-southeast-1.amazonaws.com/megampub/gems/knife-opennebula-0.3.
 
 gem install knife-opennebula-0.3.0.gem >> $MEGAM_LOG
 
+
 ##################################################### configure chef-server #########################################################
 if [ -d "/opt/chef-server" ]; then
 echo "Chef-server reconfigure" >> $MEGAM_LOG
 sudo chef-server-ctl reconfigure >> $MEGAM_LOG
-
-#Rabbitmq server has to be run in localhost
-#cat /etc/rabbitmq/rabbitmq-env.conf	NODENAME=localhost
-
-if [ -d "/etc/rabbitmq" ]; then
-
-#Rabbitmq server has to be run in localhost for chef-server changes
-#cat /etc/rabbitmq/rabbitmq-env.conf	NODENAME=localhost
-
-sudo rabbitmqctl stop_app
-sudo rabbitmqctl reset
-sudo rabbitmqctl stop
-cat > //etc/rabbitmq/rabbitmq-env.conf <<EOF
-NODENAME=localhost
-EOF
-echo "Rabbitmq-server stoped" >> $MEGAM_LOG
-fi
-
 
 cat > //etc/chef-server/chef-server.rb <<EOF
 nginx['url']="https://$ipaddr"
@@ -103,24 +86,25 @@ sudo chef-server-ctl reconfigure >> $MEGAM_LOG
 
 sudo chef-server-ctl restart >> $MEGAM_LOG
 
-sudo rabbitmq-server -detached >> $MEGAM_LOG
+#sudo rabbitmq-server -detached >> $MEGAM_LOG
 
   set -e
 
   #chef_repo_dir=`find /var/lib/megam/megamd  -name chef-repo  | awk -F/ -vOFS=/ 'NF-=0' | sort -u`
    chef_repo_dir="/var/lib/megam/megamd/"
+apt-get install git-core >> $MEGAM_LOG
 
-git clone https://github.com/megamsys/chef-repo.git $chef_repo_dir
+git clone https://github.com/megamsys/chef-repo.git $chef_repo_dir/chef-repo >> $MEGAM_LOG
   cp /etc/chef-server/admin.pem $chef_repo_dir/chef-repo/.chef
   cp /etc/chef-server/chef-validator.pem $chef_repo_dir/chef-repo/.chef
   
  sed -i "s@^[ \t]*chef_server_url.*@chef_server_url 'https://$ipaddr'@" $chef_repo_dir/chef-repo/.chef/knife.rb
   
-mkdir $chef_repo_dir/chef-repo/.chef/trusted_certs
+mkdir $chef_repo_dir/chef-repo/.chef/trusted_certs || true 
 
-[ -f /var/opt/chef-server/nginx/ca/$ipaddr.crt ] && cp /var/opt/chef-server/nginx/ca/$ipaddr.crt /var/lib/megam/megamd/chef-repo/.chef/trusted_certs
-[ -f /var/opt/chef-server/nginx/ca/$host.crt ] && cp /var/opt/chef-server/nginx/ca/$host.crt /var/lib/megam/megamd/chef-repo/.chef/trusted_certs
-#chown -R cibadmin:cibadmin $chef_repo_dir/chef-repo
+[ -f /var/opt/chef-server/nginx/ca/$ipaddr.crt ] && cp /var/opt/chef-server/nginx/ca/$ipaddr.crt $chef_repo_dir/chef-repo/.chef/trusted_certs
+[ -f /var/opt/chef-server/nginx/ca/$host.crt ] && cp /var/opt/chef-server/nginx/ca/$host.crt $chef_repo_dir/chef-repo/.chef/trusted_certs
+
   knife cookbook upload --all -c $chef_repo_dir/chef-repo/.chef/knife.rb
 
 fi
@@ -144,10 +128,13 @@ start megamd
 
 apt-get -y install megamnilavu >> $MEGAM_LOG
 
-cd /usr/share/megam/megamnilavu/
-./nilavu install >> $MEGAM_LOG
+echo "export MEGAM_HOME=/var/lib/megam" >> /home/cibadmin/.bashrc
+source /home/cibadmin/.bashrc
 
-./nilavu start >> $MEGAM_LOG
+#cd /usr/share/megam/megamnilavu/
+#./nilavu install >> $MEGAM_LOG
+
+#./nilavu start >> $MEGAM_LOG
 
 system_ruby
 
@@ -159,11 +146,17 @@ sudo apt-get -y install openjdk-8-jdk >> $MEGAM_LOG
 
 apt-get -y install megamgateway >> $MEGAM_LOG
 
-apt-get -y install rabbitmq-server >> $MEGAM_LOG
-
 apt-get -y install chef-server >> $MEGAM_LOG
 
 megamd_preinstall >> $MEGAM_LOG
+
+apt-get -y install rabbitmq-server || true >> $MEGAM_LOG
+
+cat > //etc/rabbitmq/rabbitmq-env.conf <<EOF
+NODENAME=megamd
+EOF
+
+service rabbitmq-server restart >> $MEGAM_LOG
 
 apt-get -y install megamd >> $MEGAM_LOG
 
