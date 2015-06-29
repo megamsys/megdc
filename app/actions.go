@@ -17,7 +17,7 @@ import (
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 const (  
-	
+
 	opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall.sh"
@@ -37,7 +37,7 @@ const (
 	cephoneinstallslave   = "bash conf/trusty/ceph/ceph_one_install_slave.sh" 	//From slave
 	opennebulaaddnodehost = "bash conf/trusty/opennebula/add_slave_host.sh" 	//From master, pass slave_ip_Address
 
-	/*
+		/*
    opennebulapreinstall  = "bash conf/trusty/opennebula/one_preinstall_test.sh"
 	opennebulaverify      = "bash conf/trusty/opennebula/one_verify_test.sh"
 	opennebulapostinstall = "bash conf/trusty/opennebula/one_postinstall_test.sh"
@@ -57,7 +57,9 @@ const (
 	cephoneinstallslave   = "bash conf/trusty/ceph/ceph_one_install_slave_test.sh" 	//From slave
 	opennebulaaddnodehost = "bash conf/trusty/opennebula/add_slave_host_test.sh" 	
 */
+
 )
+
 
 func CIBExecutor(cib *CIB) (action.Result, error) {
 	var e exec.OsExecutor

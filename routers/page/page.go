@@ -88,7 +88,7 @@ func (this *PageRouter) MasterDashboard() {
 		for _, p := range serverlist {
        	   servname = servname + " " + p.Name
        	 }  
-		//cmd := "/home/thomas/.rvm/rubies/ruby-2.2.1/bin/ruby conf/trusty/cib.rb" + strings.ToLower(servname)
+		//cmd := "/home/thomas/.rvm/rubies/ruby-2.2.2/bin/ruby conf/trusty/cib.rb" + strings.ToLower(servname)
 		cmd := "ruby conf/trusty/cib.rb" + strings.ToLower(servname)
 		fmt.Println("=============>Command to be executed=================>")
 		fmt.Println(cmd)
