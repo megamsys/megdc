@@ -2,12 +2,12 @@ require 'json'
 
 #Packages list
 @packages = {
-"megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "megamsnowflake" => "false", "megamgateway" => "false", "megamd" => "false", "chef-server" => "false", "megamanalytics" => "false", "megamvarai" => "false", "megammonitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
-"cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false", "debmirror" => "false"},
-"opennebula" => {"opennebula" => "false", "opennebula-sunstone" => "false"},
-"opennebulahost" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
-"ceph" => {"ceph-deploy" => "false", "ceph-common ceph-mds" => "false"},
-"drbd" => {"drbd8-utils" => "false", "linux-image-extra-virtual" => "false", "pacemaker" => "false", "heartbeat" => "false"}
+"megam" => {"megamcommon" => "true", "megamcib" => "true", "megamcibn" => "true", "megamnilavu" => "true", "megamsnowflake" => "true", "megamgateway" => "true", "megamd" => "true", "chef-server" => "true", "megamanalytics" => "true", "megamvarai" => "true", "megammonitor" => "true", "riak" => "true", "rabbitmq-server" => "true", "nodejs" => "true", "sqlite3" => "true", "ruby2.0" => "true", "openjdk-7-jdk" => "true"},
+"cobbler" => {"cobbler" => "true", "dnsmasq" => "true", "apache2" => "true", "debmirror" => "true"},
+"opennebula" => {"opennebula" => "true", "opennebula-sunstone" => "true"},
+"opennebulahost" => {"opennebula-node" => "true", "qemu-kvm" => "true"},
+"ceph" => {"ceph-deploy" => "true", "ceph-common ceph-mds" => "true"},
+"drbd" => {"drbd8-utils" => "true", "linux-image-extra-virtual" => "true", "pacemaker" => "true", "heartbeat" => "true"}
 }
 
 #Package installation check for debian
@@ -31,12 +31,12 @@ end
 #Some of the packages don't have services
 #megamcommon, megamsnowflake(but snowflake),megammonitor(but ganglia-monitor), nodejs, sqlite3, ruby2.0, openjdk-7-jdk, debmirror
 @services = {
-"megam" => {"megamcommon" => "false", "megamcib" => "false", "megamcibn" => "false", "megamnilavu" => "false", "snowflake" => "false", "megamgateway" => "false", "megamd" => "false", "chef-server-ctl" => "false", "megamanalytics" => "false", "megamvarai" => "false", "ganglia-monitor" => "false", "riak" => "false", "rabbitmq-server" => "false", "nodejs" => "false", "sqlite3" => "false", "ruby2.0" => "false", "openjdk-7-jdk" => "false"},
-"cobbler" => {"cobbler" => "false", "dnsmasq" => "false", "apache2" => "false"},
-"opennebula" => {"opennebula" => "false", "opennebula-sunstone" => "false"},
-"opennebulahost" => {"opennebula-node" => "false", "qemu-kvm" => "false"},
-"ceph" => {"ceph-all" => "false", "ceph_health" => "false"},
-"drbd" => {"drbd" => "false", "pacemaker" => "false", "heartbeat" => "false", "crm" => "false"}
+"megam" => {"megamcommon" => "true", "megamcib" => "true", "megamcibn" => "true", "megamnilavu" => "true", "snowflake" => "true", "megamgateway" => "true", "megamd" => "true", "chef-server-ctl" => "true", "megamanalytics" => "true", "megamvarai" => "true", "ganglia-monitor" => "true", "riak" => "true", "rabbitmq-server" => "true", "nodejs" => "true", "sqlite3" => "true", "ruby2.0" => "true", "openjdk-7-jdk" => "true"},
+"cobbler" => {"cobbler" => "true", "dnsmasq" => "true", "apache2" => "true"},
+"opennebula" => {"opennebula" => "true", "opennebula-sunstone" => "true"},
+"opennebulahost" => {"opennebula-node" => "true", "qemu-kvm" => "true"},
+"ceph" => {"ceph-all" => "true", "ceph_health" => "true"},
+"drbd" => {"drbd" => "true", "pacemaker" => "true", "heartbeat" => "true", "crm" => "true"}
 }
 
 def service_check(service_array)
@@ -76,5 +76,4 @@ end
 
 cib_json = check_cib(ARGV)
 puts cib_json
-
 
