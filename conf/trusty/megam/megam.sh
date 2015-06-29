@@ -104,8 +104,8 @@ mkdir $chef_repo_dir/chef-repo/.chef/trusted_certs || true
 
 [ -f /var/opt/chef-server/nginx/ca/$ipaddr.crt ] && cp /var/opt/chef-server/nginx/ca/$ipaddr.crt $chef_repo_dir/chef-repo/.chef/trusted_certs
 [ -f /var/opt/chef-server/nginx/ca/$host.crt ] && cp /var/opt/chef-server/nginx/ca/$host.crt $chef_repo_dir/chef-repo/.chef/trusted_certs
-
-  knife cookbook upload --all -c $chef_repo_dir/chef-repo/.chef/knife.rb
+echo "Cookbook upload Start=====> " >> $MEGAM_LOG
+  knife cookbook upload --all -c $chef_repo_dir/chef-repo/.chef/knife.rb >> $MEGAM_LOG
 
 fi
 

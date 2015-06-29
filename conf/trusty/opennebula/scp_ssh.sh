@@ -34,7 +34,7 @@ EOF"
 
 
 echo "Transfering auth_keys to megamcib_node ==> $1" >> $ONE_INSTALL_LOG
-sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@$1:/var/lib/one/.ssh/authorized_keys
+sudo -H -u oneadmin bash -c "sshpass -p \"oneadmin\" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@$1:/var/lib/one/.ssh/authorized_keys"
 #sshpass -p "oneadmin" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@192.168.1.102:/var/lib/one/.ssh/authorized_keys
 
 echo "Oneadmin Authenticated. Oneadmin can access hosts without password " >> $ONE_INSTALL_LOG
