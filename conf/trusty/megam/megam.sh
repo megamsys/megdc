@@ -104,6 +104,8 @@ mkdir $chef_repo_dir/chef-repo/.chef/trusted_certs || true
 
 [ -f /var/opt/chef-server/nginx/ca/$ipaddr.crt ] && cp /var/opt/chef-server/nginx/ca/$ipaddr.crt $chef_repo_dir/chef-repo/.chef/trusted_certs
 [ -f /var/opt/chef-server/nginx/ca/$host.crt ] && cp /var/opt/chef-server/nginx/ca/$host.crt $chef_repo_dir/chef-repo/.chef/trusted_certs
+sudo echo 3 > /proc/sys/vm/drop_caches
+sleep 5
 echo "Cookbook upload Start=====> " >> $MEGAM_LOG
   knife cookbook upload --all -c $chef_repo_dir/chef-repo/.chef/knife.rb  || true >> $MEGAM_LOG
 echo "Cookbook upload End=====> " >> $MEGAM_LOG
@@ -115,13 +117,13 @@ fi
 service_restart() {
 #MEGAM_GATEWAY
 sed -i "s/^[ \t]*riak.url.*/riak.url=\"$ipaddr\"/" /usr/share/megam/megamgateway/conf/application-production.conf
-stop megamgateway
-start megamgateway
+stop megamgateway >> $MEGAM_LOG
+start megamgateway >> $MEGAM_LOG
 
 #MEGAMD
 sed -i "s/.*:8087.*/  url: $ipaddr:8087/" /usr/share/megam/megamd/conf/megamd.conf
-stop megamd
-start megamd
+stop megamd || true >> $MEGAM_LOG
+start megamd >> $MEGAM_LOG
 }
 
 
@@ -144,10 +146,12 @@ sudo apt-get -y update >> $MEGAM_LOG
 
 sudo apt-get -y install openjdk-8-jdk >> $MEGAM_LOG
 
+sudo echo 3 > /proc/sys/vm/drop_caches
+
 apt-get -y install megamgateway >> $MEGAM_LOG
 
 apt-get -y install chef-server >> $MEGAM_LOG
-
+sudo echo 3 > /proc/sys/vm/drop_caches
 megamd_preinstall >> $MEGAM_LOG
 
 apt-get -y install rabbitmq-server || true >> $MEGAM_LOG
@@ -157,7 +161,7 @@ NODENAME=megamd
 EOF
 
 service rabbitmq-server restart >> $MEGAM_LOG
-
+sudo echo 3 > /proc/sys/vm/drop_caches
 apt-get -y install megamd >> $MEGAM_LOG
 
 apt-get -y install megamanalytics >> $MEGAM_LOG
@@ -166,7 +170,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get -y install megammonitor >> $MEGAM_LOG
 
-service_restart
+service_restart >> $MEGAM_LOG
 
 echo "`date`: Step1: megam installed successfully." >> $MEGAM_LOG
 
