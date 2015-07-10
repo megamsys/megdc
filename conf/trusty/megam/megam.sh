@@ -164,13 +164,15 @@ service rabbitmq-server restart >> $MEGAM_LOG
 sudo echo 3 > /proc/sys/vm/drop_caches
 apt-get -y install megamd >> $MEGAM_LOG
 
+service_restart >> $MEGAM_LOG
+
 apt-get -y install megamanalytics >> $MEGAM_LOG
 
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get -y install megammonitor >> $MEGAM_LOG
+sudo echo 3 > /proc/sys/vm/drop_caches
 
-service_restart >> $MEGAM_LOG
+apt-get -y install megammonitor >> $MEGAM_LOG
 
 echo "`date`: Step1: megam installed successfully." >> $MEGAM_LOG
 

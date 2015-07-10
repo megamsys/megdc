@@ -2,11 +2,23 @@
 
 sudo apt-get -y install openvswitch-common openvswitch-switch bridge-utils
 
-sudo ovs-vsctl add-br one
 
-sudo ovs-vsctl show
+cat > //etc/sudoers.d/openvswitch <<EOF
+%oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl
+%oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl
+EOF
 
-sudo ifconfig one up
+BRIDGE_NAME="one"
+NETWORK_IF="eth0"
+
+#sudo ovs-vsctl add-br $BRIDGE_NAME
+
+echo "auto $BRIDGE_NAME" >> /etc/network/interfaces
+#sudo ovs-vsctl show
+
+#ovs-vsctl add-port $BRIDGE_NAME $NETWORK_IF
+
+#sudo ifconfig one up
 
 #sudo ovs-vsctl add-port one eth0
 #sudo ovs-vsctl del-port one eth0
