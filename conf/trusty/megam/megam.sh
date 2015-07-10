@@ -44,20 +44,6 @@ sed -i "s/^[ \t]*listener.protobuf.internal =.*/listener.protobuf.internal = $ip
 
 riak start  >> $MEGAM_LOG
 
-##################################################### Install and configure ruby #########################################################
-system_ruby() {
-#RUBY CHANGE
-apt-get -y install ruby2.0 ruby2.0-dev >> $MEGAM_LOG
-rm /usr/bin/ruby
-rm /usr/bin/gem
-
-ln -s /usr/bin/ruby2.0 /usr/bin/ruby
-ln -s /usr/bin/gem2.0 /usr/bin/gem
-
-#rvm use system
-echo "System ruby used" >> $MEGAM_LOG
-}
-
 ##################################################### MEGAMD PREINSTALL SCRIPT #########################################################
 
 megamd_preinstall() {
@@ -132,13 +118,6 @@ apt-get -y install megamnilavu >> $MEGAM_LOG
 
 echo "export MEGAM_HOME=/var/lib/megam" >> /home/cibadmin/.bashrc
 source /home/cibadmin/.bashrc
-
-#cd /usr/share/megam/megamnilavu/
-#./nilavu install >> $MEGAM_LOG
-
-#./nilavu start >> $MEGAM_LOG
-
-system_ruby
 
 sudo apt-add-repository -y ppa:openjdk-r/ppa >> $MEGAM_LOG
 
