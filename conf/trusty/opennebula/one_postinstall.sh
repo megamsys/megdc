@@ -55,7 +55,7 @@ sed -i '/SRC=$1/a SRC=${SRC#*:}' /var/lib/one/remotes/tm/ssh/clone
 
 sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin
 
-service_restart() {
+service_start() {
 sunstone-server start >> $ONE_INSTALL_LOG
 econe-server start >> $ONE_INSTALL_LOG
 occi-server restart >> $ONE_INSTALL_LOG
@@ -64,6 +64,17 @@ sudo -H -u oneadmin bash -c "one restart" >> $ONE_INSTALL_LOG
 sudo service opennebula restart >> $ONE_INSTALL_LOG
 }
 
+service_restart() {
+sunstone-server restart >> $ONE_INSTALL_LOG
+econe-server restart >> $ONE_INSTALL_LOG
+occi-server restart >> $ONE_INSTALL_LOG
+onegate-server restart >> $ONE_INSTALL_LOG
+sudo -H -u oneadmin bash -c "one restart" >> $ONE_INSTALL_LOG
+sudo service opennebula restart >> $ONE_INSTALL_LOG
+}
+
+
+service_start >> $ONE_INSTALL_LOG
 service_restart >> $ONE_INSTALL_LOG
 
 echo "one_postinstall.sh end execution ====>" >> $ONE_INSTALL_LOG
