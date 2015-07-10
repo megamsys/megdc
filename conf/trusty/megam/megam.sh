@@ -93,7 +93,7 @@ mkdir $chef_repo_dir/chef-repo/.chef/trusted_certs || true
 sudo echo 3 > /proc/sys/vm/drop_caches
 sleep 5
 echo "Cookbook upload Start=====> " >> $MEGAM_LOG
-  knife cookbook upload --all -c $chef_repo_dir/chef-repo/.chef/knife.rb  || true >> $MEGAM_LOG
+knife cookbook upload --all -c $chef_repo_dir/chef-repo/.chef/knife.rb  || true >> $MEGAM_LOG
 echo "Cookbook upload End=====> " >> $MEGAM_LOG
 fi
 
@@ -103,6 +103,7 @@ fi
 service_restart() {
 #MEGAM_GATEWAY
 sed -i "s/^[ \t]*riak.url.*/riak.url=\"$ipaddr\"/" /usr/share/megam/megamgateway/conf/application-production.conf
+sed -i "s/^[ \t]*sf.host.*/sf.host=\"localhost\"/" /usr/share/megam/megamgateway/conf/application-production.conf
 stop megamgateway >> $MEGAM_LOG
 start megamgateway >> $MEGAM_LOG
 
