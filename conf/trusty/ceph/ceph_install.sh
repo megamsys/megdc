@@ -199,7 +199,7 @@ ceph-deploy mon create-initial
 
 #ceph-deploy  --overwrite-conf osd prepare megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd 
 #ceph-deploy  --overwrite-conf osd activate megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd
-#ceph-deploy osd prepare megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd
+#ceph-deploy osd prepare ubuntu:/storage1/osd ubuntu:/storage2/osd ubuntu:/storage3/osd
 
 ceph-deploy osd prepare $host:$osd1/osd $host:$osd2/osd $host:$osd3/osd
 ceph-deploy osd activate $host:$osd1/osd $host:$osd2/osd $host:$osd3/osd
