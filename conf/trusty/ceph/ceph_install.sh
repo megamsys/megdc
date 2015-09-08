@@ -197,7 +197,7 @@ ceph-deploy install $host
 
 ceph-deploy mon create-initial
 
-#ceph-deploy  --overwrite-conf osd prepare megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd 
+#ceph-deploy  --overwrite-conf osd prepare megammaster:/storage1/osd megammaster:/storage2/osd megamslave:/storage3/osd 
 #ceph-deploy  --overwrite-conf osd activate megamubuntu:/storage1/osd megamubuntu:/storage2/osd megamubuntu:/storage3/osd
 #ceph-deploy osd prepare ubuntu:/storage1/osd ubuntu:/storage2/osd ubuntu:/storage3/osd
 
