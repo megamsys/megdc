@@ -1,20 +1,19 @@
 ===============
-Cloud In a Box
+Megdc
 ================
 
-This is a browser based wnstaller which installs private cloud - Opennebula and Megam PaaS.
+This is a browser based wnstaller which installs a datacenter based Megam cloud platform. This is being made into a CLI based tool.
 
 
 ### Requirements
 
 > 
-[Golang 1.4 > +](http://www.golang.org/dl)
+[Golang 1.5 > +](http://www.golang.org/dl)
 
 
 ## Usage
 
-``cib start`` 
- 
+
 
 ### Compile from source 
 
@@ -24,9 +23,9 @@ mkdir -p code/megam/go/src/github.com/megamsys
 
 cd code/megam/go/src/github.com/megamsys
 
-git clone https://github.com/megamsys/cloudinabox.git
+git clone https://github.com/megamsys/megdc.git
 
-cd cloudinabox
+cd megdc
 
 make
 
@@ -35,7 +34,7 @@ make
 
 ### Documentation
 
-Refer [documentation] (http://www.gomegam.com/docs)
+Refer [documentation] (http://www.docs.megam.io)
 
 
 
