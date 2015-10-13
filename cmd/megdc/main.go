@@ -1,5 +1,5 @@
 /*
-** Copyright [2012-2014] [Megam Systems]
+** Copyright [2013-2015] [Megam Systems]
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -16,33 +16,29 @@
 package main
 
 import (
-	"fmt"
-	"github.com/megamsys/libgo/cmd"
-	"github.com/tsuru/config"
-	"log"
 	"os"
-	"path/filepath"
+//	"fmt"
+//	"strings"
+	log "github.com/Sirupsen/logrus"
+	"runtime"
+	"github.com/megamsys/megdc/commands"
+)
+
+// These variables are populated via the Go linker.
+var (
+	version string = "0.9"
+	commit  string = "01"
+	branch  string = "master"
+	header  string = "Supported-Megdc"
 )
 
 
-const (
-	version = "0.5.0"
-	header  = "Supported-cib"
-)
-
-const defaultConfigPath = "conf/cib.conf"
-
-func buildManager(name string) *cmd.Manager {
-	m := cmd.BuildBaseManager(name, version, header)
-	m.Register(&CIBStart{}) //start the cib daemon
-	return m
-}
-
+//Run the commands from cli.
 func main() {
-	p, _ := filepath.Abs(defaultConfigPath)
-	log.Println(fmt.Errorf("Conf: %s", p))
-	config.ReadConfigFile(defaultConfigPath)
-	name := cmd.ExtractProgramName(os.Args[0])
-	manager := buildManager(name)
-	manager.Run(os.Args[1:])
+  // Only log the debug or above
+  log.SetLevel(log.DebugLevel)  // level is configurable via cli option.
+  // Output to stderr instead of stdout, could also be a file.
+  log.SetOutput(os.Stdout)	 
+  runtime.GOMAXPROCS(runtime.NumCPU())
+  commands.Execute()
 }

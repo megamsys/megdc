@@ -1,4 +1,4 @@
-#Copyright (c) 2014 Megam Systems.
+#Copyright (c) 2012 Megam Systems.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -12,16 +12,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 ###############################################################################
-# Makefile to compile cib.
+# Makefile to compile gulpd.
 # lists all the dependencies for test, prod and we can run a go build aftermath.
 ###############################################################################
 
-GOPATH  := $(GOPATH):$(shell pwd)/../../../../
 
+GOPATH  := $(GOPATH):$(shell pwd)/../../../../
 
 define HG_ERROR
 
-FATAL: you need mercurial (hg) to download cib dependencies.
+FATAL: you need mercurial (hg) to download megamd dependencies.
        Check README.md for details
 
 
@@ -29,13 +29,13 @@ endef
 
 define GIT_ERROR
 
-FATAL: you need git to download cib dependencies.
+FATAL: you need git to download megamd dependencies.
        Check README.md for details
 endef
 
 define BZR_ERROR
 
-FATAL: you need bazaar (bzr) to download cib dependencies.
+FATAL: you need bazaar (bzr) to download megamd dependencies.
        Check README.md for details
 endef
 
@@ -43,7 +43,7 @@ endef
 
 all: check-path get test
 
-build: check-path get _go_test _cibd
+build: check-path get _go_test _gulpd
 
 # It does not support GOPATH with multiple paths.
 check-path:
@@ -53,6 +53,7 @@ ifndef GOPATH
 	@echo "       http://golang.org/cmd/go/#GOPATH_environment_variable"
 	@exit 1
 endif
+
 	@exit 0
 
 get: hg git bzr get-code godep
@@ -66,38 +67,34 @@ git:
 bzr:
 	$(if $(shell bzr), , $(error $(BZR_ERROR)))
 
+
 get-code:
-	go get $(GO_EXTRAFLAGS) -u -d ./...
+	go get $(GO_EXTRAFLAGS) -u -d -t -v ./...
 
 godep:
 	go get $(GO_EXTRAFLAGS) github.com/tools/godep
 	godep restore ./...
 
+build: check-path get _go_test _gulpd
+
 _go_test:
-	go clean $(GO_EXTRAFLAGS) ./...
-	go test $(GO_EXTRAFLAGS) ./...
+	go clean  ./...
+	go test  ./...
 
-_cibd:
-	rm -f cibd
-	rm -f cibnd
-	go build $(GO_EXTRAFLAGS) -o cibd ./cmd/cib
-	go build $(GO_EXTRAFLAGS) -o cibnd ./cmd/cibn
-	
-
-_cibdr:
-	sudo ./cibd start
-	rm -f cibd
-	rm -f cibnd
+_megdc:
+	rm -f megdc
+	go build $(GO_EXTRAFLAGS) -o megdc ./cmd/megdc
 
 _sh_tests:
 	@conf/trusty/megam/megam_test.sh
 
-test: _go_test _cibd _cibdr
+test: _go_test _megdc
 
 _install_deadcode: git
 	go get $(GO_EXTRAFLAGS) github.com/remyoudompheng/go-misc/deadcode
 
+
 deadcode: _install_deadcode
-	@go list ./... | sed -e 's;github.com/megamsys/cloudinabox/;;' | xargs deadcode
+	@go list ./... | sed -e 's;github.com/megamsys/megdc/;;' | xargs deadcode
 
 deadc0de: deadcode
