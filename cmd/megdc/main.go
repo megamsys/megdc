@@ -21,7 +21,7 @@ import (
 //	"strings"
 	log "github.com/Sirupsen/logrus"
 	"runtime"
-	"github.com/megamsys/megdc/commands"
+	"github.com/megamsys/megdc/cmd"
 )
 
 // These variables are populated via the Go linker.
@@ -40,5 +40,5 @@ func main() {
   // Output to stderr instead of stdout, could also be a file.
   log.SetOutput(os.Stdout)	 
   runtime.GOMAXPROCS(runtime.NumCPU())
-  commands.Execute()
+  cmd.Execute()
 }
