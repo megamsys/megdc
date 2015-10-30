@@ -14,11 +14,13 @@
 ** limitations under the License.
 */
 package main
-/*
+
 import (
 	"github.com/megamsys/libgo/cmd"
 	"gopkg.in/check.v1"
-	"github.com/megamsys/gulp/cmd/gulpd/run"
+	"github.com/megamsys/megdc/packages/megam"
+//	"github.com/megamsys/megdc/packages/ceph"
+//	"github.com/megamsys/megdc/packages/one"
 	"os"
 )
 
@@ -28,8 +30,8 @@ type S struct{}
 var _ = check.Suite(&S{})
 
 func (s *S) TestCommandsFromBaseManagerAreRegistered(c *check.C) {
-	baseManager := cmd.NewManager("gulpd", "0.9.1", os.Stdout, os.Stderr, os.Stdin, nil, nil)
-	manager := cmdRegistry("gulpd")
+	baseManager := cmd.NewManager("megdc", "0.9.1", os.Stdout, os.Stderr, os.Stdin, nil, nil)
+	manager := cmdRegistry("megdc")
 
 	for name, instance := range baseManager.Commands {
 		command, ok := manager.Commands[name]
@@ -40,9 +42,10 @@ func (s *S) TestCommandsFromBaseManagerAreRegistered(c *check.C) {
 }
 
 func (s *S) TestStartIsRegistered(c *check.C) {
-	manager := cmdRegistry("gulpd")
-	create, ok := manager.Commands["start"]
+	manager := cmdRegistry("megdc")
+	create, ok := manager.Commands["megaminstall"]
 	c.Assert(ok, check.Equals, true)
-	c.Assert(create, check.FitsTypeOf, &run.Start{})
+	c.Assert(create, check.FitsTypeOf, &megam.Megaminstall{})
 }
-*/
+
+
