@@ -21,8 +21,23 @@ import (
 	"os"
 	"sync"
 	//"reflect"
+	"errors"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 )
+
+//var templates Templates
+
+var templates Templates
+
+var managers map[string]Templates
+
+type Templates interface {
+}
+
+type InitializableTemplates interface {
+	Run(target urknall.Target) error
+}
 
 type Template struct {
 	Host     string
@@ -57,11 +72,20 @@ func (t *Template) Run() error {
 	if e != nil {
 		return e
 	}
-	//var typeRegistry = make(map[string]reflect.Type)
-   // v := reflect.New(typeRegistry[t.Name]).Elem()
-	//return urknall.Run(target, v.Interface())
-	fmt.Println("-------------------")
-	return urknall.Run(target, &Megamnilavu{})
+	a, err := get(t.Name)
+
+	if err != nil {
+		log.Errorf("fatal error, couldn't located the Package %s", t.Name)
+		return err
+	}
+
+	templates = a
+
+	if initializableTemplates, ok := templates.(InitializableTemplates); ok {
+		return initializableTemplates.Run(target)
+	}
+
+	return errors.New(fmt.Sprintf("fatal error, couldn't located the Package %q", t.Name))
 }
 
 type callbackFunc func(*Template, chan *Template) error
@@ -91,7 +115,8 @@ func RunInTemplates(templates []*Template, callback callbackFunc, rollback rollb
 		}
 		return nil
 	}
-	for i := 0; i < len(templates); i += step {
+	for i := 0; i < len(templates); i++ {
+		//for i := 0; i < len(templates); i += step {
 		end := i + step
 		if end > len(templates) {
 			end = len(templates)
@@ -102,7 +127,7 @@ func RunInTemplates(templates []*Template, callback callbackFunc, rollback rollb
 		} else {
 			err := runFunc(i, end)
 			if err != nil {
-				break
+				//break
 			}
 		}
 	}
@@ -118,4 +143,31 @@ func RunInTemplates(templates []*Template, callback callbackFunc, rollback rollb
 		return err
 	}
 	return nil
+}
+
+// Get gets the named provisioner from the registry.
+func get(name string) (Templates, error) {
+	p, ok := managers[name]
+	if !ok {
+		return nil, fmt.Errorf("unknown template: %q", name)
+	}
+	return p, nil
+}
+
+// Manager returns the current configured manager, as defined in the
+// configuration file.
+func manager(managerName string) Templates {
+	if _, ok := managers[managerName]; !ok {
+		managerName = "nop"
+	}
+	return managers[managerName]
+}
+
+// Register registers a new repository manager, that can be later configured
+// and used.
+func Register(name string, manager Templates) {
+	if managers == nil {
+		managers = make(map[string]Templates)
+	}
+	managers[name] = manager
 }

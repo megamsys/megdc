@@ -16,17 +16,13 @@
 package handler
 
 import (
-	"errors"
-	"github.com/megamsys/megdc/platforms"
+	//"errors"
 	"github.com/megamsys/megdc/templates"
-	_ "github.com/megamsys/megdc/platforms/coreos"
-	_ "github.com/megamsys/megdc/platforms/debian"
-	_ "github.com/megamsys/megdc/platforms/ubuntu"
 	"io"
-	"fmt"
+	"strings"
+	_ "github.com/megamsys/megdc/templates/ubuntu"
+	//"fmt"
 )
-
-var Platform platforms.Platform
 
 const (
 	HOST     = "host"
@@ -37,29 +33,16 @@ const (
 type Handler struct {
 	writer    io.Writer
 	templates []*templates.Template
-	platform  platforms.InitializablePlatform
+	platform  string
 }
 
 func NewHandler() (*Handler, error) {
 	h := &Handler{}
 
-	if platform_name, err := platforms.Read(); err != nil {
+	if platform_name, err := findPlatform(); err != nil {
 		return h, err
 	} else {
-		a, err := platforms.Get(platform_name)
-
-		if err != nil {
-			return h, err
-		}
-
-		Platform = a
-
-		if initializablePlatform, ok := Platform.(platforms.InitializablePlatform); ok {
-			h.platform = initializablePlatform
-		} else {
-			return h, errors.New("Unsupported platform")
-		}
-
+		h.platform = platform_name
 	}
 
 	return h, nil
@@ -80,19 +63,24 @@ func (h *Handler) SetTemplates(packages map[string]string, options map[string]st
 				template.Password = vo
 			}
 		}
-		template.Name = k
-		fmt.Println(template)
+		template.Name = strings.Title(h.platform) + k
 		h.templates = append(h.templates, template)
 	}
 }
 
 func (h *Handler) Run() error {
-
 	return templates.RunInTemplates(h.templates, func(t *templates.Template, _ chan *templates.Template) error {
 		err := t.Run()
 		if err != nil {
 			return err
 		}
 		return nil
-	}, nil, true)
+	}, nil, false)
 }
+
+func findPlatform() (string, error) {
+
+	return "ubuntu", nil
+}
+
+

@@ -47,6 +47,7 @@ func cmdRegistry(name string) *cmd.Manager {
 		}
 	})
 	m.Register(&megam.Megaminstall{})
+	m.Register(&megam.Megamremove{})
 	//m.Register(&ceph.Ceph{})
 	//m.Register(&one.One{})
 	return m
