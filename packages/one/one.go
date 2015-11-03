@@ -14,25 +14,3 @@
 ** limitations under the License.
  */
 package one
-
-import (
-	"fmt"
-	"github.com/spf13/cobra"
-	"strings"
-)
-
-var cmdOne = &cobra.Command{Use: "one"}
-
-var cmdOneInstall = &cobra.Command{
-	Use:   "install [Install opennebula packages]",
-	Short: "Install any opennebula package",
-	Long: `Description: Install opennebula server package.
-        `,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("One: " + strings.Join(args, " "))
-	},
-}
-
-func Register(megdcCmd *cobra.Command) {
-	megdcCmd.AddCommand(cmdOne)
-}

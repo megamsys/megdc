@@ -13,26 +13,4 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-package ceph
-
-import (
-	"fmt"
-	"github.com/spf13/cobra"
-	"strings"
-)
-
-var cmdCeph = &cobra.Command{Use: "ceph"}
-
-var cmdCephInstall = &cobra.Command{
-	Use:   "install [Install ceph packages]",
-	Short: "Install any ceph storage package",
-	Long: `Description: Install ceph storage package.
-        `,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Ceph: " + strings.Join(args, " "))
-	},
-}
-
-func Register(megdcCmd *cobra.Command) {
-	megdcCmd.AddCommand(cmdCeph)
-}
+package handler

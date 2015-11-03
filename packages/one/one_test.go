@@ -13,32 +13,4 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-
-package file
-
-import (
-//	"bytes"
-//	"net/http"
-	"testing"
-	"gopkg.in/check.v1"
-)
-
-func Test(t *testing.T) {
-	check.TestingT(t)
-}
-
-var _ = check.Suite(&FileSuite{})
-
-type FileSuite struct {
-}
-
-/*func (s *GitlabSuite) SetUpSuite(c *check.C) {
-	var err = error.New("testing")
-	c.Assert(err, check.IsNil)
-}
-
-func (s *GitlabSuite) TestClone(c *check.C) {
-	var err = error.New("testing")
-	c.Assert(err, check.IsNil)
-}*/
-
+package one

@@ -17,11 +17,11 @@ package main
 
 import (
 	"os"
-//	"fmt"
-//	"strings"
 	log "github.com/Sirupsen/logrus"
-	"runtime"
-	"github.com/megamsys/megdc/cmd"
+	"github.com/megamsys/megdc/packages/megam"
+//	"github.com/megamsys/megdc/packages/ceph"
+//	"github.com/megamsys/megdc/packages/one"
+	"github.com/megamsys/libgo/cmd"
 )
 
 // These variables are populated via the Go linker.
@@ -32,13 +32,31 @@ var (
 	header  string = "Supported-Megdc"
 )
 
+func init() {
+	// Only log the debug or above
+  log.SetLevel(log.DebugLevel)  // level is configurable via cli option.
+	// Output to stderr instead of stdout, could also be a file.
+  log.SetOutput(os.Stdout)
+}
+
+// Only log debug level when the -v flag is passed.
+func cmdRegistry(name string) *cmd.Manager {
+	m := cmd.BuildBaseManager(name, version, nil, func(modelvl int) {
+		if modelvl >= 1 {
+			log.SetLevel(log.DebugLevel)
+		}
+	})
+	m.Register(&megam.Megaminstall{})
+	m.Register(&megam.Megamremove{})
+	//m.Register(&ceph.Ceph{})
+	//m.Register(&one.One{})
+	return m
+}
+
 
 //Run the commands from cli.
 func main() {
-  // Only log the debug or above
-  log.SetLevel(log.DebugLevel)  // level is configurable via cli option.
-  // Output to stderr instead of stdout, could also be a file.
-  log.SetOutput(os.Stdout)	 
-  runtime.GOMAXPROCS(runtime.NumCPU())
-  cmd.Execute()
+	name := cmd.ExtractProgramName(os.Args[0])
+	manager := cmdRegistry(name)
+	manager.Run(os.Args[1:])
 }
