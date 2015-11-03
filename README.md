@@ -2,17 +2,23 @@
 Megdc
 ================
 
-This is a browser based wnstaller which installs a datacenter based Megam cloud platform. This is being made into a CLI based tool.
+CLI based installer that sets up our datacenter based Megam cloud platform. 
 
 
 ### Requirements
 
 > 
-[Golang 1.5 > +](http://www.golang.org/dl)
+[Golang 1.5.1 > +](http://www.golang.org/dl)
 
 
 ## Usage
 
+```
+# To install package megamnilavu in your local system.
+
+medc megaminstall --megamnilavu
+
+```
 
 
 ### Compile from source 
@@ -51,9 +57,9 @@ We are glad to help if you have questions, or request for new features..
 |                      |                                          |
 |:---------------------|:-----------------------------------------|
 | **Author:**          | Rajthilak (<rajthilak@megam.io>)
-| 	                   | KishorekumarNeelamegam (<nkishore@megam.io>)
-| 	                   | Thomas Alrin (<thomasalrin@megam.io>)
-| **Copyright:**       | Copyright (c) 2012-2014 Megam Systems.
+| 	               | KishorekumarNeelamegam (<nkishore@megam.io>)
+| 	               | Thomas Alrin (<thomasalrin@megam.io>)
+| **Copyright:**       | Copyright (c) 2013-2015 Megam Systems.
 | **License:**         | Apache License, Version 2.0
 
 Licensed under the Apache License, Version 2.0 (the "License");
