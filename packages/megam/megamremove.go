@@ -27,11 +27,12 @@ import (
 type Megamremove struct {
 	Fs           			*gnuflag.FlagSet
 	All          			bool
-	MegamNilavuRemove  	    bool
+	MegamNilavuRemove  	  bool
 	MegamGatewayRemove 		bool
 	MegamdRemove       		bool
 	MegamCommonRemove  		bool
-	MegamMonitorRemove 		bool
+	MegamSnowflakeRemove 		bool
+	RiakRemove						bool
 	Host		 			string
 	Username	 			string
 	Password     			string
@@ -69,14 +70,14 @@ func (c *Megamremove) Run(context *cmd.Context) error {
 				if value.Bool() {
 					packages[typ.Field(i).Name] = typ.Field(i).Name
 				}
-			case string:	
+			case string:
 				if value.String() != "" {
 					options[typ.Field(i).Name] = value.String()
 				}
 			}
 		}
 	}
-	
+
 	if handler, err := handler.NewHandler(); err != nil {
 		return err
 	} else {
@@ -85,8 +86,8 @@ func (c *Megamremove) Run(context *cmd.Context) error {
         if err != nil {
         	return err
         }
-	}  
-     
+	}
+
 	// goodbye.
 	return nil
 }
@@ -96,7 +97,7 @@ func (c *Megamremove) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 		c.Fs.BoolVar(&c.All, "all", false, "Remove all megam packages")
 		c.Fs.BoolVar(&c.All, "a", false, "Remove all megam packages")
-	
+
 		/* Remove package commands */
 		c.Fs.BoolVar(&c.MegamNilavuRemove, "megamnilavu", false, "Remove nilavu package")
 		c.Fs.BoolVar(&c.MegamNilavuRemove, "n", false, "Remove nilavu package")
@@ -106,9 +107,12 @@ func (c *Megamremove) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.MegamdRemove, "d", false, "Remove megamd package")
 		c.Fs.BoolVar(&c.MegamCommonRemove, "megamcommon", false, "Remove megamcommon package")
 		c.Fs.BoolVar(&c.MegamCommonRemove, "c", false, "Remove megamcommon package")
-		c.Fs.BoolVar(&c.MegamMonitorRemove, "megammonitor", false, "Remove megam monitor package")
-		c.Fs.BoolVar(&c.MegamMonitorRemove, "m", false, "Remove megam monitor package")
-		
+		c.Fs.BoolVar(&c.MegamSnowflakeRemove, "megamsnowflake", false, "Remove megam snowflake package")
+		c.Fs.BoolVar(&c.MegamSnowflakeRemove, "s", false, "Remove megam snowflake package")
+		c.Fs.BoolVar(&c.RiakRemove, "riak", false, "Remove Riak package")
+		c.Fs.BoolVar(&c.RiakRemove, "r", false, "Remove Riak package")
+
+
 		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
 		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
 		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
@@ -120,5 +124,3 @@ func (c *Megamremove) Flags() *gnuflag.FlagSet {
 	}
 	return c.Fs
 }
-
-

@@ -41,7 +41,10 @@ func (tpl *UbuntuMegamGatewayRemove) Run(target urknall.Target) error {
 type UbuntuMegamGatewayRemoveTemplate struct{}
 
 func (m *UbuntuMegamGatewayRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("build",
-		And("ls -la",),
+	pkg.AddCommands("megamgateway",
+		RemovePackage("megamgateway"),
+		RemovePackages(""),
+		PurgePackages("megamgateway"),
+		Shell("dpkg --get-selections megam*",),
 	)
 }

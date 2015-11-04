@@ -45,13 +45,12 @@ func (m *UbuntuMegamNilavuInstallTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("packages",
 		InstallPackages("software-properties-common", "python-software-properties", "ruby2.0", "ruby2.0-dev"),
 	)
-	
+
 	pkg.AddCommands("repository",
-		Shell("add-apt-repository 'deb [arch=amd64] http://get.megam.io/0.9/ubuntu/14.04/ testing megam'"),
-		Shell("apt-key adv --keyserver keyserver.ubuntu.com --recv B3E0C1B7"),
+		Shell(" echo 'deb [arch=amd64] http://get.megam.io/0.9/ubuntu/14.04/ trusty testing' > /etc/apt/sources.list.d/megam.list"),
 		UpdatePackagesOmitError(),
 	)
-	
+
 	pkg.AddCommands("megamcommon",
 		And("apt-get -y install megamcommon"),
 	)
