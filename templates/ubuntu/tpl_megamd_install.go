@@ -43,7 +43,7 @@ type UbuntuMegamdInstallTemplate struct{}
 func (m *UbuntuMegamdInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("repository",
-		Shell(" echo 'deb [arch=amd64] http://get.megam.io/0.9/ubuntu/14.04/ trusty testing' > /etc/apt/sources.list.d/megam.list"),
+		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 
