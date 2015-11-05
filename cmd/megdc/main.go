@@ -19,7 +19,7 @@ import (
 	"os"
 	log "github.com/Sirupsen/logrus"
 	"github.com/megamsys/megdc/packages/megam"
-//	"github.com/megamsys/megdc/packages/ceph"
+	"github.com/megamsys/megdc/packages/ceph"
 //	"github.com/megamsys/megdc/packages/one"
 	"github.com/megamsys/libgo/cmd"
 )
@@ -48,7 +48,8 @@ func cmdRegistry(name string) *cmd.Manager {
 	})
 	m.Register(&megam.Megaminstall{})
 	m.Register(&megam.Megamremove{})
-	//m.Register(&ceph.Ceph{})
+	m.Register(&ceph.Cephinstall{})
+	m.Register(&ceph.Cephremove{})
 	//m.Register(&one.One{})
 	return m
 }

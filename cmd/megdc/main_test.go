@@ -19,7 +19,7 @@ import (
 	"github.com/megamsys/libgo/cmd"
 	"gopkg.in/check.v1"
 	"github.com/megamsys/megdc/packages/megam"
-//	"github.com/megamsys/megdc/packages/ceph"
+	"github.com/megamsys/megdc/packages/ceph"
 //	"github.com/megamsys/megdc/packages/one"
 	"os"
 )
@@ -48,4 +48,9 @@ func (s *S) TestStartIsRegistered(c *check.C) {
 	c.Assert(create, check.FitsTypeOf, &megam.Megaminstall{})
 }
 
-
+func (s *S) TestStartcephIsRegistered(c *check.C) {
+	manager := cmdRegistry("megdc")
+	create, ok := manager.Commands["cephinstall"]
+	c.Assert(ok, check.Equals, true)
+	c.Assert(create, check.FitsTypeOf, &ceph.Cephinstall{})
+}
