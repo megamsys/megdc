@@ -41,7 +41,12 @@ func (tpl *UbuntuMegamGatewayInstall) Run(target urknall.Target) error {
 type UbuntuMegamGatewayInstallTemplate struct{}
 
 func (m *UbuntuMegamGatewayInstallTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("build",
-		And("ls -la",),
+	pkg.AddCommands("repository",
+		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		UpdatePackagesOmitError(),
+	)
+
+	pkg.AddCommands("megamgateway",
+		InstallPackages("megamgateway"),
 	)
 }

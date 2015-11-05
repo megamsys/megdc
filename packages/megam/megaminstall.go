@@ -31,7 +31,8 @@ type Megaminstall struct {
 	MegamGatewayInstall 	bool
 	MegamdInstall       	bool
 	MegamCommonInstall  	bool
-	MegamMonitorInstall 	bool
+	MegamSnowflakeInstall 	bool
+	RiakInstall							bool
 	Host		 			string
 	Username	 			string
 	Password     			string
@@ -69,14 +70,14 @@ func (c *Megaminstall) Run(context *cmd.Context) error {
 				if value.Bool() {
 					packages[typ.Field(i).Name] = typ.Field(i).Name
 				}
-			case string:	
+			case string:
 				if value.String() != "" {
 					options[typ.Field(i).Name] = value.String()
 				}
 			}
 		}
 	}
-	
+
 	if handler, err := handler.NewHandler(); err != nil {
 		return err
 	} else {
@@ -85,8 +86,8 @@ func (c *Megaminstall) Run(context *cmd.Context) error {
         if err != nil {
         	return err
         }
-	}  
-     
+	}
+
 	// goodbye.
 	return nil
 }
@@ -96,7 +97,7 @@ func (c *Megaminstall) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 		c.Fs.BoolVar(&c.All, "all", false, "Install all megam packages")
 		c.Fs.BoolVar(&c.All, "a", false, "Install all megam packages")
-		
+
 		/* Install package commands */
 		c.Fs.BoolVar(&c.MegamNilavuInstall, "megamnilavu", false, "Install nilavu package")
 		c.Fs.BoolVar(&c.MegamNilavuInstall, "n", false, "Install nilavu package")
@@ -106,9 +107,11 @@ func (c *Megaminstall) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.MegamdInstall, "d", false, "Install megamd package")
 		c.Fs.BoolVar(&c.MegamCommonInstall, "megamcommon", false, "Install megamcommon package")
 		c.Fs.BoolVar(&c.MegamCommonInstall, "c", false, "Install megamcommon package")
-		c.Fs.BoolVar(&c.MegamMonitorInstall, "megammonitor", false, "Install megam monitor package")
-		c.Fs.BoolVar(&c.MegamMonitorInstall, "m", false, "Install megam monitor package")
-		
+		c.Fs.BoolVar(&c.MegamSnowflakeInstall, "megamsnowflake", false, "Install megam snowflake package")
+		c.Fs.BoolVar(&c.MegamSnowflakeInstall, "s", false, "Install megam snowflake package")
+		c.Fs.BoolVar(&c.RiakInstall, "riak", false, "Install Riak package")
+		c.Fs.BoolVar(&c.RiakInstall, "r", false, "Install Riak package")
+
 		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
 		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
 		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
@@ -120,5 +123,3 @@ func (c *Megaminstall) Flags() *gnuflag.FlagSet {
 	}
 	return c.Fs
 }
-
-

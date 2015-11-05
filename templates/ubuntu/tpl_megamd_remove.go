@@ -41,7 +41,11 @@ func (tpl *UbuntuMegamdRemove) Run(target urknall.Target) error {
 type UbuntuMegamdRemoveTemplate struct{}
 
 func (m *UbuntuMegamdRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("build",
-		And("ls -la",),
+
+	pkg.AddCommands("megamd",
+		RemovePackage("megamd"),
+		RemovePackages(""),
+		PurgePackages("megamd"),
+		Shell("dpkg --get-selections megam*",),
 	)
 }

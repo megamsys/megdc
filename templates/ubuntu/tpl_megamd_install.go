@@ -41,7 +41,13 @@ func (tpl *UbuntuMegamdInstall) Run(target urknall.Target) error {
 type UbuntuMegamdInstallTemplate struct{}
 
 func (m *UbuntuMegamdInstallTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("build",
-		And("ls -la",),
+
+	pkg.AddCommands("repository",
+		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		UpdatePackagesOmitError(),
+	)
+
+	pkg.AddCommands("megamd",
+		InstallPackages("megamd"),
 	)
 }

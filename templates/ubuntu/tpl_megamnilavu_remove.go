@@ -41,11 +41,10 @@ func (tpl *UbuntuMegamNilavuRemove) Run(target urknall.Target) error {
 type UbuntuMegamNilavuRemoveTemplate struct{}
 
 func (m *UbuntuMegamNilavuRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("build",
-		And("ls -la",),
-		Shell("service snowflake status"),
-		And("s, la"),
+	pkg.AddCommands("megamnilavu",
+		RemovePackage("megamnilavu"),
+		RemovePackages(""),
+		PurgePackages("megamnilavu"),
+		Shell("dpkg --get-selections megam*",),
 	)
 }
-
-

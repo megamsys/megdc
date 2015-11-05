@@ -42,6 +42,27 @@ func InstallPackagesWithoutForce(pkg string, pkgs ...string) *ShellCommand {
 	}
 }
 
+// Remove the given packages using apt-get. At least one package must be given (pkgs can be left empty).
+func RemovePackages(pkg string, pkgs ...string) *ShellCommand {
+	return &ShellCommand{
+		Command: fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get autoremove -y --no-install-recommends "),
+	}
+}
+
+func RemovePackage( pkg string, pkgs ...string) *ShellCommand {
+	return &ShellCommand{
+	Command: fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get remove -y --no-install-recommends %s %s", pkg, strings.Join(pkgs, " ")),
+	}
+}
+
+func PurgePackages(pkg string, pkgs ...string) *ShellCommand {
+	return &ShellCommand{
+			Command: fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get purge -y --no-install-recommends %s %s", pkg, strings.Join(pkgs, " ")),
+	}
+}
+
+
+
 // PinPackage pins package via dpkg --set-selections
 func PinPackage(name string) *ShellCommand {
 	return Shell(fmt.Sprintf(`echo "%s hold" | dpkg --set-selections`, name))
