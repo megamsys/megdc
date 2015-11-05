@@ -20,9 +20,7 @@ import (
 	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
 )
-const{
- Host=`hostname`
-}
+
 var ubuntucephremove *UbuntuCephRemove
 
 func init() {
@@ -44,12 +42,12 @@ type UbuntuCephRemoveTemplate struct{}
 
 func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("purgedata",
-		Shell("ceph-deploy purgedata " + host + ""),
+		Shell("ceph-deploy purgedata " + Host + ""),
 	)
   pkg.AddCommands("forgetKeys",
 		Shell("ceph-deploy forgetkeys"),
 	)
   pkg.AddCommands("purge",
-		Shell("ceph-deploy purge " + host + ""),
+		Shell("ceph-deploy purge " + Host + ""),
 	)
 }
