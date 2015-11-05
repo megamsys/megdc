@@ -55,10 +55,13 @@ func (tpl *UbuntuMegamCommonInstall) Run(target urknall.Target) error {
 type UbuntuMegamCommonInstallTemplate struct{}
 
 func (m *UbuntuMegamCommonInstallTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("build",
-		Shell("echo  'hello' "),
+
+	pkg.AddCommands("repository",
+		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		UpdatePackagesOmitError(),
 	)
-	pkg.AddCommands("ex",
-		Shell("echo  " + getip + " " ),
+	pkg.AddCommands("megamcommon",
+		InstallPackages("megamcommon"),
+
 	)
 }

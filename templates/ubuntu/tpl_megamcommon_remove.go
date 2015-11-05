@@ -41,7 +41,10 @@ func (tpl *UbuntuMegamCommonRemove) Run(target urknall.Target) error {
 type UbuntuMegamCommonRemoveTemplate struct{}
 
 func (m *UbuntuMegamCommonRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("build",
-		And("ls -la",),
+	pkg.AddCommands("megamcommon",
+		RemovePackage("megamcommon"),
+		RemovePackages(""),
+		PurgePackages("megamcommon"),
+		Shell("dpkg --get-selections megam*",),
 	)
 }
