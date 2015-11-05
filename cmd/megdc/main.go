@@ -19,14 +19,9 @@ import (
 	"os"
 	log "github.com/Sirupsen/logrus"
 	"github.com/megamsys/megdc/packages/megam"
-<<<<<<< HEAD
-//	"github.com/megamsys/megdc/packages/ceph"
 	"github.com/megamsys/megdc/packages/one"
 	"github.com/megamsys/megdc/packages/onehost"
-=======
 	"github.com/megamsys/megdc/packages/ceph"
-//	"github.com/megamsys/megdc/packages/one"
->>>>>>> origin
 	"github.com/megamsys/libgo/cmd"
 )
 
