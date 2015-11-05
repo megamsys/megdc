@@ -11,7 +11,7 @@ EOF
 BRIDGE_NAME="one"
 NETWORK_IF="eth0"
 
-#sudo ovs-vsctl add-br $BRIDGE_NAME
+sudo ovs-vsctl add-br $BRIDGE_NAME
 
 echo "auto $BRIDGE_NAME" >> /etc/network/interfaces
 #sudo ovs-vsctl show
