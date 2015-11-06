@@ -22,9 +22,9 @@ import (
 	"github.com/megamsys/megdc/templates"
 	"os/exec"
 	// "sync"
-	"strings"
 	"os"
 	"path"
+	"strings"
 	//"reflect"
 	//pp "github.com/megamsys/libgo/cmd"
 	//"github.com/codeskyblue/go-sh"
@@ -50,18 +50,18 @@ func (tpl *UbuntuMegamReport) Run(target urknall.Target) error {
 type UbuntuMegamReportTemplate struct{}
 
 func (m *UbuntuMegamReportTemplate) Render(pkg urknall.Package) {
-	
+
 	if err := writefile(); err != nil {
 		return
 	} else {
 		commands := "bash /var/lib/megam/report.sh megam"
 
-	commandWords := strings.Fields(commands)
-	out, err := exe_cmd(commandWords[0], commandWords[1:])
-	if err != nil {
-		return
-	}
-	fmt.Println(out)
+		commandWords := strings.Fields(commands)
+		out, err := exe_cmd(commandWords[0], commandWords[1:])
+		if err != nil {
+			return
+		}
+		fmt.Println(out)
 	}
 }
 

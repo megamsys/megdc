@@ -56,6 +56,7 @@ func cmdRegistry(name string) *cmd.Manager {
 	m.Register(&onehost.Onehostremove{})
 	m.Register(&ceph.Cephinstall{})
 	m.Register(&ceph.Cephremove{})
+	m.Register(&onehost.Bridge{})
 	return m
 }
 

@@ -19,8 +19,6 @@ package ubuntu
 import (
 	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
-	"net"
-	"fmt"
 )
 
 const (
@@ -39,7 +37,7 @@ func init() {
 type UbuntuOneHostInstall struct{}
 
 func (tpl *UbuntuOneHostInstall) Render(p urknall.Package) {
-	p.AddTemplate("one", &UbuntuOneHostInstallTemplate{})
+	p.AddTemplate("onehost", &UbuntuOneHostInstallTemplate{})
 }
 
 func (tpl *UbuntuOneHostInstall) Run(target urknall.Target) error {
@@ -50,22 +48,7 @@ type UbuntuOneHostInstallTemplate struct{}
 
 func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
 
-	ip := ""
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		fmt.Println(err)
-	}
- for _, address := range addrs {
-			// check the address type and if it is not a loopback the display it
-			if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-					if ipnet.IP.To4() != nil {
-							//return ipnet.IP.String()
-							ip = ipnet.IP.String()
-							fmt.Println(ip)
-					}
-			}
-	}
-
+	//ip := GetLocalIP()
 
 	pkg.AddCommands("repository",
 	Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
@@ -77,7 +60,7 @@ func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
 		InstallPackages("build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils lvm2 ssh iproute iputils-arping make"),
 	)
 
-	pkg.AddCommands("onehost",
+	pkg.AddCommands("node",
 		InstallPackages("opennebula-node"),
 	)
 
@@ -85,9 +68,8 @@ func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
 			InstallPackages("qemu-system-x86 qemu-kvm cpu-checker"),
 			And("kvm=`kvm-ok  | grep 'KVM acceleration can be used'`"),
 		)
-  pkg.AddCommands("vswitch",
-		InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),
-	Shell("echo '"+ "%" + "oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
-	
-)
+		pkg.AddCommands("vswitch",
+				InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),
+			)
+
 }

@@ -26,7 +26,7 @@ var ubuntuonehostremove *UbuntuOneHostRemove
 
 func init() {
 	ubuntuonehostremove = &UbuntuOneHostRemove{}
-	templates.Register("UbuntuOneRemove", ubuntuonehostremove)
+	templates.Register("UbuntuOneHostRemove", ubuntuonehostremove)
 }
 
 type UbuntuOneHostRemove struct{}

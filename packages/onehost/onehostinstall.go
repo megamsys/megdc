@@ -27,7 +27,7 @@ import (
 type Onehostinstall struct {
 	Fs           			*gnuflag.FlagSet
 	OneHostInstall  	bool
-
+	
 	Host		 			string
 	Username	 			string
 	Password     			string
@@ -35,7 +35,7 @@ type Onehostinstall struct {
 }
 
 func (g *Onehostinstall) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `OneHost installation.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 
@@ -94,6 +94,7 @@ func (c *Onehostinstall) Flags() *gnuflag.FlagSet {
 		/* Install package commands */
 		c.Fs.BoolVar(&c.OneHostInstall, "install", false, "Install Opennebula ")
 		c.Fs.BoolVar(&c.OneHostInstall, "i", false, "Install Opennebula ")
+
 
 		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
 		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")

@@ -33,6 +33,8 @@ type Megaminstall struct {
 	MegamCommonInstall  	bool
 	MegamSnowflakeInstall 	bool
 	RiakInstall							bool
+	RabbitmqInstall         bool
+
 	Host		 			string
 	Username	 			string
 	Password     			string
@@ -40,7 +42,7 @@ type Megaminstall struct {
 }
 
 func (g *Megaminstall) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `Megam packages setup .
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 
@@ -111,6 +113,9 @@ func (c *Megaminstall) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.MegamSnowflakeInstall, "s", false, "Install megam snowflake package")
 		c.Fs.BoolVar(&c.RiakInstall, "riak", false, "Install Riak package")
 		c.Fs.BoolVar(&c.RiakInstall, "r", false, "Install Riak package")
+		c.Fs.BoolVar(&c.RabbitmqInstall, "rabbitmq", false, "Install Rabbitmq-server")
+		c.Fs.BoolVar(&c.RabbitmqInstall, "m", false, "Install Rabbitmq-server")
+
 
 		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
 		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")

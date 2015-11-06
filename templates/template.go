@@ -43,6 +43,8 @@ type Template struct {
 	Host     string
 	UserName string
 	Password string
+	Bridgename string
+	Networkif string
 	Name     string
 }
 
