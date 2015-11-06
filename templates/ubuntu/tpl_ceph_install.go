@@ -23,14 +23,13 @@ import (
 
 const (
 	// DefaultCephRepo is the default megam repository to install if its not provided.
-	  Ceph_user="cibadmin"
-   Host=`hostname`
-    User_home="/home/cibadmin"
-    Osd1="/storage1"
-Osd2="/storage2"
-Osd3="/storage3"
-		)
-
+	Ceph_user = "cibadmin"
+	Host      = `hostname`
+	User_home = "/home/cibadmin"
+	Osd1      = "/storage1"
+	Osd2      = "/storage2"
+	Osd3      = "/storage3"
+)
 
 var ubuntucephinstall *UbuntuCephInstall
 
@@ -52,6 +51,7 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 type UbuntuCephInstallTemplate struct{}
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
+
 	ip := ""
   addrs, err := net.InterfaceAddrs()
   if err != nil {
@@ -95,84 +95,83 @@ Shell("sudo apt-get -y install -f ceph-deploy ceph-common ceph-mds dnsmasq opens
 pkg.AddCommands("ipaddress",
 Shell("IP_ADDR=" + ip +""),
 )
+	pkg.AddCommands("entry",
+		Shell("echo 'Adding entry in /etc/hosts'"),
+	)
+	pkg.AddCommands("edithost",
+		Shell("echo '$IP_ADDR "+Host+"'"),
+	)
+	pkg.AddCommands("ssh",
+		Shell("echo 'Processing ssh-keygen'"),
+	)
 
-pkg.AddCommands("entry",
-Shell("echo 'Adding entry in /etc/hosts'"),
-)
-pkg.AddCommands("edithost",
-Shell("echo '$IP_ADDR " + Host + "'"),
-)
-pkg.AddCommands("ssh",
-Shell("echo 'Processing ssh-keygen'"),
-)
+	pkg.AddCommands("sshfile",
+		Shell("sudo -u "+Ceph_user+" bash << EOF"+
+			"ssh-keygen -N '' -t rsa -f "+User_home+"/.ssh/id_rsa"+
+			"cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys"+
+			"EOF"),
+	)
+	pkg.AddCommands("ipKnown_hosts",
+		Shell("sudo -H -u "+Ceph_user+" bash -c 'cat > '/"+User_home+"'/.ssh/ssh_config <<EOF'"+
+			"'ConnectTimeout 5'"+
+			"'Host *''"+
+			"'StrictHostKeyChecking no'"+
+			"'EOF'"),
+	)
+	pkg.AddCommands("host",
+		Shell("sudo -H -u "+Ceph_user+" bash -c 'cat > '"+User_home+"'/.ssh/config <<EOF'"+
+			"'Host "+Host+"'"+
+			"'Hostname "+Host+"'"+
+			"' User  "+Ceph_user+" '"+
+			"'EOF'"),
+	)
+	pkg.AddCommands("makeosd",
+		Shell("echo 'Making directory inside osd drive '"),
+	)
 
-pkg.AddCommands("sshfile",
-Shell("sudo -u " + Ceph_user + " bash << EOF"+
-"ssh-keygen -N '' -t rsa -f " + User_home + "/.ssh/id_rsa"+
-"cp " + User_home + "/.ssh/id_rsa.pub " + User_home + "/.ssh/authorized_keys"+
-"EOF"),
-)
-pkg.AddCommands("ipKnown_hosts",
-Shell("sudo -H -u " + Ceph_user +" bash -c 'cat > '/" + User_home + "'/.ssh/ssh_config <<EOF'" +
-"'ConnectTimeout 5'"+
-"'Host *''"+
-"'StrictHostKeyChecking no'" +
-"'EOF'"),
-)
-pkg.AddCommands("host",
-Shell("sudo -H -u " + Ceph_user + " bash -c 'cat > '" + User_home + "'/.ssh/config <<EOF'"+
-"'Host " + Host + "'"+
-   "'Hostname "+ Host + "'"+
-  "' User  "+ Ceph_user +" '"+
-"'EOF'"),
-)
-pkg.AddCommands("makeosd",
-Shell("echo 'Making directory inside osd drive '"),
-)
+	pkg.AddCommands("osd1",
+		Shell("mkdir "+Osd1+"/osd"),
+	)
+	pkg.AddCommands("osd2",
+		Shell("mkdir "+Osd2+"/osd"),
+	)
+	pkg.AddCommands("osd3",
+		Shell("mkdir "+Osd3+"/osd"),
+	)
+	pkg.AddCommands("getip",
+		Shell(" ip3=`echo $IP_ADDR| cut -d'.' -f 1,2,3`"),
+	)
 
-pkg.AddCommands("osd1",
-Shell("mkdir "+ Osd1 + "/osd"),
-)
-pkg.AddCommands("osd2",
-Shell("mkdir "+ Osd2 + "/osd"),
-)
-pkg.AddCommands("osd3",
-Shell("mkdir "+ Osd3 + "/osd"),
-)
-pkg.AddCommands("getip",
-Shell(" ip3=`echo $IP_ADDR| cut -d'.' -f 1,2,3`"),
-)
+	pkg.AddCommands("cephconfig",
+		Shell("echo 'Ceph configuration started...'"),
+	)
+	pkg.AddCommands("conf",
+		Shell("sudo -u "+Ceph_user+" bash << EOF"+
+			"mkdir "+User_home+"/ceph-cluster"+
+			"cd "+User_home+"/ceph-cluster"+
 
-pkg.AddCommands("cephconfig",
-Shell("echo 'Ceph configuration started...'"),
-)
-pkg.AddCommands("conf",
-Shell("sudo -u " + Ceph_user +" bash << EOF"+
-"mkdir "+ User_home +"/ceph-cluster"+
-"cd " + User_home +"/ceph-cluster"+
+			"ceph-deploy new "+Host+" "+
 
-"ceph-deploy new " + Host + " "+
-
-"echo 'osd crush chooseleaf type = 0'"+
-"echo 'public network = $ip3.0/24'"+
-"echo 'cluster network = $ip3.0/24'"+
-"ceph-deploy install " + Host + ""+
-"ceph-deploy mon create-initial" +
-"ceph-deploy osd prepare " + Host + ":"+ Osd1 + "/osd " + Host + ":"+ Osd2 + "/osd " + Host + ":"+ Osd3 + "/osd"+
-"ceph-deploy osd activate " + Host + ":"+ Osd1 + "/osd " + Host + ":"+ Osd2 + "/osd " + Host + ":"+ Osd3 + "/osd"+
-"ceph-deploy admin " + Host + ""+
-"sudo chmod +r /etc/ceph/ceph.client.admin.keyring"+
-"sleep 180"+
-"ceph osd pool set rbd pg_num 150"+
-"sleep 180"+
-"ceph osd pool set rbd pgp_num 150"+
-"EOF"),
-)
-pkg.AddCommands("copy",
-Shell("cp " + User_home + "/ceph-cluster/*.keyring /etc/ceph/"),
-)
-pkg.AddCommands("complete",
-Shell("echo 'Ceph installed successfully.'"),
-)
+			"echo 'osd crush chooseleaf type = 0'"+
+			"echo 'public network = $ip3.0/24'"+
+			"echo 'cluster network = $ip3.0/24'"+
+			"ceph-deploy install "+Host+""+
+			"ceph-deploy mon create-initial"+
+			"ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "+Host+":"+Osd3+"/osd"+
+			"ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "+Host+":"+Osd3+"/osd"+
+			"ceph-deploy admin "+Host+""+
+			"sudo chmod +r /etc/ceph/ceph.client.admin.keyring"+
+			"sleep 180"+
+			"ceph osd pool set rbd pg_num 150"+
+			"sleep 180"+
+			"ceph osd pool set rbd pgp_num 150"+
+			"EOF"),
+	)
+	pkg.AddCommands("copy",
+		Shell("cp "+User_home+"/ceph-cluster/*.keyring /etc/ceph/"),
+	)
+	pkg.AddCommands("complete",
+		Shell("echo 'Ceph installed successfully.'"),
+	)
 
 }

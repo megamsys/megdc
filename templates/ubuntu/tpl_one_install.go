@@ -19,8 +19,6 @@ package ubuntu
 import (
 	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
-	"net"
-	"fmt"
 )
 
 const (
@@ -50,23 +48,8 @@ type UbuntuOneInstallTemplate struct{}
 
 func (m *UbuntuOneInstallTemplate) Render(pkg urknall.Package) {
 
-	ip := ""
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		fmt.Println(err)
-	}
- for _, address := range addrs {
-			// check the address type and if it is not a loopback the display it
-			if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-					if ipnet.IP.To4() != nil {
-							//return ipnet.IP.String()
-							ip = ipnet.IP.String()
-							fmt.Println(ip)
-					}
-			}
-	}
-
-
+    ip := GetLocalIP()
+   
 	pkg.AddCommands("repository",
 	Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
 	Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),

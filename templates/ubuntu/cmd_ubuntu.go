@@ -3,6 +3,7 @@ package ubuntu
 import (
 	"fmt"
 	"strings"
+	"net"
 )
 
 // Upgrade the package cache and update the installed packages (using apt).
@@ -77,4 +78,23 @@ func StartOrRestart(service string) *ShellCommand {
 // might break stuff (think ElasticSearch cluster instances in an ES update).
 func EnsureRunning(service string) *ShellCommand {
 	return Shell(fmt.Sprintf("status %s | grep running || start %s", service, service))
+}
+
+// GetLocalIP returns the non loopback local IP of the host
+func GetLocalIP() string {
+    ip := ""
+    addrs, err := net.InterfaceAddrs()
+    if err != nil {
+        return ""
+    }
+    for _, address := range addrs {
+        // check the address type and if it is not a loopback the display it
+        if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+            if ipnet.IP.To4() != nil {
+                //return ipnet.IP.String()
+                ip = ipnet.IP.String()
+            }
+        }
+    }
+    return ip
 }
