@@ -23,9 +23,8 @@ import (
 
 const (
 	// DefaultCephRepo is the default megam repository to install if its not provided.
-	Ceph_user = "cibadmin"
-	Host      = `hostname`
-	User_home = "/home/cibadmin"
+	Ceph_user = "megdc"
+	User_home = "/home/megdc"
 	Osd1      = "/storage1"
 	Osd2      = "/storage2"
 	Osd3      = "/storage3"
@@ -51,64 +50,59 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 type UbuntuCephInstallTemplate struct{}
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
-	
-	ipaddr := GetLocalIP()
-	
-	pkg.AddCommands("sudoer",
-		Shell("echo ' "+Ceph_user+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+Ceph_user+""),
+    	Host := host()
+	  ip := GetLocalIP()
+	pkg.AddCommands("cephuser",
+		Shell(" echo 'Make ceph user as sudoer'" ),
 	)
-	pkg.AddCommands("changepermission",
-		Shell("sudo chmod 0440 /etc/sudoers.d/"+Ceph_user),
-	)
-	pkg.AddCommands("startinstall",
-		Shell("echo 'Started installing ceph'"),
-	)
-	pkg.AddCommands("install",
-		Shell("sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list"),
-	)
-	pkg.AddCommands("get",
-		Shell("sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -"),
-	)
-	pkg.AddCommands("update",
-		Shell("sudo apt-get -y update"),
-	)
-	pkg.AddCommands("cephDeployinstall",
-		Shell("sudo apt-get -y install ceph-deploy ceph-common ceph-mds dnsmasq openssh-server ntp sshpass "),
-	)
-	pkg.AddCommands("ipaddress",
-		Shell("IP_ADDR='"+ipaddr+"'"),
+  pkg.AddCommands("sudoer",
+  Shell("echo ' " + Ceph_user + " ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/" + Ceph_user + "" ),
+)
+pkg.AddCommands("changepermission",
+Shell("sudo chmod 0440 /etc/sudoers.d/" + Ceph_user +"" ),
+)
+pkg.AddCommands("startinstall",
+Shell("echo 'Started installing ceph'" ),
+)
+pkg.AddCommands("install",
+Shell("sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list"),
+)
+pkg.AddCommands("get",
+Shell("sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -"),
+)
+pkg.AddCommands("update",
+Shell("sudo apt-get -y update"),
+)
+pkg.AddCommands("cephDeployinstall",
+
+		InstallPackages("ceph-deploy","ceph-common","ceph-mds","dnsmasq","openssh-server","ntp","sshpass"),
 	)
 
+pkg.AddCommands("ipaddress",
+Shell("IP_ADDR=" + ip +""),
+)
 	pkg.AddCommands("entry",
 		Shell("echo 'Adding entry in /etc/hosts'"),
 	)
 	pkg.AddCommands("edithost",
-		Shell("echo '$IP_ADDR "+Host+"'"),
+		Shell("echo '"+ip+" "+Host+"'"),
 	)
 	pkg.AddCommands("ssh",
 		Shell("echo 'Processing ssh-keygen'"),
 	)
-
-	pkg.AddCommands("sshfile",
-		Shell("sudo -u "+Ceph_user+" bash << EOF"+
-			"ssh-keygen -N '' -t rsa -f "+User_home+"/.ssh/id_rsa"+
-			"cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys"+
-			"EOF"),
+	pkg.AddCommands("adduser",
+		AddUser("megdc",true),
+		Shell("ssh-keygen -N '' -t rsa -f "+User_home+"/.ssh/id_rsa"),
+			Shell("cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys"),
 	)
 	pkg.AddCommands("ipKnown_hosts",
-		Shell("sudo -H -u "+Ceph_user+" bash -c 'cat > '/"+User_home+"'/.ssh/ssh_config <<EOF'"+
-			"'ConnectTimeout 5'"+
-			"'Host *''"+
-			"'StrictHostKeyChecking no'"+
-			"'EOF'"),
+			AddUser("megdc",true),
+		WriteFile(""+User_home+"/.ssh/ssh_config", content, ""+Ceph_user+"", 0755),
 	)
-	pkg.AddCommands("host",
-		Shell("sudo -H -u "+Ceph_user+" bash -c 'cat > '"+User_home+"'/.ssh/config <<EOF'"+
-			"'Host "+Host+"'"+
-			"'Hostname "+Host+"'"+
-			"' User  "+Ceph_user+" '"+
-			"'EOF'"),
-	)
+	pkg.AddCommands("hostuser",
+		AddUser(""+Ceph_user+"",true),
+		WriteFile(""+User_home+"/.ssh/config", content2, ""+Ceph_user+"", 0755),
+			)
 	pkg.AddCommands("makeosd",
 		Shell("echo 'Making directory inside osd drive '"),
 	)
@@ -123,33 +117,30 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		Shell("mkdir "+Osd3+"/osd"),
 	)
 	pkg.AddCommands("getip",
-		Shell(" ip3=`echo $IP_ADDR| cut -d'.' -f 1,2,3`"),
+		Shell("ip3=`echo 103.56.92.24| cut -d'.' -f 1,2,3`"),
 	)
 
 	pkg.AddCommands("cephconfig",
 		Shell("echo 'Ceph configuration started...'"),
 	)
 	pkg.AddCommands("conf",
-		Shell("sudo -u "+Ceph_user+" bash << EOF"+
-			"mkdir "+User_home+"/ceph-cluster"+
-			"cd "+User_home+"/ceph-cluster"+
-
-			"ceph-deploy new "+Host+" "+
-
-			"echo 'osd crush chooseleaf type = 0'"+
-			"echo 'public network = $ip3.0/24'"+
-			"echo 'cluster network = $ip3.0/24'"+
-			"ceph-deploy install "+Host+""+
-			"ceph-deploy mon create-initial"+
-			"ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "+Host+":"+Osd3+"/osd"+
-			"ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "+Host+":"+Osd3+"/osd"+
-			"ceph-deploy admin "+Host+""+
-			"sudo chmod +r /etc/ceph/ceph.client.admin.keyring"+
-			"sleep 180"+
-			"ceph osd pool set rbd pg_num 150"+
-			"sleep 180"+
-			"ceph osd pool set rbd pgp_num 150"+
-			"EOF"),
+	AddUser(""+Ceph_user+"",true),
+			Shell("mkdir "+User_home+"/ceph-cluster"),
+			Shell("cd "+User_home+"/ceph-cluster"),
+			Shell("ceph-deploy new "+Host+" "),
+			Shell("echo 'osd crush chooseleaf type = 0'"),
+			Shell("echo 'public network = $ip3.0/24'"),
+			Shell("echo 'cluster network = $ip3.0/24'"),
+			Shell("ceph-deploy install "+Host+""),
+			Shell("ceph-deploy mon create-initial"),
+			Shell("ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
+			Shell("ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
+			Shell("ceph-deploy admin "+Host+""),
+			Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring"),
+			Shell("sleep 180"),
+			Shell("ceph osd pool set rbd pg_num 150"),
+			Shell("sleep 180"),
+			Shell("ceph osd pool set rbd pgp_num 150"),
 	)
 	pkg.AddCommands("copy",
 		Shell("cp "+User_home+"/ceph-cluster/*.keyring /etc/ceph/"),
@@ -159,5 +150,15 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	)
 
 }
+const content = `#!/bin/sh
 
+ConnectTimeout 5
+Host *
+StrictHostKeyChecking no
+`
+const content2 = `#!/bin/sh
+  Host ranjitha-sfd-sdf
+ Hostname ranjitha-sfd-sdf
+ User megdc
 
+`
