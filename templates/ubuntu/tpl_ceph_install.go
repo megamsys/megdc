@@ -52,7 +52,23 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 type UbuntuCephInstallTemplate struct{}
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
-		pkg.AddCommands("cephuser",
+	ip := ""
+  addrs, err := net.InterfaceAddrs()
+  if err != nil {
+    fmt.Println(err)
+  }
+for _, address := range addrs {
+      // check the address type and if it is not a loopback the display it
+      if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+          if ipnet.IP.To4() != nil {
+              //return ipnet.IP.String()
+              ip = ipnet.IP.String()
+              fmt.Println(ip)
+          }
+      }
+  }
+
+	pkg.AddCommands("cephuser",
 		Shell(" echo 'Make ceph user as sudoer'" ),
 	)
   pkg.AddCommands("sudoer",
@@ -74,10 +90,10 @@ pkg.AddCommands("update",
 Shell("sudo apt-get -y update"),
 )
 pkg.AddCommands("cephDeployinstall",
-Shell("sudo apt-get -y install ceph-deploy ceph-common ceph-mds dnsmasq openssh-server ntp sshpass "),
+Shell("sudo apt-get -y install -f ceph-deploy ceph-common ceph-mds dnsmasq openssh-server ntp sshpass "),
 )
 pkg.AddCommands("ipaddress",
-Shell("IP_ADDR=''"),
+Shell("IP_ADDR=" + ip +""),
 )
 
 pkg.AddCommands("entry",

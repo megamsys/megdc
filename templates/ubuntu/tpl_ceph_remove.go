@@ -21,7 +21,7 @@ import (
 	"github.com/megamsys/megdc/templates"
 )
 const{
- Host=`hostname`
+ Host = "hostname"
 }
 var ubuntucephremove *UbuntuCephRemove
 
@@ -44,12 +44,18 @@ type UbuntuCephRemoveTemplate struct{}
 
 func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("purgedata",
-		Shell("ceph-deploy purgedata " + host + ""),
+		Shell("ceph-deploy purgedata `" + Host + "`"),
 	)
   pkg.AddCommands("forgetKeys",
 		Shell("ceph-deploy forgetkeys"),
 	)
   pkg.AddCommands("purge",
 		Shell("ceph-deploy purge " + host + ""),
+	)
+  pkg.AddCommands("remove",
+		Shell("sudo rm -r /var/lib/ceph/"),
+	)
+  pkg.AddCommands("remove",
+		Shell("sudo rm -r /var/lib/ceph/"),
 	)
 }
