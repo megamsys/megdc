@@ -57,7 +57,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
   if err != nil {
     fmt.Println(err)
   }
-for _, address := range addrs {
+ for _, address := range addrs {
       // check the address type and if it is not a loopback the display it
       if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
           if ipnet.IP.To4() != nil {
