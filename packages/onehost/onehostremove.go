@@ -35,7 +35,7 @@ type Onehostremove struct {
 }
 
 func (g *Onehostremove) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `Remove OneHost setup.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 

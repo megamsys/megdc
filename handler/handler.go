@@ -28,6 +28,8 @@ const (
 	HOST     = "host"
 	USERNAME = "username"
 	PASSWORD = "password"
+	BRIDGENAME = "bridgename"
+	NETWORK_IF = "networkif"
 )
 
 type Handler struct {
@@ -62,6 +64,12 @@ func (h *Handler) SetTemplates(packages map[string]string, options map[string]st
 			if ko == PASSWORD {
 				template.Password = vo
 			}
+			if ko == BRIDGENAME {
+				template.Bridgename = vo
+			}
+			if ko == NETWORK_IF {
+				template.Networkif = vo
+			}
 		}
 		template.Name = strings.Title(h.platform) + k
 		h.templates = append(h.templates, template)
@@ -71,7 +79,7 @@ func (h *Handler) SetTemplates(packages map[string]string, options map[string]st
 func (h *Handler) Run() error {
 	return templates.RunInTemplates(h.templates, func(t *templates.Template, _ chan *templates.Template) error {
 		err := t.Run()
-		if err != nil {
+    if err != nil {
 			return err
 		}
 		return nil
@@ -82,5 +90,3 @@ func findPlatform() (string, error) {
 
 	return "ubuntu", nil
 }
-
-

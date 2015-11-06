@@ -34,7 +34,7 @@ type Oneinstall struct {
 }
 
 func (g *Oneinstall) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `One storage installation.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 
