@@ -16,7 +16,7 @@
 package megam
 
 import (
-	"fmt"
+	//"fmt"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
 	"launchpad.net/gnuflag"
@@ -56,7 +56,7 @@ If you use the '--quiet' flag megdc doesn't print the logs.
 }
 
 func (c *Megaminstall) Run(context *cmd.Context) error {
-	fmt.Println("[main] starting megdc ...")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "")
 
 	packages := make(map[string]string)
 	options := make(map[string]string)

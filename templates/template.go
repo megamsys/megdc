@@ -55,7 +55,6 @@ func NewTemplate() *Template {
 }
 
 func (t *Template) Run() error {
-	fmt.Println(t)
 	defer urknall.OpenLogger(os.Stdout).Close()
 	var target urknall.Target
 	var e error

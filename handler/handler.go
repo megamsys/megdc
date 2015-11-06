@@ -18,10 +18,13 @@ package handler
 import (
 	//"errors"
 	"github.com/megamsys/megdc/templates"
+	pp "github.com/megamsys/libgo/cmd"
 	"io"
 	"strings"
 	_ "github.com/megamsys/megdc/templates/ubuntu"
-	//"fmt"
+	"fmt"
+	"github.com/tj/go-spin"
+	"time"
 )
 
 const (
@@ -31,6 +34,15 @@ const (
 	BRIDGENAME = "bridgename"
 	NETWORK_IF = "networkif"
 )
+
+const Logo = `
+	███╗   ███╗███████╗ ██████╗ ██████╗  ██████╗
+	████╗ ████║██╔════╝██╔════╝ ██╔══██╗██╔════╝           
+	██╔████╔██║█████╗  ██║  ███╗██║  ██║██║     
+	██║╚██╔╝██║██╔══╝  ██║   ██║██║  ██║██║     
+	██║ ╚═╝ ██║███████╗╚██████╔╝██████╔╝╚██████╗
+	╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═════╝  ╚═════╝
+`
 
 type Handler struct {
 	writer    io.Writer
@@ -90,3 +102,16 @@ func findPlatform() (string, error) {
 
 	return "ubuntu", nil
 }
+
+//Show a spinner until our services start.
+func FunSpin(vers string, logo string) {
+	fmt.Printf("%s %s", vers, logo)
+
+	s := spin.New()
+	for i := 0; i < 10; i++ {
+		fmt.Printf("\r%s", fmt.Sprintf("%s %s", pp.Colorfy("starting", "green", "", "bold"), s.Next()))
+		time.Sleep(3 * time.Millisecond)
+	}
+	fmt.Printf("\n")
+}
+
