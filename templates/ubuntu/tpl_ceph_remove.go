@@ -41,13 +41,38 @@ func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
 type UbuntuCephRemoveTemplate struct{}
 
 func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
+	Host := host()
 	pkg.AddCommands("purgedata",
-		Shell("ceph-deploy purgedata " + Host + ""),
+		Shell("ceph-deploy purgedata `" + Host + "`"),
 	)
   pkg.AddCommands("forgetKeys",
 		Shell("ceph-deploy forgetkeys"),
 	)
   pkg.AddCommands("purge",
 		Shell("ceph-deploy purge " + Host + ""),
+	)
+  pkg.AddCommands("remove",
+		Shell("sudo rm -r /var/lib/ceph/"),
+	)
+  pkg.AddCommands("cephdeploy",
+		Shell("sudo apt-get -y remove ceph-deploy ceph-common ceph-mds"),
+	)
+	pkg.AddCommands("purgeceph",
+		Shell("sudo apt-get -y purge ceph-deploy ceph-common ceph-mds"),
+	)
+	pkg.AddCommands("autoremove",
+		Shell("sudo apt-get -y autoremove"),
+	)
+	pkg.AddCommands("run",
+		Shell("sudo rm -r /run/ceph"),
+	)
+	pkg.AddCommands("lib",
+		Shell("sudo rm -r /var/lib/ceph"),
+	)
+	pkg.AddCommands("log",
+		Shell("sudo rm /var/log/upstart/ceph*"),
+	)
+	pkg.AddCommands("cluster",
+		Shell("sudo rm ~/ceph-cluster/*"),
 	)
 }
