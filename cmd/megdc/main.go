@@ -49,6 +49,7 @@ func cmdRegistry(name string) *cmd.Manager {
 	})
 	m.Register(&megam.Megaminstall{})
 	m.Register(&megam.Megamremove{})
+	m.Register(&megam.Megamreport{})
 	m.Register(&one.Oneinstall{})
 	m.Register(&one.Oneremove{})
 	m.Register(&onehost.Onehostinstall{})

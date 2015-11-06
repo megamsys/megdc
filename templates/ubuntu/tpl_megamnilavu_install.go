@@ -23,11 +23,10 @@ import (
 
 const (
 	// DefaultMegamRepo is the default megam repository to install if its not provided.
-	    DefaultMegamRepo = "http://get.megam.io/0.9/ubuntu/14.04/ trusty testing"
+	DefaultMegamRepo = "http://get.megam.io/0.9/ubuntu/14.04/ trusty testing"
 
-			ListFilePath  = "/etc/apt/sources.list.d/megam.list"
-		)
-
+	ListFilePath = "/etc/apt/sources.list.d/megam.list"
+)
 
 var ubuntumegamnilavuinstall *UbuntuMegamNilavuInstall
 
@@ -49,8 +48,8 @@ func (tpl *UbuntuMegamNilavuInstall) Run(target urknall.Target) error {
 type UbuntuMegamNilavuInstallTemplate struct{}
 
 func (m *UbuntuMegamNilavuInstallTemplate) Render(pkg urknall.Package) {
-		pkg.AddCommands("repository",
-		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath ),
+	pkg.AddCommands("repository",
+		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 
