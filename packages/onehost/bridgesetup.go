@@ -13,7 +13,7 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-package one
+package onehost
 
 import (
 	"fmt"
@@ -24,30 +24,29 @@ import (
 	//	"strconv"
 )
 
-type Oneinstall struct {
+type Bridge struct {
 	Fs           			*gnuflag.FlagSet
-	OneInstall  	bool
-	Host		 			string
-	Username	 			string
-	Password     			string
+	Networkif		 			string
+	Bridgename	 			string
+	Bridge      bool
 	Quiet        			bool
 }
 
-func (g *Oneinstall) Info() *cmd.Info {
-	desc := `One storage installation.
+func (g *Bridge) Info() *cmd.Info {
+	desc := `Setup bridge.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 
 `
 	return &cmd.Info{
-		Name:    "oneinstall",
-		Usage:   `oneinstall [--host] [--username]...`,
+		Name:    "bridgesetup",
+		Usage:   `bridgesetup [--bridge]`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
 }
 
-func (c *Oneinstall) Run(context *cmd.Context) error {
+func (c *Bridge) Run(context *cmd.Context) error {
 	fmt.Println("[main] starting megdc ...")
 
 	packages := make(map[string]string)
@@ -80,26 +79,20 @@ func (c *Oneinstall) Run(context *cmd.Context) error {
         if err != nil {
         	return err
         }
+
 	}
 
 	// goodbye.
 	return nil
 }
 
-func (c *Oneinstall) Flags() *gnuflag.FlagSet {
+func (c *Bridge) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 
 		/* Install package commands */
-		c.Fs.BoolVar(&c.OneInstall, "install", false, "Install Opennebula ")
-		c.Fs.BoolVar(&c.OneInstall, "i", false, "Install Opennebula ")
+		c.Fs.BoolVar(&c.Bridge, "bridge", false, "Bridge create")
 
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
 		c.Fs.BoolVar(&c.Quiet, "quiet", false, "")
 		c.Fs.BoolVar(&c.Quiet, "q", false, "")
 	}

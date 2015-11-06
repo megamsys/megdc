@@ -21,30 +21,30 @@ import (
 	"github.com/megamsys/megdc/templates"
 )
 
-
-var ubuntuonehostremove *UbuntuOneHostRemove
+var ubunturabbitmqremove *UbuntuRabbitmqRemove
 
 func init() {
-	ubuntuonehostremove = &UbuntuOneHostRemove{}
-	templates.Register("UbuntuOneHostRemove", ubuntuonehostremove)
+	ubunturabbitmqremove = &UbuntuRabbitmqRemove{}
+	templates.Register("UbuntuRabbitmqRemove", ubunturabbitmqremove)
 }
 
-type UbuntuOneHostRemove struct{}
+type UbuntuRabbitmqRemove struct{}
 
-func (tpl *UbuntuOneHostRemove) Render(p urknall.Package) {
-	p.AddTemplate("onehost", &UbuntuOneHostRemoveTemplate{})
+func (tpl *UbuntuRabbitmqRemove) Render(p urknall.Package) {
+	p.AddTemplate("rabbitmq", &UbuntuRabbitRemoveTemplate{})
 }
 
-func (tpl *UbuntuOneHostRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuOneHostRemove{})
+func (tpl *UbuntuRabbitmqRemove) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuRabbitmqRemove{})
 }
 
-type UbuntuOneHostRemoveTemplate struct{}
+type UbuntuRabbitRemoveTemplate struct{}
 
-func (m *UbuntuOneHostRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("onehost",
-	   RemovePackage("opennebula-node"),
-		 RemovePackages(""),
-		 PurgePackages("opennebula-node"),
+func (m *UbuntuRabbitRemoveTemplate) Render(pkg urknall.Package) {
+	pkg.AddCommands("rabbitmq",
+		RemovePackage("rabbitmq-server"),
+		RemovePackages(""),
+		PurgePackages("rabbitmq-server"),
+		Shell("dpkg --get-selections rabbitmq*",),
 	)
 }

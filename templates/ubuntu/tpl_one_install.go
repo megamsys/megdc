@@ -49,7 +49,7 @@ type UbuntuOneInstallTemplate struct{}
 func (m *UbuntuOneInstallTemplate) Render(pkg urknall.Package) {
 
     ip := GetLocalIP()
-   
+
 	pkg.AddCommands("repository",
 	Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
 	Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),
@@ -67,8 +67,8 @@ func (m *UbuntuOneInstallTemplate) Render(pkg urknall.Package) {
   Shell("ln -s /usr/bin/gem2.0 /usr/bin/gem"),
 	Shell("sudo chmod 0440 /etc/sudoers.d/oneadmin"),
 	Shell("sudo rm /usr/share/one/install_gems"),
-	//Shell("sudo cp ~/install_gems /usr/share/one/install_gems"),
-	Shell("sudo cp /usr/share/megam/megdc/conf/trusty/opennebula/install_gems /usr/share/one/install_gems"),
+	Shell("sudo cp ~/install_gems /usr/share/one/install_gems"),
+	//Shell("sudo cp /usr/share/megam/megdc/conf/trusty/opennebula/install_gems /usr/share/one/install_gems"),
 	Shell("sudo chmod 755 /usr/share/one/install_gems"),
 	Shell("sudo /usr/share/one/install_gems sunstone"),
 	Shell("sed -i 's/^[ \t]*:host:.*/:host: " + ip + "/' /etc/one/sunstone-server.conf"),

@@ -41,7 +41,7 @@ type Cephinstall struct {
 }
 
 func (g *Cephinstall) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `Ceph installation.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 

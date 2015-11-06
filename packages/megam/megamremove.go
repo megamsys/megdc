@@ -33,6 +33,7 @@ type Megamremove struct {
 	MegamCommonRemove  		bool
 	MegamSnowflakeRemove 		bool
 	RiakRemove						bool
+	RabbitmqRemove        bool
 	Host		 			string
 	Username	 			string
 	Password     			string
@@ -40,7 +41,7 @@ type Megamremove struct {
 }
 
 func (g *Megamremove) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `Remove megam package [all | nilava,d,...].
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 
@@ -111,7 +112,8 @@ func (c *Megamremove) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.MegamSnowflakeRemove, "s", false, "Remove megam snowflake package")
 		c.Fs.BoolVar(&c.RiakRemove, "riak", false, "Remove Riak package")
 		c.Fs.BoolVar(&c.RiakRemove, "r", false, "Remove Riak package")
-
+		c.Fs.BoolVar(&c.RabbitmqRemove, "rabbitmq", false, "Remove Rabbitmq-server")
+		c.Fs.BoolVar(&c.RabbitmqRemove, "m", false, "Remove Rabbitmq-server")
 
 		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
 		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")

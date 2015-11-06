@@ -41,7 +41,7 @@ type Cephremove struct {
 }
 
 func (g *Cephremove) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `Remove ceph setup.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 

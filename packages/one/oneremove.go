@@ -27,7 +27,6 @@ import (
 type Oneremove struct {
 	Fs           			*gnuflag.FlagSet
 	OneRemove  	bool
-
 	Host		 			string
 	Username	 			string
 	Password     			string
@@ -35,7 +34,7 @@ type Oneremove struct {
 }
 
 func (g *Oneremove) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `Remove one storage.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
 
