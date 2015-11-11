@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntumegamdinstall *UbuntuMegamdInstall
@@ -53,4 +53,5 @@ func (m *UbuntuMegamdInstallTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("megamd",
 		InstallPackages("megamd"),
 	)
+
 }

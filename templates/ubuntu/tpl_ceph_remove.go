@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -44,7 +44,8 @@ func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
 type UbuntuCephRemoveTemplate struct{}
 
 func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
-	Host := host()
+	//Host := host()
+	Host := ""
 	pkg.AddCommands("purgedata",
 		Shell("ceph-deploy purgedata `"+Host+"`"),
 	)

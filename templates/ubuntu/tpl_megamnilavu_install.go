@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -28,30 +28,30 @@ const (
 	ListFilePath = "/etc/apt/sources.list.d/megam.list"
 )
 
-var ubuntumegamnilavuinstall *UbuntuMegamNilavuInstall
+var ubuntunilavuinstall *UbuntuNilavuInstall
 
 func init() {
-	ubuntumegamnilavuinstall = &UbuntuMegamNilavuInstall{}
-	templates.Register("UbuntuMegamNilavuInstall", ubuntumegamnilavuinstall)
+	ubuntunilavuinstall = &UbuntuNilavuInstall{}
+	templates.Register("UbuntuNilavuInstall", ubuntunilavuinstall)
 }
 
-type UbuntuMegamNilavuInstall struct{}
+type UbuntuNilavuInstall struct{}
 
-func (tpl *UbuntuMegamNilavuInstall) Render(p urknall.Package) {
-	p.AddTemplate("nilavu", &UbuntuMegamNilavuInstallTemplate{})
+func (tpl *UbuntuNilavuInstall) Render(p urknall.Package) {
+	p.AddTemplate("nilavu", &UbuntuNilavuInstallTemplate{})
 }
 
-func (tpl *UbuntuMegamNilavuInstall) Options(opts map[string]string) {
+func (tpl *UbuntuNilavuInstall) Options(opts map[string]string) {
 }
 
-func (tpl *UbuntuMegamNilavuInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamNilavuInstall{})
+func (tpl *UbuntuNilavuInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuNilavuInstall{})
 }
 
-type UbuntuMegamNilavuInstallTemplate struct{}
+type UbuntuNilavuInstallTemplate struct{}
 
-func (m *UbuntuMegamNilavuInstallTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("repository",
+func (m *UbuntuNilavuInstallTemplate) Render(pkg urknall.Package) {
+	/*pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
@@ -62,5 +62,12 @@ func (m *UbuntuMegamNilavuInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("megamnilavu",
 		InstallPackages("megamnilavu"),
+	)*/
+	pkg.AddCommands("megamd",
+		Shell("ls -la"),
+	)
+   
+    pkg.AddCommands("megamd23",
+		Shell("ls -la"),
 	)
 }

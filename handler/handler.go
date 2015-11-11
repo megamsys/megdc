@@ -46,21 +46,21 @@ type Handler struct {
 
 func NewHandler(w *WrappedParms) (*Handler, error) {
 	h := &Handler{}
-  if os, err := supportedOS(); err != nil {
-			return nil, err
-		} else {
-			h.platform = os
+	if os, err := supportedOS(); err != nil {
+		return nil, err
+	} else {
+		h.platform = os
 	}
 	fmt.Println(w)
 	h.SetTemplates(w)
-	return h, nil	
+	return h, nil
 }
 
 func (h *Handler) SetTemplates(w *WrappedParms) {
 	for k, _ := range w.Packages {
 		template := templates.NewTemplate()
 		var v, ok = w.GetHost()
-	   if ok {
+		if ok {
 			template.Host = v
 		}
 		v, ok = w.GetUserName()

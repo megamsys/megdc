@@ -23,7 +23,7 @@ import (
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 )
 
 const LOCALHOST = "localhost"
