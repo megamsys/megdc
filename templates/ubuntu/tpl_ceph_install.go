@@ -22,12 +22,10 @@ import (
 )
 
 const (
-	// DefaultCephRepo is the default megam repository to install if its not provided.
-	Ceph_user = "megdc"
+	CephUser = "megdc"
 	User_home = "/home/megdc"
 	Osd1      = "/storage1"
 	Osd2      = "/storage2"
-	Osd3      = "/storage3"
 )
 
 var ubuntucephinstall *UbuntuCephInstall
@@ -38,6 +36,9 @@ func init() {
 }
 
 type UbuntuCephInstall struct{}
+
+func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
+}
 
 func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 	p.AddTemplate("ceph", &UbuntuCephInstallTemplate{})
@@ -50,37 +51,37 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 type UbuntuCephInstallTemplate struct{}
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
-    	Host := host()
-	  ip := GetLocalIP()
+	Host := host()
+	ip := GetLocalIP()
 	pkg.AddCommands("cephuser",
-		Shell(" echo 'Make ceph user as sudoer'" ),
+		Shell(" echo 'Make ceph user as sudoer'"),
 	)
-  pkg.AddCommands("sudoer",
-  Shell("echo ' " + Ceph_user + " ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/" + Ceph_user + "" ),
-)
-pkg.AddCommands("changepermission",
-Shell("sudo chmod 0440 /etc/sudoers.d/" + Ceph_user +"" ),
-)
-pkg.AddCommands("startinstall",
-Shell("echo 'Started installing ceph'" ),
-)
-pkg.AddCommands("install",
-Shell("sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list"),
-)
-pkg.AddCommands("get",
-Shell("sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -"),
-)
-pkg.AddCommands("update",
-Shell("sudo apt-get -y update"),
-)
-pkg.AddCommands("cephDeployinstall",
+	pkg.AddCommands("sudoer",
+		Shell("echo ' "+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
+	)
+	pkg.AddCommands("changepermission",
+		Shell("sudo chmod 0440 /etc/sudoers.d/"+CephUser+""),
+	)
+	pkg.AddCommands("startinstall",
+		Shell("echo 'Started installing ceph'"),
+	)
+	pkg.AddCommands("install",
+		Shell("sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list"),
+	)
+	pkg.AddCommands("get",
+		Shell("sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -"),
+	)
+	pkg.AddCommands("update",
+		Shell("sudo apt-get -y update"),
+	)
+	pkg.AddCommands("cephDeployinstall",
 
-		InstallPackages("ceph-deploy","ceph-common","ceph-mds","dnsmasq","openssh-server","ntp","sshpass"),
+		InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
 	)
 
-pkg.AddCommands("ipaddress",
-Shell("IP_ADDR=" + ip +""),
-)
+	pkg.AddCommands("ipaddress",
+		Shell("IP_ADDR="+ip+""),
+	)
 	pkg.AddCommands("entry",
 		Shell("echo 'Adding entry in /etc/hosts'"),
 	)
@@ -91,18 +92,18 @@ Shell("IP_ADDR=" + ip +""),
 		Shell("echo 'Processing ssh-keygen'"),
 	)
 	pkg.AddCommands("adduser",
-		AddUser("megdc",true),
+		AddUser("megdc", true),
 		Shell("ssh-keygen -N '' -t rsa -f "+User_home+"/.ssh/id_rsa"),
-			Shell("cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys"),
+		Shell("cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys"),
 	)
 	pkg.AddCommands("ipKnown_hosts",
-			AddUser("megdc",true),
-		WriteFile(""+User_home+"/.ssh/ssh_config", content, ""+Ceph_user+"", 0755),
+		AddUser("megdc", true),
+		WriteFile(""+User_home+"/.ssh/ssh_config", content, ""+CephUser+"", 0755),
 	)
 	pkg.AddCommands("hostuser",
-		AddUser(""+Ceph_user+"",true),
-		WriteFile(""+User_home+"/.ssh/config", content2, ""+Ceph_user+"", 0755),
-			)
+		AddUser(""+CephUser+"", true),
+		WriteFile(""+User_home+"/.ssh/config", content2, ""+CephUser+"", 0755),
+	)
 	pkg.AddCommands("makeosd",
 		Shell("echo 'Making directory inside osd drive '"),
 	)
@@ -113,9 +114,6 @@ Shell("IP_ADDR=" + ip +""),
 	pkg.AddCommands("osd2",
 		Shell("mkdir "+Osd2+"/osd"),
 	)
-	pkg.AddCommands("osd3",
-		Shell("mkdir "+Osd3+"/osd"),
-	)
 	pkg.AddCommands("getip",
 		Shell("ip3=`echo 103.56.92.24| cut -d'.' -f 1,2,3`"),
 	)
@@ -124,23 +122,23 @@ Shell("IP_ADDR=" + ip +""),
 		Shell("echo 'Ceph configuration started...'"),
 	)
 	pkg.AddCommands("conf",
-	AddUser(""+Ceph_user+"",true),
-			Shell("mkdir "+User_home+"/ceph-cluster"),
-			Shell("cd "+User_home+"/ceph-cluster"),
-			Shell("ceph-deploy new "+Host+" "),
-			Shell("echo 'osd crush chooseleaf type = 0'"),
-			Shell("echo 'public network = $ip3.0/24'"),
-			Shell("echo 'cluster network = $ip3.0/24'"),
-			Shell("ceph-deploy install "+Host+""),
-			Shell("ceph-deploy mon create-initial"),
-			Shell("ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
-			Shell("ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
-			Shell("ceph-deploy admin "+Host+""),
-			Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring"),
-			Shell("sleep 180"),
-			Shell("ceph osd pool set rbd pg_num 150"),
-			Shell("sleep 180"),
-			Shell("ceph osd pool set rbd pgp_num 150"),
+		AddUser(""+CephUser+"", true),
+		Shell("mkdir "+User_home+"/ceph-cluster"),
+		Shell("cd "+User_home+"/ceph-cluster"),
+		Shell("ceph-deploy new "+Host+" "),
+		Shell("echo 'osd crush chooseleaf type = 0'"),
+		Shell("echo 'public network = $ip3.0/24'"),
+		Shell("echo 'cluster network = $ip3.0/24'"),
+		Shell("ceph-deploy install "+Host+""),
+		Shell("ceph-deploy mon create-initial"),
+		Shell("ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
+		Shell("ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
+		Shell("ceph-deploy admin "+Host+""),
+		Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring"),
+		Shell("sleep 180"),
+		Shell("ceph osd pool set rbd pg_num 150"),
+		Shell("sleep 180"),
+		Shell("ceph osd pool set rbd pgp_num 150"),
 	)
 	pkg.AddCommands("copy",
 		Shell("cp "+User_home+"/ceph-cluster/*.keyring /etc/ceph/"),
@@ -150,6 +148,7 @@ Shell("IP_ADDR=" + ip +""),
 	)
 
 }
+
 const content = `#!/bin/sh
 
 ConnectTimeout 5

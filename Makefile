@@ -69,13 +69,13 @@ bzr:
 
 
 get-code:
-	go get $(GO_EXTRAFLAGS) -u -d -t -v ./...
+	go get $(GO_EXTRAFLAGS) -u -d -t -insecure ./...
 
 godep:
 	go get $(GO_EXTRAFLAGS) github.com/tools/godep
 	godep restore ./...
 
-build: check-path get _go_test _gulpd
+build: check-path get _go_test _megdc
 
 _go_test:
 	go clean  ./...
@@ -85,14 +85,10 @@ _megdc:
 	rm -f megdc
 	go build $(GO_EXTRAFLAGS) -o megdc ./cmd/megdc
 
-_sh_tests:
-	@conf/trusty/megam/megam_test.sh
-
 test: _go_test _megdc
 
 _install_deadcode: git
 	go get $(GO_EXTRAFLAGS) github.com/remyoudompheng/go-misc/deadcode
-
 
 deadcode: _install_deadcode
 	@go list ./... | sed -e 's;github.com/megamsys/megdc/;;' | xargs deadcode

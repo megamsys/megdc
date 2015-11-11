@@ -21,7 +21,6 @@ import (
 	"github.com/megamsys/megdc/templates"
 )
 
-
 var ubuntuoneremove *UbuntuOneRemove
 
 func init() {
@@ -35,6 +34,9 @@ func (tpl *UbuntuOneRemove) Render(p urknall.Package) {
 	p.AddTemplate("one", &UbuntuOneRemoveTemplate{})
 }
 
+func (tpl *UbuntuOneRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuOneRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuOneRemove{})
 }
@@ -43,8 +45,8 @@ type UbuntuOneRemoveTemplate struct{}
 
 func (m *UbuntuOneRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("one",
-	   RemovePackage("opennebula opennebula-sunstone"),
-		 RemovePackages(""),
-		 PurgePackages("opennebula opennebula-sunstone"),
+		RemovePackage("opennebula opennebula-sunstone"),
+		RemovePackages(""),
+		PurgePackages("opennebula opennebula-sunstone"),
 	)
 }

@@ -34,6 +34,9 @@ func (tpl *UbuntuMegamSnowflakeRemove) Render(p urknall.Package) {
 	p.AddTemplate("snowflake", &UbuntuMegamSnowflakeRemoveTemplate{})
 }
 
+func (tpl *UbuntuMegamSnowflakeRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamSnowflakeRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamSnowflakeRemove{})
 }

@@ -37,6 +37,6 @@ If you use the '--quiet' flag megdc doesn't print the logs.
 		Desc:    desc,
 		MinArgs: 0,
 	}
-	command := Megaminstall{}
+	command := MegamInstall{}
 	c.Assert(command.Info(), check.DeepEquals, expected)
 }

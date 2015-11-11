@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/megamsys/megdc",
-	"GoVersion": "go1.5",
+	"GoVersion": "go1.5.1",
 	"Packages": [
 		"./..."
 	],
@@ -20,15 +20,24 @@
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/cmd",
-			"Rev": "a6a0ea47dbf7eed2f5fbd617dd920346dc653657"
+			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/fs",
-			"Rev": "a6a0ea47dbf7eed2f5fbd617dd920346dc653657"
+			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/os",
+			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
 		},
 		{
 			"ImportPath": "github.com/sajari/fuzzy",
 			"Rev": "b6d13352e6a42cfdafe3cd204970a55f6f5b55a5"
+		},
+		{
+			"ImportPath": "github.com/tj/go-spin",
+			"Comment": "1.0.0-9-g4bd47d3",
+			"Rev": "4bd47d3603b5c0460028794fbbf207f881088c08"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/curve25519",

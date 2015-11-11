@@ -34,6 +34,9 @@ func (tpl *UbuntuMegamGatewayInstall) Render(p urknall.Package) {
 	p.AddTemplate("gateway", &UbuntuMegamGatewayInstallTemplate{})
 }
 
+func (tpl *UbuntuMegamGatewayInstall) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamGatewayInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamGatewayInstall{})
 }

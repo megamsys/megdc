@@ -48,6 +48,9 @@ func (tpl *UbuntuMegamCommonInstall) Render(p urknall.Package) {
 	p.AddTemplate("common", &UbuntuMegamCommonInstallTemplate{})
 }
 
+func (tpl *UbuntuMegamCommonInstall) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamCommonInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamCommonInstall{})
 }
