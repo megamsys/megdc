@@ -24,15 +24,13 @@ import (
 type Oneremove struct {
 	Fs        *gnuflag.FlagSet
 	OneRemove bool
-	Host      string
-	Username  string
-	Password  string
+
 }
 
 func (g *Oneremove) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "oneremove",
-		Usage:   `oneremove [--host] [--username]...`,
+		Usage:   `oneremove [--help] [--install/-i]...`,
 		Desc:  ` Setup Opennebula to your local or remote Machine `,
 		MinArgs: 0,
 	}
@@ -55,17 +53,9 @@ func (c *Oneremove) Flags() *gnuflag.FlagSet {
 
 		/* Install package commands */
 		oneMsg := "Remove Opennebula"
-		c.Fs.BoolVar(&c.OneRemove, "install", false, oneMsg)
-		c.Fs.BoolVar(&c.OneRemove, "i", false, oneMsg)
-		hstMsg := "Host address for remote machine"
-		c.Fs.StringVar(&c.Host, "host", "", hstMsg)
-		c.Fs.StringVar(&c.Host, "h", "",hstMsg)
-		usrMsg :=  "username for hosted machine"
-		c.Fs.StringVar(&c.Username, "username", "",usrMsg)
-		c.Fs.StringVar(&c.Username, "u", "",usrMsg)
-		usrPwd := "password for hosted machine"
-		c.Fs.StringVar(&c.Password, "password", "", usrPwd )
-		c.Fs.StringVar(&c.Password, "p", "", usrPwd)
+		c.Fs.BoolVar(&c.OneRemove, "remove", false, oneMsg)
+		c.Fs.BoolVar(&c.OneRemove, "r", false, oneMsg)
+
 	}
 	return c.Fs
 }

@@ -34,7 +34,7 @@ func (g *Oneinstall) Info() *cmd.Info {
 `
 	return &cmd.Info{
 		Name:    "oneinstall",
-		Usage:   `oneinstall [--host] [--username]...`,
+		Usage:   `oneinstall [--install/-i]...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
@@ -54,19 +54,12 @@ func (c *Oneinstall) Run(context *cmd.Context) error {
 func (c *Oneinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		/* Install package commands */
+		/* Install package commands*/
 		oneMsg := "Install Opennebula"
 		c.Fs.BoolVar(&c.OneInstall, "install", false, oneMsg)
 		c.Fs.BoolVar(&c.OneInstall, "i", false, oneMsg)
-    hstMsg := "Host address for remote machine"
-		c.Fs.StringVar(&c.Host, "host", "", hstMsg)
-		c.Fs.StringVar(&c.Host, "h", "",hstMsg)
-    usrMsg :=  "username for hosted machine"
-		c.Fs.StringVar(&c.Username, "username", "",usrMsg)
-		c.Fs.StringVar(&c.Username, "u", "",usrMsg)
-		usrPwd := "password for hosted machine"
-		c.Fs.StringVar(&c.Password, "password", "", usrPwd )
-		c.Fs.StringVar(&c.Password, "p", "", usrPwd)
 	}
 	return c.Fs
+}
+
 }

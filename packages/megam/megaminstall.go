@@ -26,15 +26,9 @@ type MegamInstall struct {
 	Fs        *gnuflag.FlagSet
 	All       bool
 	NilavuInstall    bool
-<<<<<<< HEAD
 	GatewayInstall   bool
 	MegamdInstall    bool
 	SnowflakeInstall bool
-=======
-	Gateway   bool
-	MegamdInstall    bool
-	Snowflake bool
->>>>>>> origin/master
 }
 
 func (c *MegamInstall) Info() *cmd.Info {
