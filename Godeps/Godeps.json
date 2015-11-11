@@ -16,15 +16,15 @@
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/cmd",
-			"Rev": "310a85bd5209f66401aa2c83f6a0154ec4f690a0"
+			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/fs",
-			"Rev": "310a85bd5209f66401aa2c83f6a0154ec4f690a0"
+			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/os",
-			"Rev": "310a85bd5209f66401aa2c83f6a0154ec4f690a0"
+			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
 		},
 		{
 			"ImportPath": "github.com/megamsys/urknall",
