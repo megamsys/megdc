@@ -16,23 +16,17 @@
 package megam
 
 import (
-	//"fmt"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
 	"launchpad.net/gnuflag"
-	//"reflect"
-	//	"strconv"
 )
 
 type Megamreport struct {
-	Fs           			*gnuflag.FlagSet
+	Fs *gnuflag.FlagSet
 }
 
 func (g *Megamreport) Info() *cmd.Info {
-	desc := `starts megdc.
-
-If you use the '--quiet' flag megdc doesn't print the logs.
-
+	desc := `Report about megam installation.
 `
 	return &cmd.Info{
 		Name:    "megamreport",
@@ -43,23 +37,13 @@ If you use the '--quiet' flag megdc doesn't print the logs.
 }
 
 func (c *Megamreport) Run(context *cmd.Context) error {
-	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "")
-
-	packages := make(map[string]string)
-	options := make(map[string]string)
-	
-    packages["MegamReport"] = "MegamReport" 
-	if handler, err := handler.NewHandler(); err != nil {
+	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "report")
+	w := handler.NewWrap(c)
+	if h, err := handler.NewHandler(w); err != nil {
 		return err
-	} else {
-		handler.SetTemplates(packages, options)
-        err := handler.Run()
-        if err != nil {
-        	return err
-        }
+	} else if err := h.Run(); err != nil {
+		return err
 	}
-
-	// goodbye.
 	return nil
 }
 

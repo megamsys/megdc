@@ -21,6 +21,11 @@ import (
 	"github.com/megamsys/megdc/templates"
 )
 
+const (
+	BRIDGE_NAME ="bridge"
+	PHY_DEV ="phy"
+)
+
 var ubuntubridge *UbuntuBridge
 
 func init() {
@@ -28,7 +33,21 @@ func init() {
 	templates.Register("UbuntuBridge", ubuntubridge)
 }
 
-type UbuntuBridge struct{}
+type UbuntuBridge struct {
+	BridgeName string
+	PhyDev     string
+}
+
+func (tpl *UbuntuBridge) Options(opts map[string]string) {
+	if bg, ok := opts[BRIDGE_NAME]; ok {
+		tpl.BridgeName = bg
+	}
+
+	if ph, ok := opts[PHY_DEV]; ok {
+		tpl.BridgeName = ph
+	}
+
+}
 
 func (tpl *UbuntuBridge) Render(p urknall.Package) {
 	p.AddTemplate("bridge", &UbuntuBridgeTemplate{})
@@ -42,19 +61,19 @@ type UbuntuBridgeTemplate struct{}
 
 func (m *UbuntuBridgeTemplate) Render(pkg urknall.Package) {
 
- //    ip := GetLocalIP()
+	//    ip := GetLocalIP()
 
 	pkg.AddCommands("setupbrdige",
-	Shell(""),
-	Shell("sudo echo '"+ "%" + "oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
-  Shell("sudo echo '"+ "%" + "oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),
-  Shell("export BRIDGE_NAME='one'"),
-	Shell("export NETWORK_IF='eth0'"),
-	Shell("sudo ovs-vsctl add-br one"),
-	Shell("sudo echo 'auto one' >> /etc/network/interfaces"),
-	Shell("sudo ovs-vsctl add-port one eth0"),
+		Shell(""),
+		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
+		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),
+		Shell("export BRIDGE_NAME='one'"),
+		Shell("export NETWORK_IF='eth0'"),
+		Shell("sudo ovs-vsctl add-br one"),
+		Shell("sudo echo 'auto one' >> /etc/network/interfaces"),
+		Shell("sudo ovs-vsctl add-port one eth0"),
 
-  UpdatePackagesOmitError(),
- )
+		UpdatePackagesOmitError(),
+	)
 
 }

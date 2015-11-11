@@ -34,6 +34,9 @@ func (tpl *UbuntuMegamdRemove) Render(p urknall.Package) {
 	p.AddTemplate("megamd", &UbuntuMegamdRemoveTemplate{})
 }
 
+func (tpl *UbuntuMegamdRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamdRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamdRemove{})
 }

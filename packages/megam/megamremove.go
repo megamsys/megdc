@@ -16,35 +16,28 @@
 package megam
 
 import (
-	"fmt"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
 	"launchpad.net/gnuflag"
-	"reflect"
-	//	"strconv"
 )
 
 type Megamremove struct {
-	Fs           			*gnuflag.FlagSet
-	All          			bool
-	MegamNilavuRemove  	  bool
-	MegamGatewayRemove 		bool
-	MegamdRemove       		bool
-	MegamCommonRemove  		bool
-	MegamSnowflakeRemove 		bool
-	RiakRemove						bool
-	RabbitmqRemove        bool
-	Host		 			string
-	Username	 			string
-	Password     			string
-	Quiet        			bool
+	Fs                   *gnuflag.FlagSet
+	All                  bool
+	MegamNilavuRemove    bool
+	MegamGatewayRemove   bool
+	MegamdRemove         bool
+	MegamCommonRemove    bool
+	MegamSnowflakeRemove bool
+	RiakRemove           bool
+	RabbitmqRemove       bool
+	Host                 string
+	Username             string
+	Password             string
 }
 
 func (g *Megamremove) Info() *cmd.Info {
-	desc := `Remove megam package [all | nilava,d,...].
-
-If you use the '--quiet' flag megdc doesn't print the logs.
-
+	desc := `Remove megam.
 `
 	return &cmd.Info{
 		Name:    "megamremove",
@@ -55,41 +48,13 @@ If you use the '--quiet' flag megdc doesn't print the logs.
 }
 
 func (c *Megamremove) Run(context *cmd.Context) error {
-	fmt.Println("[main] starting megdc ...")
-
-	packages := make(map[string]string)
-	options := make(map[string]string)
-
-	s := reflect.ValueOf(c).Elem()
-	typ := s.Type()
-	if s.Kind() == reflect.Struct {
-		for i := 0; i < s.NumField(); i++ {
-			key := s.Field(i)
-			value := s.FieldByName(typ.Field(i).Name)
-			switch key.Interface().(type) {
-			case bool:
-				if value.Bool() {
-					packages[typ.Field(i).Name] = typ.Field(i).Name
-				}
-			case string:
-				if value.String() != "" {
-					options[typ.Field(i).Name] = value.String()
-				}
-			}
-		}
-	}
-
-	if handler, err := handler.NewHandler(); err != nil {
+	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
+	w := handler.NewWrap(c)
+	if h, err := handler.NewHandler(w); err != nil {
 		return err
-	} else {
-		handler.SetTemplates(packages, options)
-        err := handler.Run()
-        if err != nil {
-        	return err
-        }
+	} else if err := h.Run(); err != nil {
+		return err
 	}
-
-	// goodbye.
 	return nil
 }
 
@@ -121,8 +86,6 @@ func (c *Megamremove) Flags() *gnuflag.FlagSet {
 		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
 		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
 		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
-		c.Fs.BoolVar(&c.Quiet, "quiet", false, "")
-		c.Fs.BoolVar(&c.Quiet, "q", false, "")
 	}
 	return c.Fs
 }

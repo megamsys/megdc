@@ -34,6 +34,9 @@ func (tpl *UbuntuRabbitmqInstall) Render(p urknall.Package) {
 	p.AddTemplate("rabbitmq", &UbuntuRabbitmqInstallTemplate{})
 }
 
+func (tpl *UbuntuRabbitmqInstall) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuRabbitmqInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuRabbitmqInstall{})
 }
@@ -42,7 +45,7 @@ type UbuntuRabbitmqInstallTemplate struct{}
 
 func (m *UbuntuRabbitmqInstallTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("rabbitmq",
-	  UpdatePackagesOmitError(),
+		UpdatePackagesOmitError(),
 		InstallPackages("rabbitmq-server"),
 	)
 }

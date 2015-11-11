@@ -41,6 +41,9 @@ func (tpl *UbuntuMegamNilavuInstall) Render(p urknall.Package) {
 	p.AddTemplate("nilavu", &UbuntuMegamNilavuInstallTemplate{})
 }
 
+func (tpl *UbuntuMegamNilavuInstall) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamNilavuInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamNilavuInstall{})
 }

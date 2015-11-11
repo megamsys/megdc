@@ -34,6 +34,9 @@ func (tpl *UbuntuMegamNilavuRemove) Render(p urknall.Package) {
 	p.AddTemplate("nilavu", &UbuntuMegamNilavuRemoveTemplate{})
 }
 
+func (tpl *UbuntuMegamNilavuRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamNilavuRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamNilavuRemove{})
 }
