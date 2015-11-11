@@ -18,6 +18,7 @@ package megam
 import (
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
+	"github.com/megamsys/megdc/packages"
 	"launchpad.net/gnuflag"
 )
 
@@ -75,14 +76,15 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.NilavuInstall, "n", false, nilMsg)
 		gwyMsg := "Install megam gateway apiserver"
 		c.Fs.BoolVar(&c.Gateway, "gateway", false, gwyMsg)
-		c.Fs.BoolVar(&c.Gateway, "g", false, gwyMsg)
+		c.Fs.BoolVar(&c.Gateway, "b", false, gwyMsg)
 		megdMsg := "Install megam omni scheduler"
 		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, megdMsg)
 		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
 		snoMsg := "Install megam uidserver"
 		c.Fs.BoolVar(&c.Snowflake, "snowflake", false, snoMsg)
-		c.Fs.BoolVar(&c.Snowflake, "s", false, snoMsg)
+		c.Fs.BoolVar(&c.Snowflake, "d", false, snoMsg)
 	}
+	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
 	return c.Fs
 }
 
