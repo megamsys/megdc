@@ -25,7 +25,7 @@ import (
 )
 
 type Megamreport struct {
-	Fs           			*gnuflag.FlagSet
+	Fs *gnuflag.FlagSet
 }
 
 func (g *Megamreport) Info() *cmd.Info {
@@ -47,16 +47,16 @@ func (c *Megamreport) Run(context *cmd.Context) error {
 
 	packages := make(map[string]string)
 	options := make(map[string]string)
-	
-    packages["MegamReport"] = "MegamReport" 
+
+	packages["MegamReport"] = "MegamReport"
 	if handler, err := handler.NewHandler(); err != nil {
 		return err
 	} else {
 		handler.SetTemplates(packages, options)
-        err := handler.Run()
-        if err != nil {
-        	return err
-        }
+		err := handler.Run()
+		if err != nil {
+			return err
+		}
 	}
 
 	// goodbye.
