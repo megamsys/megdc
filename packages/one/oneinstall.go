@@ -34,7 +34,7 @@ func (g *Oneinstall) Info() *cmd.Info {
 `
 	return &cmd.Info{
 		Name:    "oneinstall",
-		Usage:   `oneinstall [--install/-i]...`,
+		Usage:   `oneinstall [--help/-h]...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
@@ -43,6 +43,7 @@ func (g *Oneinstall) Info() *cmd.Info {
 func (c *Oneinstall) Run(context *cmd.Context) error {
 	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
 	w := handler.NewWrap(c)
+	c.oneInstall(w)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -54,12 +55,19 @@ func (c *Oneinstall) Run(context *cmd.Context) error {
 func (c *Oneinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		/* Install package commands*/
+		/* Install package commands
 		oneMsg := "Install Opennebula"
 		c.Fs.BoolVar(&c.OneInstall, "install", false, oneMsg)
-		c.Fs.BoolVar(&c.OneInstall, "i", false, oneMsg)
+		c.Fs.BoolVar(&c.OneInstall, "i", false, oneMsg)*/
 	}
 	return c.Fs
 }
+func (c *Oneinstall) oneInstall(w *handler.WrappedParms) {
+	DEFAULT_PACKAGES := []string{"OneInstall"}
 
+	if w.Empty() {
+		for i := range DEFAULT_PACKAGES {
+			w.AddPackage(DEFAULT_PACKAGES[i])
+		}
+	}
 }

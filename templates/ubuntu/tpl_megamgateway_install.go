@@ -21,29 +21,29 @@ import (
 	"github.com/megamsys/megdc/templates"
 )
 
-var ubuntumegamgatewayinstall *UbuntuMegamGatewayInstall
+var ubuntugatewayinstall *UbuntuGatewayInstall
 
 func init() {
-	ubuntumegamgatewayinstall = &UbuntuMegamGatewayInstall{}
-	templates.Register("UbuntuMegamGatewayInstall", ubuntumegamgatewayinstall)
+	ubuntugatewayinstall = &UbuntuGatewayInstall{}
+	templates.Register("UbuntuGatewayInstall", ubuntugatewayinstall)
 }
 
-type UbuntuMegamGatewayInstall struct{}
+type UbuntuGatewayInstall struct{}
 
-func (tpl *UbuntuMegamGatewayInstall) Render(p urknall.Package) {
-	p.AddTemplate("gateway", &UbuntuMegamGatewayInstallTemplate{})
+func (tpl *UbuntuGatewayInstall) Render(p urknall.Package) {
+	p.AddTemplate("gateway", &UbuntuGatewayInstallTemplate{})
 }
 
-func (tpl *UbuntuMegamGatewayInstall) Options(opts map[string]string) {
+func (tpl *UbuntuGatewayInstall) Options(opts map[string]string) {
 }
 
-func (tpl *UbuntuMegamGatewayInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamGatewayInstall{})
+func (tpl *UbuntuGatewayInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuGatewayInstall{})
 }
 
-type UbuntuMegamGatewayInstallTemplate struct{}
+type UbuntuGatewayInstallTemplate struct{}
 
-func (m *UbuntuMegamGatewayInstallTemplate) Render(pkg urknall.Package) {
+func (m *UbuntuGatewayInstallTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
 		UpdatePackagesOmitError(),

@@ -89,8 +89,8 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 }
 
 func (c *MegamInstall) chooseAll(w *handler.WrappedParms) {
-	DEFAULT_PACKAGES := []string{"megamsnowflake",
-		"megamnilavu", "megamgateway", "megamd"}
+	DEFAULT_PACKAGES := []string{"SnowflakeInstall",
+		"NilavuInstall", "GatewayInstall", "MegamdInstall"}
 
 	if w.Empty() {
 		for i := range DEFAULT_PACKAGES {

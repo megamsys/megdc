@@ -33,7 +33,7 @@ func (g *Onehostinstall) Info() *cmd.Info {
 `
 	return &cmd.Info{
 		Name:    "onehostinstall",
-		Usage:   `onehostinstall [--host][-i] [--username]...`,
+		Usage:   `onehostinstall [--help/-h] ...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
@@ -42,6 +42,7 @@ func (g *Onehostinstall) Info() *cmd.Info {
 func (c *Onehostinstall) Run(context *cmd.Context) error {
 	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
 	w := handler.NewWrap(c)
+	c.hostInstall(w)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -55,4 +56,13 @@ func (c *Onehostinstall) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 	}
 	return c.Fs
+}
+func (c *Onehostinstall) hostInstall(w *handler.WrappedParms) {
+	DEFAULT_PACKAGES := []string{"OneHostInstall"}
+
+	if w.Empty() {
+		for i := range DEFAULT_PACKAGES {
+			w.AddPackage(DEFAULT_PACKAGES[i])
+		}
+	}
 }

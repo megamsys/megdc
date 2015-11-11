@@ -30,7 +30,7 @@ type Oneremove struct {
 func (g *Oneremove) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "oneremove",
-		Usage:   `oneremove [--help] [--install/-i]...`,
+		Usage:   `oneremove [--help] ...`,
 		Desc:  ` Setup Opennebula to your local or remote Machine `,
 		MinArgs: 0,
 	}
@@ -39,6 +39,7 @@ func (g *Oneremove) Info() *cmd.Info {
 func (c *Oneremove) Run(context *cmd.Context) error {
 	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
 	w := handler.NewWrap(c)
+	c.oneRemove(w)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -51,11 +52,20 @@ func (c *Oneremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 
-		/* Install package commands */
+		/* Install package commands
 		oneMsg := "Remove Opennebula"
 		c.Fs.BoolVar(&c.OneRemove, "remove", false, oneMsg)
-		c.Fs.BoolVar(&c.OneRemove, "r", false, oneMsg)
+		c.Fs.BoolVar(&c.OneRemove, "r", false, oneMsg)*/
 
 	}
 	return c.Fs
+}
+func (c *Oneremove) oneRemove(w *handler.WrappedParms) {
+	DEFAULT_PACKAGES := []string{"OneRemove"}
+
+	if w.Empty() {
+		for i := range DEFAULT_PACKAGES {
+			w.AddPackage(DEFAULT_PACKAGES[i])
+		}
+	}
 }

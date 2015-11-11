@@ -43,6 +43,7 @@ func (g *Onehostremove) Info() *cmd.Info {
 func (c *Onehostremove) Run(context *cmd.Context) error {
 	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
 	w := handler.NewWrap(c)
+	c.hostRemove(w)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -57,4 +58,13 @@ func (c *Onehostremove) Flags() *gnuflag.FlagSet {
 
 	}
 	return c.Fs
+}
+func (c *Onehostremove) hostRemove(w *handler.WrappedParms) {
+	DEFAULT_PACKAGES := []string{"OneHostRemove"}
+
+	if w.Empty() {
+		for i := range DEFAULT_PACKAGES {
+			w.AddPackage(DEFAULT_PACKAGES[i])
+		}
+	}
 }
