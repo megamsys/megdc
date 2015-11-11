@@ -56,6 +56,8 @@ func (c *Cephinstall) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 		c.Fs.StringVar(&c.Osd1, "osd1", "", "osd1 storage drive for hosted machine")
 		c.Fs.StringVar(&c.Osd2, "osd2", "", "osd2 storage drive for hosted machine")
+		//parameter ceph user
+		//parameter ceph password
 	}
 	return c.Fs
 }

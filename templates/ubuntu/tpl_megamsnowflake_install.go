@@ -22,29 +22,29 @@ import (
 )
 
 
-var ubuntumegamsnowflakeinstall *UbuntuMegamSnowflakeInstall
+var ubuntusnowflakeinstall *UbuntuSnowflakeInstall
 
 func init() {
-	ubuntumegamsnowflakeinstall = &UbuntuMegamSnowflakeInstall{}
-	templates.Register("UbuntuMegamSnowflakeInstall", ubuntumegamsnowflakeinstall)
+	ubuntusnowflakeinstall = &UbuntuSnowflakeInstall{}
+	templates.Register("UbuntuSnowflakeInstall", ubuntusnowflakeinstall)
 }
 
-type UbuntuMegamSnowflakeInstall struct{}
+type UbuntuSnowflakeInstall struct{}
 
-func (tpl *UbuntuMegamSnowflakeInstall) Render(p urknall.Package) {
-	p.AddTemplate("snowflake", &UbuntuMegamSnowflakeInstallTemplate{})
+func (tpl *UbuntuSnowflakeInstall) Render(p urknall.Package) {
+	p.AddTemplate("snowflake", &UbuntuSnowflakeInstallTemplate{})
 }
 
-func (tpl *UbuntuMegamSnowflakeInstall) Options(opts map[string]string) {
+func (tpl *UbuntuSnowflakeInstall) Options(opts map[string]string) {
 }
 
-func (tpl *UbuntuMegamSnowflakeInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamSnowflakeInstall{})
+func (tpl *UbuntuSnowflakeInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuSnowflakeInstall{})
 }
 
-type UbuntuMegamSnowflakeInstallTemplate struct{}
+type UbuntuSnowflakeInstallTemplate struct{}
 
-func (m *UbuntuMegamSnowflakeInstallTemplate) Render(pkg urknall.Package) {
+func (m *UbuntuSnowflakeInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),

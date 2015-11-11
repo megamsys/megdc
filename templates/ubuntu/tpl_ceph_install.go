@@ -23,9 +23,26 @@ import (
 
 const (
 	CephUser = "megdc"
-	User_home = "/home/megdc"
+	User_home = "/home/" + CephUser
 	Osd1      = "/storage1"
 	Osd2      = "/storage2"
+	StrictHostKey = `#!/bin/sh
+
+	ConnectTimeout 5
+	Host *
+	StrictHostKeyChecking no
+	`
+	SSHHostConfig = `#!/bin/sh
+  Host %s
+ Hostname %s
+ User %s
+`
+CephConf = `osd crush chooseleaf type = 0
+osd_pool_default_size = 2
+public network = %s/%s
+cluster network = %s/%s
+mon_pg_warn_max_per_osd = 0
+`
 )
 
 var ubuntucephinstall *UbuntuCephInstall
@@ -54,111 +71,60 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	//Host := host()
 	Host := ""
 	ip := GetLocalIP()
-	pkg.AddCommands("cephuser",
-		Shell(" echo 'Make ceph user as sudoer'"),
-	)
+
 	pkg.AddCommands("sudoer",
 		Shell("echo ' "+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
 	)
 	pkg.AddCommands("changepermission",
 		Shell("sudo chmod 0440 /etc/sudoers.d/"+CephUser+""),
 	)
-	pkg.AddCommands("startinstall",
-		Shell("echo 'Started installing ceph'"),
-	)
-	pkg.AddCommands("install",
+
+	pkg.AddCommands("ceph_install",
 		Shell("sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list"),
-	)
-	pkg.AddCommands("get",
 		Shell("sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -"),
-	)
-	pkg.AddCommands("update",
 		Shell("sudo apt-get -y update"),
-	)
-	pkg.AddCommands("cephDeployinstall",
-
-		InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
+    InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
 	)
 
-	pkg.AddCommands("ipaddress",
-		Shell("IP_ADDR="+ip+""),
-	)
-	pkg.AddCommands("entry",
-		Shell("echo 'Adding entry in /etc/hosts'"),
-	)
 	pkg.AddCommands("edithost",
-		Shell("echo '"+ip+" "+Host+"'"),
-	)
-	pkg.AddCommands("ssh",
-		Shell("echo 'Processing ssh-keygen'"),
-	)
-	pkg.AddCommands("adduser",
-		AddUser("megdc", true),
-		Shell("ssh-keygen -N '' -t rsa -f "+User_home+"/.ssh/id_rsa"),
-		Shell("cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys"),
-	)
-	pkg.AddCommands("ipKnown_hosts",
-		AddUser("megdc", true),
-		WriteFile(""+User_home+"/.ssh/ssh_config", content, ""+CephUser+"", 0755),
-	)
-	pkg.AddCommands("hostuser",
-		AddUser(""+CephUser+"", true),
-		WriteFile(""+User_home+"/.ssh/config", content2, ""+CephUser+"", 0755),
-	)
-	pkg.AddCommands("makeosd",
-		Shell("echo 'Making directory inside osd drive '"),
+		Shell("echo '"+ip+" "+Host+"' >> /etc/hosts"),
+
 	)
 
-	pkg.AddCommands("osd1",
-		Shell("mkdir "+Osd1+"/osd"),
-	)
-	pkg.AddCommands("osd2",
-		Shell("mkdir "+Osd2+"/osd"),
-	)
-	pkg.AddCommands("getip",
-		Shell("ip3=`echo 103.56.92.24| cut -d'.' -f 1,2,3`"),
+	pkg.AddCommands("ssh-keygen",
+		Mkdir(User_home +"/.ssh",CephUser,0700),
+		AsUser(CephUser, Shell("ssh-keygen -N '' -t rsa -f "+User_home+"/.ssh/id_rsa")),
+		AsUser(CephUser,	Shell("cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys")),
 	)
 
-	pkg.AddCommands("cephconfig",
-		Shell("echo 'Ceph configuration started...'"),
+	pkg.AddCommands("ssh_known_hosts",
+		 WriteFile(User_home+"/.ssh/ssh_config", StrictHostKey, CephUser, 0755),
+	   WriteFile(User_home+"/.ssh/ssh_config",fmt.Sprintf(SSHHostConfig,Host,Host,CephUser),CephUser, 0755),
 	)
-	pkg.AddCommands("conf",
-		AddUser(""+CephUser+"", true),
-		Shell("mkdir "+User_home+"/ceph-cluster"),
-		Shell("cd "+User_home+"/ceph-cluster"),
-		Shell("ceph-deploy new "+Host+" "),
-		Shell("echo 'osd crush chooseleaf type = 0'"),
-		Shell("echo 'public network = $ip3.0/24'"),
-		Shell("echo 'cluster network = $ip3.0/24'"),
-		Shell("ceph-deploy install "+Host+""),
-		Shell("ceph-deploy mon create-initial"),
-		Shell("ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
-		Shell("ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd "),
-		Shell("ceph-deploy admin "+Host+""),
-		Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring"),
-		Shell("sleep 180"),
-		Shell("ceph osd pool set rbd pg_num 150"),
-		Shell("sleep 180"),
-		Shell("ceph osd pool set rbd pgp_num 150"),
+
+	pkg.AddCommands("mkdir_osd",
+			Mkdir(Osd1 +"/osd","",0755),
+	    Mkdir(Osd2 +"/osd","",0755),
+	)
+
+	pkg.AddCommands("ceph-conf",
+		AsUser(CephUser, Shell("mkdir "+User_home+"/ceph-cluster")),
+			AsUser(CephUser,Shell("cd "+User_home+"/ceph-cluster"),
+			AsUser(CephUser,Shell("ceph-deploy new "+Host+" "),
+ //add cephconf 	 WriteFile(User_home+"/.ssh/ssh_config", StrictHostKey, CephUser, 0755),
+		AsUser(CephUser,Shell("ceph-deploy install "+Host+"")),
+		AsUser(CephUser,Shell("ceph-deploy mon create-initial")),
+		AsUser(CephUser,Shell("ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd ")),
+		AsUser(CephUser,Shell("ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd ")),
+		AsUser(CephUser,Shell("ceph-deploy admin "+Host+"")),
+		AsUser(CephUser,Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring")),
+		AsUser(CephUser,Shell("sleep 180")),
+		AsUser(CephUser,Shell("ceph osd pool set rbd pg_num 100")),
+		AsUser(CephUser,Shell("sleep 180")),
+		AsUser(CephUser,Shell("ceph osd pool set rbd pgp_num 100")),
 	)
 	pkg.AddCommands("copy",
 		Shell("cp "+User_home+"/ceph-cluster/*.keyring /etc/ceph/"),
 	)
-	pkg.AddCommands("complete",
-		Shell("echo 'Ceph installed successfully.'"),
-	)
 
 }
-
-const content = `#!/bin/sh
-
-ConnectTimeout 5
-Host *
-StrictHostKeyChecking no
-`
-const content2 = `#!/bin/sh
-  Host ranjitha-sfd-sdf
- Hostname ranjitha-sfd-sdf
- User megdc
-
-`

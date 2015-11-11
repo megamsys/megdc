@@ -40,6 +40,7 @@ func (c *Megamreport) Run(context *cmd.Context) error {
 
 	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "report")
 	w := handler.NewWrap(c)
+	c.megamReport(w)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -53,4 +54,13 @@ func (c *Megamreport) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 	}
 	return c.Fs
+}
+func (c *Megamreport) megamReport(w *handler.WrappedParms) {
+	DEFAULT_PACKAGES := []string{"MegamReport"}
+
+	if w.Empty() {
+		for i := range DEFAULT_PACKAGES {
+			w.AddPackage(DEFAULT_PACKAGES[i])
+		}
+	}
 }

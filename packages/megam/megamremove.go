@@ -24,25 +24,36 @@ import (
 type Megamremove struct {
 	Fs                   *gnuflag.FlagSet
 	All                  bool
-	MegamNilavuRemove    bool
-	MegamGatewayRemove   bool
-	MegamdRemove         bool
-	MegamCommonRemove    bool
-	MegamSnowflakeRemove bool
-	RiakRemove           bool
-	RabbitmqRemove       bool
-	Host                 string
-	Username             string
-	Password             string
+	NilavuRemove    bool
+	GatewayRemove   bool
+	MegamdRemove    bool
+	SnowflakeRemove bool
 }
 
 func (g *Megamremove) Info() *cmd.Info {
-	desc := `Remove megam.
-`
 	return &cmd.Info{
 		Name:    "megamremove",
-		Usage:   `megamremove [--all] [--nilavu]...`,
-		Desc:    desc,
+		Usage:   `megamremove [--nilavu/-n] [--gateway/-g] [--snowflake/-s]...`,
+		Desc:    `Remove megam (app orchestrator). For megdc, available install plaform is ubuntu.
+We are working to support centos.
+In order to Remove individual packages use the following options.
+
+The [[--nilavu]] parameter removes megam cockpit ui.
+This code name is nilavu packaged as megamnilavu.
+
+The [[--gateway]] parameter removes megam gateway apiserver.
+This code name is gateway packaged as megamgateway.
+
+The [[--snowflake]] parameter removes megam uidserver.
+This code name is snowflake packaged as megamsnowflake.
+
+The [[--megamd]] parameter removes megam omni scheduler.
+This code name is megamd packaged as megammegamd.
+
+To install again megam use megaminstall
+
+For more information read http://docs.megam.io.
+`,
 		MinArgs: 0,
 	}
 }
@@ -60,32 +71,20 @@ func (c *Megamremove) Run(context *cmd.Context) error {
 
 func (c *Megamremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
-		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.BoolVar(&c.All, "all", false, "Remove all megam packages")
-		c.Fs.BoolVar(&c.All, "a", false, "Remove all megam packages")
-
-		/* Remove package commands */
-		c.Fs.BoolVar(&c.MegamNilavuRemove, "megamnilavu", false, "Remove nilavu package")
-		c.Fs.BoolVar(&c.MegamNilavuRemove, "n", false, "Remove nilavu package")
-		c.Fs.BoolVar(&c.MegamGatewayRemove, "megamgateway", false, "Remove megam gateway package")
-		c.Fs.BoolVar(&c.MegamGatewayRemove, "g", false, "Remove megam gateway package")
-		c.Fs.BoolVar(&c.MegamdRemove, "megamd", false, "Remove megamd package")
-		c.Fs.BoolVar(&c.MegamdRemove, "d", false, "Remove megamd package")
-		c.Fs.BoolVar(&c.MegamCommonRemove, "megamcommon", false, "Remove megamcommon package")
-		c.Fs.BoolVar(&c.MegamCommonRemove, "c", false, "Remove megamcommon package")
-		c.Fs.BoolVar(&c.MegamSnowflakeRemove, "megamsnowflake", false, "Remove megam snowflake package")
-		c.Fs.BoolVar(&c.MegamSnowflakeRemove, "s", false, "Remove megam snowflake package")
-		c.Fs.BoolVar(&c.RiakRemove, "riak", false, "Remove Riak package")
-		c.Fs.BoolVar(&c.RiakRemove, "r", false, "Remove Riak package")
-		c.Fs.BoolVar(&c.RabbitmqRemove, "rabbitmq", false, "Remove Rabbitmq-server")
-		c.Fs.BoolVar(&c.RabbitmqRemove, "m", false, "Remove Rabbitmq-server")
-
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
+			/* Remove package commands */
+		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
+		nilMsg := "Uninstall megam cockpit ui"
+		c.Fs.BoolVar(&c.NilavuRemove, "nilavu", false, nilMsg)
+		c.Fs.BoolVar(&c.NilavuRemove, "n", false, nilMsg)
+		gwyMsg := "Uninstall megam gateway apiserver"
+		c.Fs.BoolVar(&c.GatewayRemove, "gateway", false, gwyMsg)
+		c.Fs.BoolVar(&c.GatewayRemove, "g", false, gwyMsg)
+		megdMsg := "Uninstall megam omni scheduler"
+		c.Fs.BoolVar(&c.MegamdRemove, "megamd", false, megdMsg)
+		c.Fs.BoolVar(&c.MegamdRemove, "d", false, megdMsg)
+		snoMsg := "Uninstall megam uidserver"
+		c.Fs.BoolVar(&c.SnowflakeRemove, "snowflake", false, snoMsg)
+		c.Fs.BoolVar(&c.SnowflakeRemove, "s", false, snoMsg)
 	}
 	return c.Fs
 }

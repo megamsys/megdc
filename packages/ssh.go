@@ -30,15 +30,15 @@ type SSHCommand struct {
 func (cmd *SSHCommand) Flags() *gnuflag.FlagSet {
 	if cmd.fs == nil {
 		cmd.fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
-		hostMsg := "The host of the server to ssh"
+	/*	hostMsg := "The host of the server to ssh"
 		cmd.fs.StringVar(&cmd.Host, "host", "localhost", hostMsg)
-		cmd.fs.StringVar(&cmd.Host, "h", "localhost", hostMsg)
+		cmd.fs.StringVar(&cmd.Host, "o", "localhost", hostMsg)
 		usrMsg := "The username of the server"
 		cmd.fs.StringVar(&cmd.Username, "username", "megdc", usrMsg)
 		cmd.fs.StringVar(&cmd.Username, "u", "megdc", usrMsg)
 		pwdMsg := "The password of the server"
 		cmd.fs.StringVar(&cmd.Password, "password", "megdc", pwdMsg)
-		cmd.fs.StringVar(&cmd.Password, "p", "megdc", pwdMsg)
+		cmd.fs.StringVar(&cmd.Password, "p", "megdc", pwdMsg)*/
 
 	}
 	return cmd.fs
