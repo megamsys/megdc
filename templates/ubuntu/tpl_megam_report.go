@@ -18,7 +18,7 @@ package ubuntu
 
 import (
 	"fmt"
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 	"os/exec"
 	// "sync"

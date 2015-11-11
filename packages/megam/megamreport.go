@@ -37,6 +37,7 @@ func (g *Megamreport) Info() *cmd.Info {
 }
 
 func (c *Megamreport) Run(context *cmd.Context) error {
+
 	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "report")
 	w := handler.NewWrap(c)
 	if h, err := handler.NewHandler(w); err != nil {

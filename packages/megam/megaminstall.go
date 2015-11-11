@@ -26,9 +26,15 @@ type MegamInstall struct {
 	Fs        *gnuflag.FlagSet
 	All       bool
 	NilavuInstall    bool
+<<<<<<< HEAD
 	GatewayInstall   bool
 	MegamdInstall    bool
 	SnowflakeInstall bool
+=======
+	Gateway   bool
+	MegamdInstall    bool
+	Snowflake bool
+>>>>>>> origin/master
 }
 
 func (c *MegamInstall) Info() *cmd.Info {
@@ -72,7 +78,6 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
 		nilMsg := "Install megam cockpit ui"
-
 		c.Fs.BoolVar(&c.NilavuInstall, "nilavu", false, nilMsg)
 		c.Fs.BoolVar(&c.NilavuInstall, "n", false, nilMsg)
 		gwyMsg := "Install megam gateway apiserver"
@@ -84,7 +89,6 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		snoMsg := "Install megam uidserver"
 		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
 		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
-
 	}
 	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
 	return c.Fs

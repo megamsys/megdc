@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -51,7 +51,8 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 type UbuntuCephInstallTemplate struct{}
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
-	Host := host()
+	//Host := host()
+	Host := ""
 	ip := GetLocalIP()
 	pkg.AddCommands("cephuser",
 		Shell(" echo 'Make ceph user as sudoer'"),

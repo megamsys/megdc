@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"net"
-	"os"
 )
 
 // Upgrade the package cache and update the installed packages (using apt).
@@ -99,15 +98,4 @@ func GetLocalIP() string {
     }
     return ip
 }
-func host() string{
-      Host := ""
-				name, err := os.Hostname()
 
-				if err != nil {
-								panic(err)
-				}
-
-		 fmt.Println("Hostname reported by kernel : ", name)
-		  Host = name
-       return Host
-}
