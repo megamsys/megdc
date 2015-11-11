@@ -72,7 +72,7 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
 		nilMsg := "Install megam cockpit ui"
-<<<<<<< HEAD
+
 		c.Fs.BoolVar(&c.NilavuInstall, "nilavu", false, nilMsg)
 		c.Fs.BoolVar(&c.NilavuInstall, "n", false, nilMsg)
 		gwyMsg := "Install megam gateway apiserver"
@@ -84,19 +84,7 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		snoMsg := "Install megam uidserver"
 		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
 		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
-=======
-		c.Fs.BoolVar(&c.Nilavu, "nilavu", false, nilMsg)
-		c.Fs.BoolVar(&c.Nilavu, "a", false, nilMsg)
-		gwyMsg := "Install megam gateway apiserver"
-		c.Fs.BoolVar(&c.Gateway, "gateway", false, gwyMsg)
-		c.Fs.BoolVar(&c.Gateway, "b", false, gwyMsg)
-		megdMsg := "Install megam omni scheduler"
-		c.Fs.BoolVar(&c.Megamd, "megamd", false, megdMsg)
-		c.Fs.BoolVar(&c.Megamd, "c", false, megdMsg)
-		snoMsg := "Install megam uidserver"
-		c.Fs.BoolVar(&c.Snowflake, "snowflake", false, snoMsg)
-		c.Fs.BoolVar(&c.Snowflake, "d", false, snoMsg)
->>>>>>> origin/master
+
 	}
 	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
 	return c.Fs
