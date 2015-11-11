@@ -18,7 +18,7 @@ package ubuntu
 
 import (
 	"fmt"
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 	"os/exec"
 	// "sync"
@@ -41,6 +41,9 @@ type UbuntuMegamReport struct{}
 
 func (tpl *UbuntuMegamReport) Render(p urknall.Package) {
 	p.AddTemplate("report", &UbuntuMegamReportTemplate{})
+}
+
+func (tpl *UbuntuMegamReport) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuMegamReport) Run(target urknall.Target) error {
@@ -175,7 +178,7 @@ parseParameters()   {
 
   for item in "$@"
   do
-    case $item in     
+    case $item in
       [mM][eE][gG][aA][mM])
       report_megam
       ;;
@@ -204,11 +207,11 @@ help() {
   echo  "one_host     : report about the one_host installation"
 }
 
-report_megam() { 
+report_megam() {
 
   pkgnames=( megamcommon megamnilavu megamsnowflake megamgateway megamd riak rabbitmq-server ruby2.0 openjdk-7-jdk)
 
-  howdy_pkgs pkgnames[@]  
+  howdy_pkgs pkgnames[@]
 
 }
 #--------------------------------------------------------------------------
@@ -298,7 +301,7 @@ howdy_pkgs() {
         printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
   	printf "*${bldblu}%-50s${txtrst}*\n" "   ${pkgname} Report";
   	printf "*${txtblu}%-50s${txtrst}*\n" "--------------------------------------------------";
-        dpkg -s "$pkgname" >/dev/null 2>&1 && {        
+        dpkg -s "$pkgname" >/dev/null 2>&1 && {
            contentparse $pkgname "Status" "Install-"
 	   contentparse $pkgname "Size"
 	   contentparse $pkgname "Architecture"
@@ -318,22 +321,22 @@ howdy_pkgs() {
 #--------------------------------------------------------------------------
 statusparse(){
   sername=$1
-  
+
    if (( $(ps -ef | grep -v grep | grep $sername | wc -l) > 0 ))
     then
     sudo service $sername status > /dev/null 2>&1 && {
-      echo -e "${bldpur}$2${txtrst} \t \t ${bakgrn}Running${txtrst}\n";     
+      echo -e "${bldpur}$2${txtrst} \t \t ${bakgrn}Running${txtrst}\n";
     } || {
-      echo -e "${bldpur}$2${txtrst} \t \t ${bakred}NotRunning${txtrst}\n";  
+      echo -e "${bldpur}$2${txtrst} \t \t ${bakred}NotRunning${txtrst}\n";
     }
     else
-      echo -e "${bldpur}$2${txtrst} \t \t ${bakred}NotRunning${txtrst}\n"; 
+      echo -e "${bldpur}$2${txtrst} \t \t ${bakred}NotRunning${txtrst}\n";
     fi
 }
 
 contentparse(){
     str=$(dpkg -s $1 | grep $2)
-    IFS=: read typename value <<< $str		
+    IFS=: read typename value <<< $str
     echo -e "${bldpur}$3$typename \t \t ${bldcyn}$value${txtrst}";
 }
 

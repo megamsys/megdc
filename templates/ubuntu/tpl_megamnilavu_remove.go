@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -32,6 +32,9 @@ type UbuntuMegamNilavuRemove struct{}
 
 func (tpl *UbuntuMegamNilavuRemove) Render(p urknall.Package) {
 	p.AddTemplate("nilavu", &UbuntuMegamNilavuRemoveTemplate{})
+}
+
+func (tpl *UbuntuMegamNilavuRemove) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuMegamNilavuRemove) Run(target urknall.Target) error {

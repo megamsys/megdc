@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -32,6 +32,9 @@ type UbuntuMegamGatewayRemove struct{}
 
 func (tpl *UbuntuMegamGatewayRemove) Render(p urknall.Package) {
 	p.AddTemplate("gateway", &UbuntuMegamGatewayRemoveTemplate{})
+}
+
+func (tpl *UbuntuMegamGatewayRemove) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuMegamGatewayRemove) Run(target urknall.Target) error {

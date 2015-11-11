@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -32,6 +32,9 @@ type UbuntuMegamGatewayInstall struct{}
 
 func (tpl *UbuntuMegamGatewayInstall) Render(p urknall.Package) {
 	p.AddTemplate("gateway", &UbuntuMegamGatewayInstallTemplate{})
+}
+
+func (tpl *UbuntuMegamGatewayInstall) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuMegamGatewayInstall) Run(target urknall.Target) error {

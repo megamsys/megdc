@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -34,6 +34,10 @@ func (tpl *UbuntuRabbitmqRemove) Render(p urknall.Package) {
 	p.AddTemplate("rabbitmq", &UbuntuRabbitRemoveTemplate{})
 }
 
+func (tpl *UbuntuRabbitmqRemove) Options(opts map[string]string) {
+}
+
+
 func (tpl *UbuntuRabbitmqRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuRabbitmqRemove{})
 }
@@ -45,6 +49,6 @@ func (m *UbuntuRabbitRemoveTemplate) Render(pkg urknall.Package) {
 		RemovePackage("rabbitmq-server"),
 		RemovePackages(""),
 		PurgePackages("rabbitmq-server"),
-		Shell("dpkg --get-selections rabbitmq*",),
+		Shell("dpkg --get-selections rabbitmq*"),
 	)
 }

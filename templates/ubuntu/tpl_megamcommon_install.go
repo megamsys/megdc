@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -46,6 +46,9 @@ type UbuntuMegamCommonInstall struct{}
 
 func (tpl *UbuntuMegamCommonInstall) Render(p urknall.Package) {
 	p.AddTemplate("common", &UbuntuMegamCommonInstallTemplate{})
+}
+
+func (tpl *UbuntuMegamCommonInstall) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuMegamCommonInstall) Run(target urknall.Target) error {

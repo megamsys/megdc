@@ -16,85 +16,45 @@
 package onehost
 
 import (
-	"fmt"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
 	"launchpad.net/gnuflag"
-	"reflect"
-	//	"strconv"
 )
 
 type Bridge struct {
-	Fs           			*gnuflag.FlagSet
-	Networkif		 			string
-	Bridgename	 			string
-	Bridge      bool
-	Quiet        			bool
+	Fs     *gnuflag.FlagSet
+	PhyDev string
+	Bridge string
 }
 
 func (g *Bridge) Info() *cmd.Info {
-	desc := `Setup bridge.
-
-If you use the '--quiet' flag megdc doesn't print the logs.
-
+	desc := `create network
+	Default: bridge name:one, phydev:eth0
 `
 	return &cmd.Info{
-		Name:    "bridgesetup",
-		Usage:   `bridgesetup [--bridge]`,
+		Name:    "createnetwork",
+		Usage:   `createnetwork [--bridge] name --[phy] name`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
 }
 
 func (c *Bridge) Run(context *cmd.Context) error {
-	fmt.Println("[main] starting megdc ...")
-
-	packages := make(map[string]string)
-	options := make(map[string]string)
-
-	s := reflect.ValueOf(c).Elem()
-	typ := s.Type()
-	if s.Kind() == reflect.Struct {
-		for i := 0; i < s.NumField(); i++ {
-			key := s.Field(i)
-			value := s.FieldByName(typ.Field(i).Name)
-			switch key.Interface().(type) {
-			case bool:
-				if value.Bool() {
-					packages[typ.Field(i).Name] = typ.Field(i).Name
-				}
-			case string:
-				if value.String() != "" {
-					options[typ.Field(i).Name] = value.String()
-				}
-			}
-		}
-	}
-
-	if handler, err := handler.NewHandler(); err != nil {
+	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "createnetwork")
+	w := handler.NewWrap(c)
+	if h, err := handler.NewHandler(w); err != nil {
 		return err
-	} else {
-		handler.SetTemplates(packages, options)
-        err := handler.Run()
-        if err != nil {
-        	return err
-        }
-
+	} else if err := h.Run(); err != nil {
+		return err
 	}
-
-	// goodbye.
 	return nil
 }
 
 func (c *Bridge) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
-		/* Install package commands */
-		c.Fs.BoolVar(&c.Bridge, "bridge", false, "Bridge create")
-
-		c.Fs.BoolVar(&c.Quiet, "quiet", false, "")
-		c.Fs.BoolVar(&c.Quiet, "q", false, "")
+		c.Fs.StringVar(&c.PhyDev, "phy", "", "Physical device or Network interface (default: eth0)")
+		c.Fs.StringVar(&c.Bridge, "bridge", "", "The name of the bridge (default: one)")
 	}
 	return c.Fs
 }

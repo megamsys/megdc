@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -34,6 +34,9 @@ func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
 	p.AddTemplate("nilavu", &UbuntuCephRemoveTemplate{})
 }
 
+func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCephRemove{})
 }
@@ -41,20 +44,21 @@ func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
 type UbuntuCephRemoveTemplate struct{}
 
 func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
-	Host := host()
+	//Host := host()
+	Host := ""
 	pkg.AddCommands("purgedata",
-		Shell("ceph-deploy purgedata `" + Host + "`"),
+		Shell("ceph-deploy purgedata `"+Host+"`"),
 	)
-  pkg.AddCommands("forgetKeys",
+	pkg.AddCommands("forgetKeys",
 		Shell("ceph-deploy forgetkeys"),
 	)
-  pkg.AddCommands("purge",
-		Shell("ceph-deploy purge " + Host + ""),
+	pkg.AddCommands("purge",
+		Shell("ceph-deploy purge "+Host+""),
 	)
-  pkg.AddCommands("remove",
+	pkg.AddCommands("remove",
 		Shell("sudo rm -r /var/lib/ceph/"),
 	)
-  pkg.AddCommands("cephdeploy",
+	pkg.AddCommands("cephdeploy",
 		Shell("sudo apt-get -y remove ceph-deploy ceph-common ceph-mds"),
 	)
 	pkg.AddCommands("purgeceph",

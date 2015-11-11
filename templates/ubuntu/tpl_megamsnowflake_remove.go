@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -32,6 +32,9 @@ type UbuntuMegamSnowflakeRemove struct{}
 
 func (tpl *UbuntuMegamSnowflakeRemove) Render(p urknall.Package) {
 	p.AddTemplate("snowflake", &UbuntuMegamSnowflakeRemoveTemplate{})
+}
+
+func (tpl *UbuntuMegamSnowflakeRemove) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuMegamSnowflakeRemove) Run(target urknall.Target) error {

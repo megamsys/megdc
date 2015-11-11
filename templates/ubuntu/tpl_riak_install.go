@@ -17,7 +17,7 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
@@ -34,6 +34,9 @@ func (tpl *UbuntuRiakInstall) Render(p urknall.Package) {
 	p.AddTemplate("riak", &UbuntuRiakInstallTemplate{})
 }
 
+func (tpl *UbuntuRiakInstall) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuRiakInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuRiakInstall{})
 }
@@ -42,9 +45,8 @@ type UbuntuRiakInstallTemplate struct{}
 
 func (m *UbuntuRiakInstallTemplate) Render(pkg urknall.Package) {
 
-
 	pkg.AddCommands("repository",
-		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 
