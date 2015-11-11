@@ -18,16 +18,13 @@ package ubuntu
 
 import (
 	"fmt"
-	"github.com/megamsys/urknall"
-	"github.com/megamsys/megdc/templates"
-	"os/exec"
-	// "sync"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
-	//"reflect"
-	//pp "github.com/megamsys/libgo/cmd"
-	//"github.com/codeskyblue/go-sh"
+
+	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntumegamreport *UbuntuMegamReport
@@ -105,7 +102,7 @@ func writefile() error {
 }
 
 const reportscript = `#!/bin/bash
-#Copyright (c) 2014 Megam Systems.
+#Copyright (c) 2013-15 Megam Systems.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -119,7 +116,7 @@ const reportscript = `#!/bin/bash
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 ###############################################################################
-# A linux script which helps to verify the cib installation.
+# A linux script which helps to verify the megdc installation.
 #                      start megam
 #                      start one.
 ###############################################################################

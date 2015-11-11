@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntugatewayremove *UbuntuGatewayRemove
@@ -48,6 +48,6 @@ func (m *UbuntuGatewayRemoveTemplate) Render(pkg urknall.Package) {
 		RemovePackage("megamgateway"),
 		RemovePackages(""),
 		PurgePackages("megamgateway"),
-		Shell("dpkg --get-selections megam*",),
+		Shell("dpkg --get-selections megam*"),
 	)
 }

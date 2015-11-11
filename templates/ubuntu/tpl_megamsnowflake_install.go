@@ -17,10 +17,9 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
-
 
 var ubuntusnowflakeinstall *UbuntuSnowflakeInstall
 
@@ -47,7 +46,7 @@ type UbuntuSnowflakeInstallTemplate struct{}
 func (m *UbuntuSnowflakeInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("repository",
-		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 

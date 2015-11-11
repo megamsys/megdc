@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubunturabbitmqremove *UbuntuRabbitmqRemove
@@ -36,7 +36,6 @@ func (tpl *UbuntuRabbitmqRemove) Render(p urknall.Package) {
 
 func (tpl *UbuntuRabbitmqRemove) Options(opts map[string]string) {
 }
-
 
 func (tpl *UbuntuRabbitmqRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuRabbitmqRemove{})
