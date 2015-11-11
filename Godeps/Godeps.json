@@ -7,28 +7,28 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/Sirupsen/logrus",
-			"Comment": "v0.8.7-35-gfe6f2b0",
-			"Rev": "fe6f2b03125e4fcafb21406381010e363a072c80"
+			"Comment": "v0.8.7-37-g6f383a9",
+			"Rev": "6f383a9b2998dd6f401704269c3e6e192f6175ad"
 		},
 		{
 			"ImportPath": "github.com/dynport/dgtk/pubsub",
-			"Rev": "12a2d100cebf3e69952c9626b6c395701ce9dd85"
-		},
-		{
-			"ImportPath": "github.com/megamsys/urknall",
-			"Rev": "432215de5882b4f5a50cdf1ad1556eb96f35fb9b"
+			"Rev": "6efda1e0c80cac5a0a6602b4b9a6d2b42540f4de"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/cmd",
-			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
+			"Rev": "310a85bd5209f66401aa2c83f6a0154ec4f690a0"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/fs",
-			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
+			"Rev": "310a85bd5209f66401aa2c83f6a0154ec4f690a0"
 		},
 		{
 			"ImportPath": "github.com/megamsys/libgo/os",
-			"Rev": "602672aecc33c1ca60474b6726c3b250c04079d5"
+			"Rev": "310a85bd5209f66401aa2c83f6a0154ec4f690a0"
+		},
+		{
+			"ImportPath": "github.com/megamsys/urknall",
+			"Rev": "34a9978dc160061e806c762f667156b67ddf2ee1"
 		},
 		{
 			"ImportPath": "github.com/sajari/fuzzy",

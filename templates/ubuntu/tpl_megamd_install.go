@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntumegamdinstall *UbuntuMegamdInstall
@@ -45,20 +45,13 @@ type UbuntuMegamdInstallTemplate struct{}
 
 func (m *UbuntuMegamdInstallTemplate) Render(pkg urknall.Package) {
 
-/*	pkg.AddCommands("repository",
+	pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 
 	pkg.AddCommands("megamd",
 		InstallPackages("megamd"),
-	)*/
+	)
 
-   pkg.AddCommands("megamd",
-		Shell("ls -la"),
-	)
-   
-    pkg.AddCommands("megamd23",
-		Shell("ls -la"),
-	)
 }

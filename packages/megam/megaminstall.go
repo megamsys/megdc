@@ -75,14 +75,14 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.NilavuInstall, "nilavu", false, nilMsg)
 		c.Fs.BoolVar(&c.NilavuInstall, "n", false, nilMsg)
 		gwyMsg := "Install megam gateway apiserver"
-		c.Fs.BoolVar(&c.Gateway, "gateway", false, gwyMsg)
-		c.Fs.BoolVar(&c.Gateway, "b", false, gwyMsg)
+		c.Fs.BoolVar(&c.GatewayInstall, "gateway", false, gwyMsg)
+		c.Fs.BoolVar(&c.GatewayInstall, "b", false, gwyMsg)
 		megdMsg := "Install megam omni scheduler"
 		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, megdMsg)
 		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
 		snoMsg := "Install megam uidserver"
-		c.Fs.BoolVar(&c.Snowflake, "snowflake", false, snoMsg)
-		c.Fs.BoolVar(&c.Snowflake, "d", false, snoMsg)
+		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
+		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 	}
 	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
 	return c.Fs
