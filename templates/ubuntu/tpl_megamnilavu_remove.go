@@ -21,29 +21,29 @@ import (
 	"github.com/megamsys/megdc/templates"
 )
 
-var ubuntumegamnilavuremove *UbuntuMegamNilavuRemove
+var ubuntunilavuremove *UbuntuNilavuRemove
 
 func init() {
-	ubuntumegamnilavuremove = &UbuntuMegamNilavuRemove{}
-	templates.Register("UbuntuMegamNilavuRemove", ubuntumegamnilavuremove)
+	ubuntunilavuremove = &UbuntuNilavuRemove{}
+	templates.Register("UbuntuNilavuRemove", ubuntunilavuremove)
 }
 
-type UbuntuMegamNilavuRemove struct{}
+type UbuntuNilavuRemove struct{}
 
-func (tpl *UbuntuMegamNilavuRemove) Render(p urknall.Package) {
-	p.AddTemplate("nilavu", &UbuntuMegamNilavuRemoveTemplate{})
+func (tpl *UbuntuNilavuRemove) Render(p urknall.Package) {
+	p.AddTemplate("nilavu", &UbuntuNilavuRemoveTemplate{})
 }
 
-func (tpl *UbuntuMegamNilavuRemove) Options(opts map[string]string) {
+func (tpl *UbuntuNilavuRemove) Options(opts map[string]string) {
 }
 
-func (tpl *UbuntuMegamNilavuRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamNilavuRemove{})
+func (tpl *UbuntuNilavuRemove) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuNilavuRemove{})
 }
 
-type UbuntuMegamNilavuRemoveTemplate struct{}
+type UbuntuNilavuRemoveTemplate struct{}
 
-func (m *UbuntuMegamNilavuRemoveTemplate) Render(pkg urknall.Package) {
+func (m *UbuntuNilavuRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("megamnilavu",
 		RemovePackage("megamnilavu"),
 		RemovePackages(""),

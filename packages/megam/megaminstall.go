@@ -26,16 +26,16 @@ type MegamInstall struct {
 	Fs        *gnuflag.FlagSet
 	All       bool
 	NilavuInstall    bool
-	Gateway   bool
+	GatewayInstall   bool
 	MegamdInstall    bool
-	Snowflake bool
+	SnowflakeInstall bool
 }
 
 func (c *MegamInstall) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:  "megaminstall",
 		Usage: "megaminstall [--nilavu/-n] [--gateway/-g] [--snowflake/-s]",
-		Desc: `Install megam (app orchestrator) on the local machine. For megdc, available install plaform is ubuntu.
+		Desc: `Install megam (app orchestrator) . For megdc, available install plaform is ubuntu.
 We are working to support centos.
 In order to install individual packages use the following options.
 
@@ -76,7 +76,7 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.NilavuInstall, "n", false, nilMsg)
 		gwyMsg := "Install megam gateway apiserver"
 		c.Fs.BoolVar(&c.GatewayInstall, "gateway", false, gwyMsg)
-		c.Fs.BoolVar(&c.GatewayInstall, "b", false, gwyMsg)
+		c.Fs.BoolVar(&c.GatewayInstall, "g", false, gwyMsg)
 		megdMsg := "Install megam omni scheduler"
 		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, megdMsg)
 		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
@@ -89,8 +89,8 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 }
 
 func (c *MegamInstall) chooseAll(w *handler.WrappedParms) {
-	DEFAULT_PACKAGES := []string{"megamsnowflake",
-		"megamnilavu", "megamgateway", "megamd"}
+	DEFAULT_PACKAGES := []string{"SnowflakeInstall",
+		"NilavuInstall", "GatewayInstall", "MegamdInstall"}
 
 	if w.Empty() {
 		for i := range DEFAULT_PACKAGES {

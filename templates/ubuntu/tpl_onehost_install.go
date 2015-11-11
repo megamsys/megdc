@@ -61,14 +61,16 @@ func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
 		InstallPackages("build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils lvm2 ssh iproute iputils-arping make"),
 	)
 
-	pkg.AddCommands("node",
-		InstallPackages("opennebula-node"),
-	)
-
 	pkg.AddCommands("verify",
 		InstallPackages("qemu-system-x86 qemu-kvm cpu-checker"),
 		And("kvm=`kvm-ok  | grep 'KVM acceleration can be used'`"),
 	)
+
+	pkg.AddCommands("node",
+		InstallPackages("opennebula-node"),
+	)
+// sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin
+
 	pkg.AddCommands("vswitch",
 		InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),
 	)

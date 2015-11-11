@@ -51,23 +51,13 @@ func (tpl *UbuntuNilavuInstall) Run(target urknall.Target) error {
 type UbuntuNilavuInstallTemplate struct{}
 
 func (m *UbuntuNilavuInstallTemplate) Render(pkg urknall.Package) {
-	/*pkg.AddCommands("repository",
+pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamcommon",
-		And("apt-get -y install megamcommon"),
-	)
-
 	pkg.AddCommands("megamnilavu",
 		InstallPackages("megamnilavu"),
-	)*/
-	pkg.AddCommands("megamd",
-		Shell("ls -la"),
 	)
-   
-    pkg.AddCommands("megamd23",
-		Shell("ls -la"),
-	)
+
 }

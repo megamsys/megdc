@@ -33,7 +33,7 @@ func (g *Onehostinstall) Info() *cmd.Info {
 `
 	return &cmd.Info{
 		Name:    "onehostinstall",
-		Usage:   `onehostinstall [--host][-i] [--username]...`,
+		Usage:   `onehostinstall [--help/-h] ...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
@@ -42,6 +42,7 @@ func (g *Onehostinstall) Info() *cmd.Info {
 func (c *Onehostinstall) Run(context *cmd.Context) error {
 	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
 	w := handler.NewWrap(c)
+	c.hostInstall(w)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -53,12 +54,15 @@ func (c *Onehostinstall) Run(context *cmd.Context) error {
 func (c *Onehostinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
 	}
 	return c.Fs
+}
+func (c *Onehostinstall) hostInstall(w *handler.WrappedParms) {
+	DEFAULT_PACKAGES := []string{"OneHostInstall"}
+
+	if w.Empty() {
+		for i := range DEFAULT_PACKAGES {
+			w.AddPackage(DEFAULT_PACKAGES[i])
+		}
+	}
 }

@@ -26,52 +26,56 @@ const (
 	PHY_DEV ="phy"
 )
 
-var ubuntubridge *UbuntuBridge
+var ubuntucreatenetwork *UbuntuCreateNetwork
 
 func init() {
-	ubuntubridge = &UbuntuBridge{}
-	templates.Register("UbuntuBridge", ubuntubridge)
+	ubuntucreatenetwork = &UbuntuCreateNetwork{}
+	templates.Register("UbuntuCreateNetwork", ubuntucreatenetwork)
 }
 
-type UbuntuBridge struct {
+type UbuntuCreateNetwork struct {
 	BridgeName string
 	PhyDev     string
 }
 
-func (tpl *UbuntuBridge) Options(opts map[string]string) {
+func (tpl *UbuntuCreateNetwork) Options(opts map[string]string) {
 	if bg, ok := opts[BRIDGE_NAME]; ok {
 		tpl.BridgeName = bg
 	}
 
 	if ph, ok := opts[PHY_DEV]; ok {
-		tpl.BridgeName = ph
+		tpl.PhyDev = ph
 	}
 
 }
 
-func (tpl *UbuntuBridge) Render(p urknall.Package) {
-	p.AddTemplate("bridge", &UbuntuBridgeTemplate{})
+func (tpl *UbuntuCreateNetwork) Render(p urknall.Package) {
+	p.AddTemplate("createnetwork", &UbuntuCreateNetworkTemplate{
+   BridgeName: tpl.BridgeName,
+	 PhyDev: tpl.PhyDev,
+	})
 }
 
-func (tpl *UbuntuBridge) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuBridge{})
+func (tpl *UbuntuCreateNetwork) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuCreateNetwork{})
 }
 
-type UbuntuBridgeTemplate struct{}
+type UbuntuCreateNetworkTemplate struct{
+	BridgeName string
+	PhyDev     string
+}
 
-func (m *UbuntuBridgeTemplate) Render(pkg urknall.Package) {
+func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
 
 	//    ip := GetLocalIP()
 
-	pkg.AddCommands("setupbrdige",
+	pkg.AddCommands("createnetwork",
 		Shell(""),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),
-		Shell("export BRIDGE_NAME='one'"),
-		Shell("export NETWORK_IF='eth0'"),
-		Shell("sudo ovs-vsctl add-br one"),
-		Shell("sudo echo 'auto one' >> /etc/network/interfaces"),
-		Shell("sudo ovs-vsctl add-port one eth0"),
+		Shell("sudo ovs-vsctl add-br "+ m.BridgeName),
+		Shell("sudo echo 'auto "+ m.BridgeName +"' >> /etc/network/interfaces"),
+		Shell("sudo ovs-vsctl add-port "+ m.BridgeName +" "+ m.PhyDev +""),
 
 		UpdatePackagesOmitError(),
 	)
