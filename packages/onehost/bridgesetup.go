@@ -28,13 +28,12 @@ type Bridge struct {
 }
 
 func (g *Bridge) Info() *cmd.Info {
-	desc := `create network
-	Default: bridge name:one, phydev:eth0
-`
 	return &cmd.Info{
 		Name:    "createnetwork",
 		Usage:   `createnetwork [--bridge] name --[phy] name`,
-		Desc:    desc,
+		Desc:   `create network
+		Default: bridge name:one, phydev:eth0
+	`,
 		MinArgs: 0,
 	}
 }

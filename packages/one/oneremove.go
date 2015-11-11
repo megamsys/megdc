@@ -30,12 +30,10 @@ type Oneremove struct {
 }
 
 func (g *Oneremove) Info() *cmd.Info {
-	desc := `Remove opennebula frontend.
-`
 	return &cmd.Info{
 		Name:    "oneremove",
 		Usage:   `oneremove [--host] [--username]...`,
-		Desc:    desc,
+		Desc:  ` Setup Opennebula to your local or remote Machine `,
 		MinArgs: 0,
 	}
 }
@@ -56,15 +54,18 @@ func (c *Oneremove) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 
 		/* Install package commands */
-		c.Fs.BoolVar(&c.OneRemove, "remove", false, "Remove Opennebula")
-		c.Fs.BoolVar(&c.OneRemove, "r", false, "Remove Opennebula")
-
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
+		oneMsg := "Remove Opennebula"
+		c.Fs.BoolVar(&c.OneRemove, "install", false, oneMsg)
+		c.Fs.BoolVar(&c.OneRemove, "i", false, oneMsg)
+		hstMsg := "Host address for remote machine"
+		c.Fs.StringVar(&c.Host, "host", "", hstMsg)
+		c.Fs.StringVar(&c.Host, "h", "",hstMsg)
+		usrMsg :=  "username for hosted machine"
+		c.Fs.StringVar(&c.Username, "username", "",usrMsg)
+		c.Fs.StringVar(&c.Username, "u", "",usrMsg)
+		usrPwd := "password for hosted machine"
+		c.Fs.StringVar(&c.Password, "password", "", usrPwd )
+		c.Fs.StringVar(&c.Password, "p", "", usrPwd)
 	}
 	return c.Fs
 }

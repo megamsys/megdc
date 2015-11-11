@@ -54,17 +54,19 @@ func (c *Oneinstall) Run(context *cmd.Context) error {
 func (c *Oneinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
 		/* Install package commands */
-		c.Fs.BoolVar(&c.OneInstall, "install", false, "Install Opennebula ")
-		c.Fs.BoolVar(&c.OneInstall, "i", false, "Install Opennebula ")
-
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
+		oneMsg := "Install Opennebula"
+		c.Fs.BoolVar(&c.OneInstall, "install", false, oneMsg)
+		c.Fs.BoolVar(&c.OneInstall, "i", false, oneMsg)
+    hstMsg := "Host address for remote machine"
+		c.Fs.StringVar(&c.Host, "host", "", hstMsg)
+		c.Fs.StringVar(&c.Host, "h", "",hstMsg)
+    usrMsg :=  "username for hosted machine"
+		c.Fs.StringVar(&c.Username, "username", "",usrMsg)
+		c.Fs.StringVar(&c.Username, "u", "",usrMsg)
+		usrPwd := "password for hosted machine"
+		c.Fs.StringVar(&c.Password, "password", "", usrPwd )
+		c.Fs.StringVar(&c.Password, "p", "", usrPwd)
 	}
 	return c.Fs
 }

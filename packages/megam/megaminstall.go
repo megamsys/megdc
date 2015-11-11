@@ -24,10 +24,10 @@ import (
 type MegamInstall struct {
 	Fs        *gnuflag.FlagSet
 	All       bool
-	Nilavu    bool
-	Gateway   bool
-	Megamd    bool
-	Snowflake bool
+	NilavuInstall    bool
+	GatewayInstall   bool
+	MegamdInstall    bool
+	SnowflakeInstall bool
 }
 
 func (c *MegamInstall) Info() *cmd.Info {
@@ -71,17 +71,17 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
 		nilMsg := "Install megam cockpit ui"
-		c.Fs.BoolVar(&c.Nilavu, "nilavu", false, nilMsg)
-		c.Fs.BoolVar(&c.Nilavu, "n", false, nilMsg)
+		c.Fs.BoolVar(&c.NilavuInstall, "nilavu", false, nilMsg)
+		c.Fs.BoolVar(&c.NilavuInstall, "n", false, nilMsg)
 		gwyMsg := "Install megam gateway apiserver"
-		c.Fs.BoolVar(&c.Gateway, "gateway", false, gwyMsg)
-		c.Fs.BoolVar(&c.Gateway, "g", false, gwyMsg)
+		c.Fs.BoolVar(&c.GatewayInstall, "gateway", false, gwyMsg)
+		c.Fs.BoolVar(&c.GatewayInstall, "g", false, gwyMsg)
 		megdMsg := "Install megam omni scheduler"
-		c.Fs.BoolVar(&c.Megamd, "megamd", false, megdMsg)
-		c.Fs.BoolVar(&c.Megamd, "d", false, megdMsg)
+		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, megdMsg)
+		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
 		snoMsg := "Install megam uidserver"
-		c.Fs.BoolVar(&c.Snowflake, "snowflake", false, snoMsg)
-		c.Fs.BoolVar(&c.Snowflake, "s", false, snoMsg)
+		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
+		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 	}
 	return c.Fs
 }
