@@ -44,20 +44,26 @@ func (tpl *UbuntuCreateNetwork) Options(opts map[string]string) {
 	}
 
 	if ph, ok := opts[PHY_DEV]; ok {
-		tpl.BridgeName = ph
+		tpl.PhyDev = ph
 	}
 
 }
 
 func (tpl *UbuntuCreateNetwork) Render(p urknall.Package) {
-	p.AddTemplate("createnetwork", &UbuntuCreateNetworkTemplate{})
+	p.AddTemplate("createnetwork", &UbuntuCreateNetworkTemplate{
+   BridgeName: tpl.BridgeName,
+	 PhyDev: tpl.PhyDev,
+	})
 }
 
 func (tpl *UbuntuCreateNetwork) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCreateNetwork{})
 }
 
-type UbuntuCreateNetworkTemplate struct{}
+type UbuntuCreateNetworkTemplate struct{
+	BridgeName string
+	PhyDev     string
+}
 
 func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
 
@@ -67,11 +73,9 @@ func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
 		Shell(""),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),
-		Shell("export BRIDGE_NAME='one'"),
-		Shell("export NETWORK_IF='eth0'"),
-		Shell("sudo ovs-vsctl add-br one"),
-		Shell("sudo echo 'auto one' >> /etc/network/interfaces"),
-		Shell("sudo ovs-vsctl add-port one eth0"),
+		Shell("sudo ovs-vsctl add-br "+ m.BridgeName),
+		Shell("sudo echo 'auto "+ m.BridgeName +"' >> /etc/network/interfaces"),
+		Shell("sudo ovs-vsctl add-port "+ m.BridgeName +" "+ m.PhyDev +""),
 
 		UpdatePackagesOmitError(),
 	)

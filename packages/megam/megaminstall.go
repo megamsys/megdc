@@ -35,7 +35,7 @@ func (c *MegamInstall) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:  "megaminstall",
 		Usage: "megaminstall [--nilavu/-n] [--gateway/-g] [--snowflake/-s]",
-		Desc: `Install megam (app orchestrator) on the local machine. For megdc, available install plaform is ubuntu.
+		Desc: `Install megam (app orchestrator) . For megdc, available install plaform is ubuntu.
 We are working to support centos.
 In order to install individual packages use the following options.
 

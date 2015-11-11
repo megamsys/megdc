@@ -31,7 +31,7 @@ func (g *Createnetwork) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "createnetwork",
 		Usage:   `createnetwork [--bridge] name --[phy] name`,
-		Desc:   `create network
+		Desc:   `create network openvswitch network bridge to phydev
 		Default: bridge name:one, phydev:eth0
 	`,
 		MinArgs: 0,
@@ -53,8 +53,8 @@ func (c *Createnetwork) Run(context *cmd.Context) error {
 func (c *Createnetwork) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.StringVar(&c.PhyDev, "phy", "", "Physical device or Network interface (default: eth0)")
-		c.Fs.StringVar(&c.Bridge, "bridge", "", "The name of the bridge (default: one)")
+		c.Fs.StringVar(&c.PhyDev, "phy", "eth0", "Physical device or Network interface (default: eth0)")
+		c.Fs.StringVar(&c.Bridge, "bridge", "one", "The name of the bridge (default: one)")
 	}
 	return c.Fs
 }

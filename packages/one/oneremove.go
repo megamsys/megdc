@@ -31,7 +31,7 @@ func (g *Oneremove) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "oneremove",
 		Usage:   `oneremove [--help] ...`,
-		Desc:  ` Setup Opennebula to your local or remote Machine `,
+		Desc:  `Remove opennebula frontend `,
 		MinArgs: 0,
 	}
 }

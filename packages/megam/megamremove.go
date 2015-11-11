@@ -34,7 +34,7 @@ func (g *Megamremove) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "megamremove",
 		Usage:   `megamremove [--nilavu/-n] [--gateway/-g] [--snowflake/-s]...`,
-		Desc:    `Install megam (app orchestrator) on the local machine. For megdc, available install plaform is ubuntu.
+		Desc:    `Remove megam (app orchestrator). For megdc, available install plaform is ubuntu.
 We are working to support centos.
 In order to Remove individual packages use the following options.
 

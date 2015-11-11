@@ -56,10 +56,6 @@ pkg.AddCommands("repository",
 		UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamcommon",
-		And("apt-get -y install megamcommon"),
-	)
-
 	pkg.AddCommands("megamnilavu",
 		InstallPackages("megamnilavu"),
 	)
