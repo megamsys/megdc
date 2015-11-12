@@ -36,33 +36,56 @@ func init() {
 	templates.Register("UbuntuSshPass", ubuntusshpass)
 }
 
-type UbuntuSshPass struct{}
+type UbuntuSshPass struct{
+	Host string
+	Username string
+	Password string
+}
 
 
 func (tpl *UbuntuSshPass) Render(p urknall.Package) {
-	p.AddTemplate("onehost", &UbuntuSshPassTemplate{})
+	p.AddTemplate("sshpass", &UbuntuSshPassTemplate{
+		Host: tpl.Host,
+		Username:     tpl.Username,
+		Password: tpl.Password,
+	})
 }
 
 func (tpl *UbuntuSshPass) Options(opts map[string]string) {
 
+if hs, ok := opts["HOST"]; ok {
+	tpl.Host = hs
+}
+if us, ok := opts["USERNAME"]; ok {
+	tpl.Username = us
+}
+if bg, ok := opts["PASSWORD"]; ok {
+	tpl.Password = bg
+}
 }
 
 
 func (tpl *UbuntuSshPass) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuSshPass{})
+	return urknall.Run(target, &UbuntuSshPass{
+		Host: tpl.Host,
+		Username:     tpl.Username,
+		Password: tpl.Password,
+	})
 }
 
-type UbuntuSshPassTemplate struct{}
+type UbuntuSshPassTemplate struct{
+	Host string
+	Username string
+	Password string
+}
 
 func (m *UbuntuSshPassTemplate) Render(pkg urknall.Package) {
-
-	ip := IP()
 
 	pkg.AddCommands("install-sshpass",
 	  InstallPackages("sshpass"),
 	)
 	pkg.AddCommands("SSHPass",
-		Shell("sudo -H -u oneadmin bash -c 'sshpass -p "+Slash+"'oneadmin'"+Slash+" scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@"+ ip +":/var/lib/one/.ssh/authorized_keys'"),
+		AsUser("oneadmin", Shell("sshpass -p 'oneadmin' scp -o StrictHostKeyChecking=no /var/lib/one/.ssh/id_rsa.pub oneadmin@"+ m.Host +":/var/lib/one/.ssh/authorized_keys")),
     WriteFile("/var/lib/one/.ssh/config",KnownHostsList,"oneadmin", 0755),
 	)
 }

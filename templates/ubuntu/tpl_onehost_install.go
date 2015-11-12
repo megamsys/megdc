@@ -62,7 +62,7 @@ func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
 		And("kvm=`kvm-ok  | grep 'KVM acceleration can be used'`"),
 	)
 
-	pkg.AddCommands("node",
+	pkg.AddCommands("one-node",
 		InstallPackages("opennebula-node"),
 	)
   pkg.AddCommands("node",

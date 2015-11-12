@@ -19,8 +19,6 @@ package ubuntu
 import (
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
-	"fmt"
-	"os"
 )
 
 const (
@@ -70,10 +68,6 @@ type UbuntuCreateNetworkTemplate struct {
 }
 
 func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
-	host,_ := os.Hostname()
-	fmt.Println("******************")
-	fmt.Println(host)
-	//    ip := GetLocalIP()
 	pkg.AddCommands("ovs-createnetwork",
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' > //etc/sudoers.d/openvswitch"),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),

@@ -45,7 +45,9 @@ func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuCephRemove{})
+	return urknall.Run(target, &UbuntuCephRemove{
+		cephuser: tpl.cephuser,
+	})
 }
 
 type UbuntuCephRemoveTemplate struct {
