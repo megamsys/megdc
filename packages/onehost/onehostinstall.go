@@ -26,9 +26,6 @@ var INSTALL_PACKAGES = []string{"OneHostInstall"}
 
 type Onehostinstall struct {
 	Fs       *gnuflag.FlagSet
-	Host     string
-	Username string
-	Password string
 }
 
 func (g *Onehostinstall) Info() *cmd.Info {

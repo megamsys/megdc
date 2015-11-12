@@ -22,8 +22,8 @@ import (
 )
 
 const (
-	BRIDGE_NAME = "bridge"
-	PHY_DEV     = "phy"
+	BRIDGE_NAME = "Bridge"
+	PHY_DEV     = "PhyDev"
 )
 
 var ubuntucreatenetwork *UbuntuCreateNetwork
@@ -46,7 +46,6 @@ func (tpl *UbuntuCreateNetwork) Options(opts map[string]string) {
 	if ph, ok := opts[PHY_DEV]; ok {
 		tpl.PhyDev = ph
 	}
-
 }
 
 func (tpl *UbuntuCreateNetwork) Render(p urknall.Package) {
@@ -57,7 +56,10 @@ func (tpl *UbuntuCreateNetwork) Render(p urknall.Package) {
 }
 
 func (tpl *UbuntuCreateNetwork) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuCreateNetwork{})
+	return urknall.Run(target, &UbuntuCreateNetwork{
+		BridgeName: tpl.BridgeName,
+		PhyDev:     tpl.PhyDev,
+	})
 }
 
 type UbuntuCreateNetworkTemplate struct {
@@ -66,8 +68,8 @@ type UbuntuCreateNetworkTemplate struct {
 }
 
 func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("ovs createnetwork",
-		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
+	pkg.AddCommands("ovs-createnetwork",
+		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' > //etc/sudoers.d/openvswitch"),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),
 		Shell("sudo ovs-vsctl add-br "+m.BridgeName),
 		Shell("sudo echo 'auto "+m.BridgeName+"' >> /etc/network/interfaces"),

@@ -31,7 +31,7 @@ func Test(t *testing.T) { check.TestingT(t) }
 
 func (s *S) TestSubnetMaskLocalSize(c *check.C) {
   a, _ := IPNet().Mask.Size()
-	c.Assert(a, check.Equals, 24)
+	c.Assert(a, check.Equals, 22)
 }
 
 func (s *S) TestSubnetMaskIP(c *check.C) {
