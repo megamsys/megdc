@@ -39,7 +39,7 @@ func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
 }
 
 func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
-	if cephuser, ok := opts[CEPHUSER]; ok {
+	if cephuser, ok := opts[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
 }
