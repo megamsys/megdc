@@ -26,9 +26,9 @@ import (
 )
 
 const (
-	CEPHUSER = "username"
-	OSD1     = "osd1"
-	OSD2     = "osd2"
+	CephUser = "CephUser"
+	Osd1     = "Osd1"
+	Osd2     = "Osd2"
 
 	UserHomePrefix = "/home/"
 
@@ -63,17 +63,17 @@ type UbuntuCephInstall struct {
 	osd1     string
 	osd2     string
 	cephuser string
-	cephhome string
 }
 
 func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
-	if osd1, ok := opts[OSD1]; ok {
+fmt.Printf("%s",opts)
+		if osd1, ok := opts[Osd1]; ok {
 		tpl.osd1 = osd1
 	}
-	if osd2, ok := opts[OSD2]; ok {
+	if osd2, ok := opts[Osd2]; ok {
 		tpl.osd2 = osd2
 	}
-	if cephuser, ok := opts[CEPHUSER]; ok {
+	if cephuser, ok := opts[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
 }
@@ -88,7 +88,12 @@ func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 }
 
 func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuCephInstall{})
+	return urknall.Run(target, &UbuntuCephInstall{
+		osd1:     tpl.osd1,
+		osd2:     tpl.osd2,
+		cephuser: tpl.cephuser,
+
+	})
 }
 
 type UbuntuCephInstallTemplate struct {
@@ -101,16 +106,14 @@ type UbuntuCephInstallTemplate struct {
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
 	ip := IP()
-
 	Osd1 := m.osd1
 	Osd2 := m.osd2
 	CephUser := m.cephuser
 	CephHome := m.cephhome
-
-	pkg.AddCommands("cephuser sudoer",
-		Shell("echo ' "+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
+	pkg.AddCommands("cephuser_sudoer",
+		Shell("echo '"+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
 	)
-	pkg.AddCommands("chmod sudoer",
+	pkg.AddCommands("chmod_sudoer",
 		Shell("sudo chmod 0440 /etc/sudoers.d/"+CephUser+""),
 	)
 
@@ -121,7 +124,10 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
 	)
 
-	pkg.AddCommands("etc host",
+	pkg.AddCommands("getip",
+		Shell("ip3=`echo 103.56.92.24| cut -d'.' -f 1,2,3`"),
+)
+	pkg.AddCommands("etchost",
 		Shell("echo '"+ip+" "+host+"' >> /etc/hosts"),
 	)
 
@@ -129,6 +135,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		Mkdir(CephHome+"/.ssh", CephUser, 0700),
 		AsUser(CephUser, Shell("ssh-keygen -N '' -t rsa -f "+CephHome+"/.ssh/id_rsa")),
 		AsUser(CephUser, Shell("cp "+CephHome+"/.ssh/id_rsa.pub "+CephHome+"/.ssh/authorized_keys")),
+
 	)
 
 	pkg.AddCommands("ssh_known_hosts",
@@ -159,7 +166,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		AsUser(CephUser, Shell("sleep 180")),
 		AsUser(CephUser, Shell("ceph osd pool set rbd pgp_num 100")),
 	)
-	pkg.AddCommands("copy keyring",
+	pkg.AddCommands("copy_keyring",
 		Shell("cp "+CephHome+"/ceph-cluster/*.keyring /etc/ceph/"),
 	)
 }
