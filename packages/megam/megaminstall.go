@@ -18,7 +18,7 @@ package megam
 import (
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
-	"github.com/megamsys/megdc/packages"
+//	"github.com/megamsys/megdc/packages"
 	"launchpad.net/gnuflag"
 )
 
@@ -84,7 +84,7 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
 		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 	}
-	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
+	//c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
 	return c.Fs
 }
 

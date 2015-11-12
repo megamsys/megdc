@@ -24,9 +24,6 @@ import (
 type Oneinstall struct {
 	Fs         *gnuflag.FlagSet
 	OneInstall bool
-	Host       string
-	Username   string
-	Password   string
 }
 
 func (g *Oneinstall) Info() *cmd.Info {

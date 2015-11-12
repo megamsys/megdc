@@ -55,7 +55,6 @@ func (c *Onehostremove) Run(context *cmd.Context) error {
 func (c *Onehostremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
 	}
 	return c.Fs
 }

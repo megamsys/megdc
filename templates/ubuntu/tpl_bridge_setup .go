@@ -19,6 +19,7 @@ package ubuntu
 import (
 	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"fmt"
 )
 
 const (
@@ -68,7 +69,7 @@ type UbuntuCreateNetworkTemplate struct{
 func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
 
 	//    ip := GetLocalIP()
-
+  fmt.Println("HHHHHHHHHHHHHHHHHHHHHHHHH" + m.BridgeName +"***********")
 	pkg.AddCommands("createnetwork",
 		Shell(""),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),

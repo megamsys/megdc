@@ -50,7 +50,7 @@ func (c *Oneremove) Run(context *cmd.Context) error {
 
 func (c *Oneremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
-		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
+		c.Fs = gnuflag.NewFlagSet("oneremove", gnuflag.ExitOnError)
 
 		/* Install package commands
 		oneMsg := "Remove Opennebula"
