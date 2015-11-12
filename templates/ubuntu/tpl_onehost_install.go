@@ -48,9 +48,6 @@ func (tpl *UbuntuOneHostInstall) Run(target urknall.Target) error {
 type UbuntuOneHostInstallTemplate struct{}
 
 func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
-
-	//ip := GetLocalIP()
-
 	pkg.AddCommands("repository",
 		Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
 		Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),

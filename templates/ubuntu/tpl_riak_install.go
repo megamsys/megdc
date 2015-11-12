@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubunturiakinstall *UbuntuRiakInstall

@@ -21,6 +21,8 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var NETWORK_PACKAGES = []string{"CreateNetwork"}
+
 type Createnetwork struct {
 	Fs     *gnuflag.FlagSet
 	PhyDev string
@@ -39,9 +41,9 @@ func (g *Createnetwork) Info() *cmd.Info {
 }
 
 func (c *Createnetwork) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "createnetwork")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "createnetwork")
 	w := handler.NewWrap(c)
-	c.createDefaultNetwork(w)
+	w.IfNoneAddPackages(NETWORK_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -53,17 +55,8 @@ func (c *Createnetwork) Run(context *cmd.Context) error {
 func (c *Createnetwork) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.StringVar(&c.PhyDev, "phy", "eth0", "Physical device or Network interface (default: eth0)")
-		c.Fs.StringVar(&c.Bridge, "bridge", "one", "The name of the bridge (default: one)")
+		c.Fs.StringVar(&c.PhyDev, "phy", "eth0", "Physical device or Network interface")
+		c.Fs.StringVar(&c.Bridge, "bridge", "one", "The name of the bridge")
 	}
 	return c.Fs
-}
-func (c *Createnetwork) createDefaultNetwork(w *handler.WrappedParms) {
-	DEFAULT_PACKAGES := []string{"CreateNetwork"}
-
-	if w.Empty() {
-		for i := range DEFAULT_PACKAGES {
-			w.AddPackage(DEFAULT_PACKAGES[i])
-		}
-	}
 }

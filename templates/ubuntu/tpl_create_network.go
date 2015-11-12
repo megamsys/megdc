@@ -17,13 +17,13 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 const (
-	BRIDGE_NAME ="bridge"
-	PHY_DEV ="phy"
+	BRIDGE_NAME = "bridge"
+	PHY_DEV     = "phy"
 )
 
 var ubuntucreatenetwork *UbuntuCreateNetwork
@@ -51,8 +51,8 @@ func (tpl *UbuntuCreateNetwork) Options(opts map[string]string) {
 
 func (tpl *UbuntuCreateNetwork) Render(p urknall.Package) {
 	p.AddTemplate("createnetwork", &UbuntuCreateNetworkTemplate{
-   BridgeName: tpl.BridgeName,
-	 PhyDev: tpl.PhyDev,
+		BridgeName: tpl.BridgeName,
+		PhyDev:     tpl.PhyDev,
 	})
 }
 
@@ -60,23 +60,18 @@ func (tpl *UbuntuCreateNetwork) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCreateNetwork{})
 }
 
-type UbuntuCreateNetworkTemplate struct{
+type UbuntuCreateNetworkTemplate struct {
 	BridgeName string
 	PhyDev     string
 }
 
 func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
-
-	//    ip := GetLocalIP()
-
-	pkg.AddCommands("createnetwork",
-		Shell(""),
+	pkg.AddCommands("ovs createnetwork",
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),
-		Shell("sudo ovs-vsctl add-br "+ m.BridgeName),
-		Shell("sudo echo 'auto "+ m.BridgeName +"' >> /etc/network/interfaces"),
-		Shell("sudo ovs-vsctl add-port "+ m.BridgeName +" "+ m.PhyDev +""),
-
+		Shell("sudo ovs-vsctl add-br "+m.BridgeName),
+		Shell("sudo echo 'auto "+m.BridgeName+"' >> /etc/network/interfaces"),
+		Shell("sudo ovs-vsctl add-port "+m.BridgeName+" "+m.PhyDev+""),
 		UpdatePackagesOmitError(),
 	)
 

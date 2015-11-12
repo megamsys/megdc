@@ -2,8 +2,8 @@ package ubuntu
 
 import (
 	"fmt"
-	"strings"
 	"net"
+	"strings"
 )
 
 // Upgrade the package cache and update the installed packages (using apt).
@@ -50,19 +50,17 @@ func RemovePackages(pkg string, pkgs ...string) *ShellCommand {
 	}
 }
 
-func RemovePackage( pkg string, pkgs ...string) *ShellCommand {
+func RemovePackage(pkg string, pkgs ...string) *ShellCommand {
 	return &ShellCommand{
-	Command: fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get remove -y --no-install-recommends %s %s", pkg, strings.Join(pkgs, " ")),
+		Command: fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get remove -y --no-install-recommends %s %s", pkg, strings.Join(pkgs, " ")),
 	}
 }
 
 func PurgePackages(pkg string, pkgs ...string) *ShellCommand {
 	return &ShellCommand{
-			Command: fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get purge -y --no-install-recommends %s %s", pkg, strings.Join(pkgs, " ")),
+		Command: fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get purge -y --no-install-recommends %s %s", pkg, strings.Join(pkgs, " ")),
 	}
 }
-
-
 
 // PinPackage pins package via dpkg --set-selections
 func PinPackage(name string) *ShellCommand {
@@ -80,22 +78,28 @@ func EnsureRunning(service string) *ShellCommand {
 	return Shell(fmt.Sprintf("status %s | grep running || start %s", service, service))
 }
 
-// GetLocalIP returns the non loopback local IP of the host
-func GetLocalIP() string {
-    ip := ""
-    addrs, err := net.InterfaceAddrs()
-    if err != nil {
-        return ""
-    }
-    for _, address := range addrs {
-        // check the address type and if it is not a loopback the display it
-        if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-            if ipnet.IP.To4() != nil {
-                //return ipnet.IP.String()
-                ip = ipnet.IP.String()
-            }
-        }
-    }
-    return ip
+// IPString returns the non loopback local IP of the host
+func IPNet() *net.IPNet {
+	var ipnet_ptr *net.IPNet
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return nil
+	}
+	for _, address := range addrs {
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				ipnet_ptr = ipnet
+			}
+		}
+	}
+	return ipnet_ptr
 }
 
+// IPString returns the non loopback local IP of the host
+func IP() string {
+	ipnet := IPNet()
+	if ipnet != nil {
+		return ipnet.IP.String()
+	}
+	return ""
+}

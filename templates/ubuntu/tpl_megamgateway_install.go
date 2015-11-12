@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntugatewayinstall *UbuntuGatewayInstall
@@ -44,8 +44,9 @@ func (tpl *UbuntuGatewayInstall) Run(target urknall.Target) error {
 type UbuntuGatewayInstallTemplate struct{}
 
 func (m *UbuntuGatewayInstallTemplate) Render(pkg urknall.Package) {
+	//fail on Java -version (1.8 check)
 	pkg.AddCommands("repository",
-		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 

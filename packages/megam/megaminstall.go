@@ -22,9 +22,14 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var INSTALL_PACKAGES = []string{"SnowflakeInstall",
+	"NilavuInstall",
+	"GatewayInstall",
+	"MegamdInstall"}
+
 type MegamInstall struct {
-	Fs        *gnuflag.FlagSet
-	All       bool
+	Fs               *gnuflag.FlagSet
+	All              bool
 	NilavuInstall    bool
 	GatewayInstall   bool
 	MegamdInstall    bool
@@ -57,9 +62,9 @@ For more information read http://docs.megam.io.`,
 }
 
 func (c *MegamInstall) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "installing")
 	w := handler.NewWrap(c)
-	c.chooseAll(w)
+	w.IfNoneAddPackages(INSTALL_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -84,17 +89,6 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
 		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 	}
-	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
+	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(), c.Fs)
 	return c.Fs
-}
-
-func (c *MegamInstall) chooseAll(w *handler.WrappedParms) {
-	DEFAULT_PACKAGES := []string{"SnowflakeInstall",
-		"NilavuInstall", "GatewayInstall", "MegamdInstall"}
-
-	if w.Empty() {
-		for i := range DEFAULT_PACKAGES {
-			w.AddPackage(DEFAULT_PACKAGES[i])
-		}
-	}
 }
