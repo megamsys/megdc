@@ -2,8 +2,7 @@
 *.o
 *.a
 *.so
-cibd
-cibnd
+megdc
 *.db
 
 # Folders
