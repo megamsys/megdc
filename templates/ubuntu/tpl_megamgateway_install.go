@@ -17,32 +17,36 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
-var ubuntumegamgatewayinstall *UbuntuMegamGatewayInstall
+var ubuntugatewayinstall *UbuntuGatewayInstall
 
 func init() {
-	ubuntumegamgatewayinstall = &UbuntuMegamGatewayInstall{}
-	templates.Register("UbuntuMegamGatewayInstall", ubuntumegamgatewayinstall)
+	ubuntugatewayinstall = &UbuntuGatewayInstall{}
+	templates.Register("UbuntuGatewayInstall", ubuntugatewayinstall)
 }
 
-type UbuntuMegamGatewayInstall struct{}
+type UbuntuGatewayInstall struct{}
 
-func (tpl *UbuntuMegamGatewayInstall) Render(p urknall.Package) {
-	p.AddTemplate("gateway", &UbuntuMegamGatewayInstallTemplate{})
+func (tpl *UbuntuGatewayInstall) Render(p urknall.Package) {
+	p.AddTemplate("gateway", &UbuntuGatewayInstallTemplate{})
 }
 
-func (tpl *UbuntuMegamGatewayInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamGatewayInstall{})
+func (tpl *UbuntuGatewayInstall) Options(opts map[string]string) {
 }
 
-type UbuntuMegamGatewayInstallTemplate struct{}
+func (tpl *UbuntuGatewayInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuGatewayInstall{})
+}
 
-func (m *UbuntuMegamGatewayInstallTemplate) Render(pkg urknall.Package) {
+type UbuntuGatewayInstallTemplate struct{}
+
+func (m *UbuntuGatewayInstallTemplate) Render(pkg urknall.Package) {
+	//fail on Java -version (1.8 check)
 	pkg.AddCommands("repository",
-		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 

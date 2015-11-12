@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubunturiakremove *UbuntuRiakRemove
@@ -34,6 +34,9 @@ func (tpl *UbuntuRiakRemove) Render(p urknall.Package) {
 	p.AddTemplate("riak", &UbuntuRiakRemoveTemplate{})
 }
 
+func (tpl *UbuntuRiakRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuRiakRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuRiakRemove{})
 }
@@ -45,6 +48,6 @@ func (m *UbuntuRiakRemoveTemplate) Render(pkg urknall.Package) {
 		RemovePackage("riak"),
 		RemovePackages(""),
 		PurgePackages("riak"),
-		Shell("dpkg --get-selections riak*",),
+		Shell("dpkg --get-selections riak*"),
 	)
 }

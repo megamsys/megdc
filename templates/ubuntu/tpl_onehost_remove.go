@@ -17,22 +17,24 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
-
 
 var ubuntuonehostremove *UbuntuOneHostRemove
 
 func init() {
 	ubuntuonehostremove = &UbuntuOneHostRemove{}
-	templates.Register("UbuntuOneRemove", ubuntuonehostremove)
+	templates.Register("UbuntuOneHostRemove", ubuntuonehostremove)
 }
 
 type UbuntuOneHostRemove struct{}
 
 func (tpl *UbuntuOneHostRemove) Render(p urknall.Package) {
 	p.AddTemplate("onehost", &UbuntuOneHostRemoveTemplate{})
+}
+
+func (tpl *UbuntuOneHostRemove) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuOneHostRemove) Run(target urknall.Target) error {
@@ -43,8 +45,8 @@ type UbuntuOneHostRemoveTemplate struct{}
 
 func (m *UbuntuOneHostRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("onehost",
-	   RemovePackage("opennebula-node"),
-		 RemovePackages(""),
-		 PurgePackages("opennebula-node"),
+		RemovePackage("opennebula-node"),
+		RemovePackages(""),
+		PurgePackages("opennebula-node"),
 	)
 }

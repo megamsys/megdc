@@ -17,75 +17,66 @@
 package templates
 
 import (
-	"github.com/dynport/urknall"
-	"os"
-	"sync"
-	//"reflect"
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+	"sync"
+
 	log "github.com/Sirupsen/logrus"
+	"github.com/megamsys/urknall"
 )
 
-//var templates Templates
+const LOCALHOST = "localhost"
 
-var templates Templates
+var runnables map[string]TemplateRunnable
 
-var managers map[string]Templates
-
-type Templates interface {
-}
-
-type InitializableTemplates interface {
+type TemplateRunnable interface {
+	Options(options map[string]string)
 	Run(target urknall.Target) error
 }
 
 type Template struct {
+	Name     string
 	Host     string
 	UserName string
 	Password string
-	Name     string
+	Options  map[string]string
 }
-
-const LOCALHOST = "localhost"
 
 func NewTemplate() *Template {
 	return &Template{}
 }
 
 func (t *Template) Run() error {
-	fmt.Println(t)
 	defer urknall.OpenLogger(os.Stdout).Close()
 	var target urknall.Target
-	var e error
-	//	uri := "ubuntu@192.168.56.10"
-	//	password := "ubuntu"
+	var err error
 	if t.Password != "" {
-		target, e = urknall.NewSshTargetWithPassword(t.Host, t.Password)
+		target, err = urknall.NewSshTargetWithPassword(t.Host, t.Password)
 	} else {
-		if t.Host == LOCALHOST {
-			target, e = urknall.NewLocalTarget()
+		if len(strings.TrimSpace(t.Host)) <= 0 || t.Host == LOCALHOST {
+			target, err = urknall.NewLocalTarget()
 		} else {
-			///target, e = urknall.NewSshTarget(t.Host)
-			target, e = urknall.NewLocalTarget()
+			target, err = urknall.NewSshTarget(t.Host) //this is with sshkey
 		}
 	}
-	if e != nil {
-		return e
-	}
-	a, err := get(t.Name)
-
 	if err != nil {
-		log.Errorf("fatal error, couldn't located the Package %s", t.Name)
 		return err
 	}
 
-	templates = a
+	runner, err := get(t.Name)
 
-	if initializableTemplates, ok := templates.(InitializableTemplates); ok {
-		return initializableTemplates.Run(target)
+	if err != nil {
+		log.Errorf("fatal error, couldn't locate the package %s", t.Name)
+		return err
 	}
 
-	return errors.New(fmt.Sprintf("fatal error, couldn't located the Package %q", t.Name))
+	if initializeRunner, ok := runner.(TemplateRunnable); ok {
+		initializeRunner.Options(t.Options)
+		return initializeRunner.Run(target)
+	}
+	return errors.New(fmt.Sprintf("fatal error, couldn't locate the package %q", t.Name))
 }
 
 type callbackFunc func(*Template, chan *Template) error
@@ -146,28 +137,19 @@ func RunInTemplates(templates []*Template, callback callbackFunc, rollback rollb
 }
 
 // Get gets the named provisioner from the registry.
-func get(name string) (Templates, error) {
-	p, ok := managers[name]
+func get(name string) (TemplateRunnable, error) {
+	p, ok := runnables[name]
 	if !ok {
 		return nil, fmt.Errorf("unknown template: %q", name)
 	}
 	return p, nil
 }
 
-// Manager returns the current configured manager, as defined in the
-// configuration file.
-func manager(managerName string) Templates {
-	if _, ok := managers[managerName]; !ok {
-		managerName = "nop"
-	}
-	return managers[managerName]
-}
-
 // Register registers a new repository manager, that can be later configured
 // and used.
-func Register(name string, manager Templates) {
-	if managers == nil {
-		managers = make(map[string]Templates)
+func Register(name string, runnable TemplateRunnable) {
+	if runnables == nil {
+		runnables = make(map[string]TemplateRunnable)
 	}
-	managers[name] = manager
+	runnables[name] = runnable
 }

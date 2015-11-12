@@ -20,11 +20,8 @@ import (
 	"gopkg.in/check.v1"
 )
 
-type S struct{}
 
-var _ = check.Suite(&S{})
-
-func (s *S) TestMegamStartInfo(c *check.C) {
+func (s *S) TestMegamReportStartInfo(c *check.C) {
 	desc := `starts megdc.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
@@ -32,11 +29,11 @@ If you use the '--quiet' flag megdc doesn't print the logs.
 `
 
 	expected := &cmd.Info{
-		Name:    "megaminstall",
-		Usage:   `megaminstall [--all] [--nilavu]...`,
+		Name:    "megamreport",
+		Usage:   `megamreport [--all] [--nilavu]...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
-	command := MegamInstall{}
+	command := Megamreport{}
 	c.Assert(command.Info(), check.DeepEquals, expected)
 }

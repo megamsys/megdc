@@ -17,8 +17,10 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"os"
+	
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntucephremove *UbuntuCephRemove
@@ -28,51 +30,50 @@ func init() {
 	templates.Register("UbuntuCephRemove", ubuntucephremove)
 }
 
-type UbuntuCephRemove struct{}
+type UbuntuCephRemove struct {
+	cephuser string
+}
 
 func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
-	p.AddTemplate("nilavu", &UbuntuCephRemoveTemplate{})
+	p.AddTemplate("ceph", &UbuntuCephRemoveTemplate{})
+}
+
+func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
+	if cephuser, ok := opts[CEPHUSER]; ok {
+		tpl.cephuser = cephuser
+	}
 }
 
 func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCephRemove{})
 }
 
-type UbuntuCephRemoveTemplate struct{}
+type UbuntuCephRemoveTemplate struct {
+	cephuser string
+}
 
 func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
-	Host := host()
+	host, _ := os.Hostname()
+
+	CephUser := m.cephuser
+
 	pkg.AddCommands("purgedata",
-		Shell("ceph-deploy purgedata `" + Host + "`"),
+		AsUser(CephUser, Shell("ceph-deploy purgedata `"+host+"`")),
 	)
-  pkg.AddCommands("forgetKeys",
-		Shell("ceph-deploy forgetkeys"),
+	pkg.AddCommands("forgetKeys",
+		AsUser(CephUser, Shell("ceph-deploy forgetkeys")),
 	)
-  pkg.AddCommands("purge",
-		Shell("ceph-deploy purge " + Host + ""),
+	pkg.AddCommands("purge",
+		AsUser(CephUser, Shell("ceph-deploy purge "+host+"")),
 	)
-  pkg.AddCommands("remove",
-		Shell("sudo rm -r /var/lib/ceph/"),
-	)
-  pkg.AddCommands("cephdeploy",
-		Shell("sudo apt-get -y remove ceph-deploy ceph-common ceph-mds"),
-	)
-	pkg.AddCommands("purgeceph",
-		Shell("sudo apt-get -y purge ceph-deploy ceph-common ceph-mds"),
-	)
-	pkg.AddCommands("autoremove",
-		Shell("sudo apt-get -y autoremove"),
-	)
-	pkg.AddCommands("run",
-		Shell("sudo rm -r /run/ceph"),
-	)
-	pkg.AddCommands("lib",
-		Shell("sudo rm -r /var/lib/ceph"),
-	)
-	pkg.AddCommands("log",
-		Shell("sudo rm /var/log/upstart/ceph*"),
-	)
-	pkg.AddCommands("cluster",
-		Shell("sudo rm ~/ceph-cluster/*"),
+	pkg.AddCommands("remove",
+		Shell("rm -r /var/lib/ceph/"),
+		Shell("apt-get -y remove ceph-deploy ceph-common ceph-mds"),
+		Shell("apt-get -y purge ceph-deploy ceph-common ceph-mds"),
+		Shell("apt-get -y autoremove"),
+		Shell("rm -r /run/ceph"),
+		Shell("rm -r /var/lib/ceph"),
+		Shell("rm /var/log/upstart/ceph*"),
+		Shell("rm ~/ceph-cluster/*"),
 	)
 }

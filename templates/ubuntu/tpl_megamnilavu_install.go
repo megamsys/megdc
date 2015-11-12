@@ -13,52 +13,53 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-
 package ubuntu
 
+
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 const (
 	// DefaultMegamRepo is the default megam repository to install if its not provided.
-	    DefaultMegamRepo = "http://get.megam.io/0.9/ubuntu/14.04/ trusty testing"
+	DefaultMegamRepo = "http://get.megam.io/0.9/ubuntu/14.04/ trusty testing"
 
-			ListFilePath  = "/etc/apt/sources.list.d/megam.list"
-		)
+	ListFilePath = "/etc/apt/sources.list.d/megam.list"
+)
 
-
-var ubuntumegamnilavuinstall *UbuntuMegamNilavuInstall
+var ubuntunilavuinstall *UbuntuNilavuInstall
 
 func init() {
-	ubuntumegamnilavuinstall = &UbuntuMegamNilavuInstall{}
-	templates.Register("UbuntuMegamNilavuInstall", ubuntumegamnilavuinstall)
+	ubuntunilavuinstall = &UbuntuNilavuInstall{}
+	templates.Register("UbuntuNilavuInstall", ubuntunilavuinstall)
 }
 
-type UbuntuMegamNilavuInstall struct{}
+type UbuntuNilavuInstall struct{}
 
-func (tpl *UbuntuMegamNilavuInstall) Render(p urknall.Package) {
-	p.AddTemplate("nilavu", &UbuntuMegamNilavuInstallTemplate{})
+func (tpl *UbuntuNilavuInstall) Render(p urknall.Package) {
+	p.AddTemplate("nilavu", &UbuntuNilavuInstallTemplate{})
 }
 
-func (tpl *UbuntuMegamNilavuInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamNilavuInstall{})
+func (tpl *UbuntuNilavuInstall) Options(opts map[string]string) {
 }
 
-type UbuntuMegamNilavuInstallTemplate struct{}
+func (tpl *UbuntuNilavuInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuNilavuInstall{})
+}
 
-func (m *UbuntuMegamNilavuInstallTemplate) Render(pkg urknall.Package) {
-		pkg.AddCommands("repository",
-		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath ),
+type UbuntuNilavuInstallTemplate struct{}
+
+func (m *UbuntuNilavuInstallTemplate) Render(pkg urknall.Package) {
+  //fail on ruby2.0 < check 
+
+	pkg.AddCommands("repository",
+		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
-	)
-
-	pkg.AddCommands("megamcommon",
-		And("apt-get -y install megamcommon"),
 	)
 
 	pkg.AddCommands("megamnilavu",
 		InstallPackages("megamnilavu"),
 	)
+
 }

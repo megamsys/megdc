@@ -17,34 +17,37 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
-var ubuntumegamgatewayremove *UbuntuMegamGatewayRemove
+var ubuntugatewayremove *UbuntuGatewayRemove
 
 func init() {
-	ubuntumegamgatewayremove = &UbuntuMegamGatewayRemove{}
-	templates.Register("UbuntuMegamGatewayRemove", ubuntumegamgatewayremove)
+	ubuntugatewayremove = &UbuntuGatewayRemove{}
+	templates.Register("UbuntuGatewayRemove", ubuntugatewayremove)
 }
 
-type UbuntuMegamGatewayRemove struct{}
+type UbuntuGatewayRemove struct{}
 
-func (tpl *UbuntuMegamGatewayRemove) Render(p urknall.Package) {
-	p.AddTemplate("gateway", &UbuntuMegamGatewayRemoveTemplate{})
+func (tpl *UbuntuGatewayRemove) Render(p urknall.Package) {
+	p.AddTemplate("gateway", &UbuntuGatewayRemoveTemplate{})
 }
 
-func (tpl *UbuntuMegamGatewayRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamGatewayRemove{})
+func (tpl *UbuntuGatewayRemove) Options(opts map[string]string) {
 }
 
-type UbuntuMegamGatewayRemoveTemplate struct{}
+func (tpl *UbuntuGatewayRemove) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuGatewayRemove{})
+}
 
-func (m *UbuntuMegamGatewayRemoveTemplate) Render(pkg urknall.Package) {
+type UbuntuGatewayRemoveTemplate struct{}
+
+func (m *UbuntuGatewayRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("megamgateway",
 		RemovePackage("megamgateway"),
 		RemovePackages(""),
 		PurgePackages("megamgateway"),
-		Shell("dpkg --get-selections megam*",),
+		Shell("dpkg --get-selections megam*"),
 	)
 }

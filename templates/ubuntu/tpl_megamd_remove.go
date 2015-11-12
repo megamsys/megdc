@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntumegamdremove *UbuntuMegamdRemove
@@ -34,6 +34,9 @@ func (tpl *UbuntuMegamdRemove) Render(p urknall.Package) {
 	p.AddTemplate("megamd", &UbuntuMegamdRemoveTemplate{})
 }
 
+func (tpl *UbuntuMegamdRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamdRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamdRemove{})
 }
@@ -46,6 +49,6 @@ func (m *UbuntuMegamdRemoveTemplate) Render(pkg urknall.Package) {
 		RemovePackage("megamd"),
 		RemovePackages(""),
 		PurgePackages("megamd"),
-		Shell("dpkg --get-selections megam*",),
+		Shell("dpkg --get-selections megam*"),
 	)
 }

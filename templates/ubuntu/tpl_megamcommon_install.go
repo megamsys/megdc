@@ -17,23 +17,10 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 )
 
-
-const getip = `#!/bin/sh
-
-while read Iface Destination Gateway Flags RefCnt Use Metric Mask MTU Window IRTT; do
-		[ "$Mask" = "00000000" ] && \
-		interface="$Iface" && \
-		ipaddr=$(LC_ALL=C /sbin/ip -4 addr list dev "$interface" scope global) && \
-		ipaddr=${ipaddr#* inet } && \
-		ipaddr=${ipaddr%%/*} && \
-		break
-	done < /proc/net/route
-echo $ipaddr
-`
 
 var ubuntumegamcommoninstall *UbuntuMegamCommonInstall
 
@@ -46,6 +33,9 @@ type UbuntuMegamCommonInstall struct{}
 
 func (tpl *UbuntuMegamCommonInstall) Render(p urknall.Package) {
 	p.AddTemplate("common", &UbuntuMegamCommonInstallTemplate{})
+}
+
+func (tpl *UbuntuMegamCommonInstall) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuMegamCommonInstall) Run(target urknall.Target) error {

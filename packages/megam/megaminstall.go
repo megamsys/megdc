@@ -16,110 +16,79 @@
 package megam
 
 import (
-	"fmt"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
+	"github.com/megamsys/megdc/packages"
 	"launchpad.net/gnuflag"
-	"reflect"
-	//	"strconv"
 )
 
-type Megaminstall struct {
-	Fs           			*gnuflag.FlagSet
-	All          			bool
-	MegamNilavuInstall  	bool
-	MegamGatewayInstall 	bool
-	MegamdInstall       	bool
-	MegamCommonInstall  	bool
-	MegamSnowflakeInstall 	bool
-	RiakInstall							bool
-	Host		 			string
-	Username	 			string
-	Password     			string
-	Quiet        			bool
+var INSTALL_PACKAGES = []string{"SnowflakeInstall",
+	"NilavuInstall",
+	"GatewayInstall",
+	"MegamdInstall"}
+
+type MegamInstall struct {
+	Fs               *gnuflag.FlagSet
+	All              bool
+	NilavuInstall    bool
+	GatewayInstall   bool
+	MegamdInstall    bool
+	SnowflakeInstall bool
 }
 
-func (g *Megaminstall) Info() *cmd.Info {
-	desc := `starts megdc.
-
-If you use the '--quiet' flag megdc doesn't print the logs.
-
-`
+func (c *MegamInstall) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:    "megaminstall",
-		Usage:   `megaminstall [--all] [--nilavu]...`,
-		Desc:    desc,
+		Name:  "megaminstall",
+		Usage: "megaminstall [--nilavu/-n] [--gateway/-g] [--snowflake/-s]",
+		Desc: `Install megam (app orchestrator) . For megdc, available install plaform is ubuntu.
+We are working to support centos.
+In order to install individual packages use the following options.
+
+The [[--nilavu]] parameter defines megam cockpit ui to install.
+This code name is nilavu packaged as megamnilavu.
+
+The [[--gateway]] parameter defines megam gateway apiserver to install.
+This code name is gateway packaged as megamgateway.
+
+The [[--snowflake]] parameter defines megam uidserver to install.
+This code name is snowflake packaged as megamsnowflake.
+
+The [[--megamd]] parameter defines megam omni scheduler to install.
+This code name is megamd packaged as megammegamd.
+
+For more information read http://docs.megam.io.`,
 		MinArgs: 0,
 	}
 }
 
-func (c *Megaminstall) Run(context *cmd.Context) error {
-	fmt.Println("[main] starting megdc ...")
-
-	packages := make(map[string]string)
-	options := make(map[string]string)
-
-	s := reflect.ValueOf(c).Elem()
-	typ := s.Type()
-	if s.Kind() == reflect.Struct {
-		for i := 0; i < s.NumField(); i++ {
-			key := s.Field(i)
-			value := s.FieldByName(typ.Field(i).Name)
-			switch key.Interface().(type) {
-			case bool:
-				if value.Bool() {
-					packages[typ.Field(i).Name] = typ.Field(i).Name
-				}
-			case string:
-				if value.String() != "" {
-					options[typ.Field(i).Name] = value.String()
-				}
-			}
-		}
-	}
-
-	if handler, err := handler.NewHandler(); err != nil {
+func (c *MegamInstall) Run(context *cmd.Context) error {
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "installing")
+	w := handler.NewWrap(c)
+	w.IfNoneAddPackages(INSTALL_PACKAGES)
+	if h, err := handler.NewHandler(w); err != nil {
 		return err
-	} else {
-		handler.SetTemplates(packages, options)
-        err := handler.Run()
-        if err != nil {
-        	return err
-        }
+	} else if err := h.Run(); err != nil {
+		return err
 	}
-
-	// goodbye.
 	return nil
 }
 
-func (c *Megaminstall) Flags() *gnuflag.FlagSet {
+func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
-		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.BoolVar(&c.All, "all", false, "Install all megam packages")
-		c.Fs.BoolVar(&c.All, "a", false, "Install all megam packages")
-
-		/* Install package commands */
-		c.Fs.BoolVar(&c.MegamNilavuInstall, "megamnilavu", false, "Install nilavu package")
-		c.Fs.BoolVar(&c.MegamNilavuInstall, "n", false, "Install nilavu package")
-		c.Fs.BoolVar(&c.MegamGatewayInstall, "megamgateway", false, "Install megam gateway package")
-		c.Fs.BoolVar(&c.MegamGatewayInstall, "g", false, "Install megam gateway package")
-		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, "Install megamd package")
-		c.Fs.BoolVar(&c.MegamdInstall, "d", false, "Install megamd package")
-		c.Fs.BoolVar(&c.MegamCommonInstall, "megamcommon", false, "Install megamcommon package")
-		c.Fs.BoolVar(&c.MegamCommonInstall, "c", false, "Install megamcommon package")
-		c.Fs.BoolVar(&c.MegamSnowflakeInstall, "megamsnowflake", false, "Install megam snowflake package")
-		c.Fs.BoolVar(&c.MegamSnowflakeInstall, "s", false, "Install megam snowflake package")
-		c.Fs.BoolVar(&c.RiakInstall, "riak", false, "Install Riak package")
-		c.Fs.BoolVar(&c.RiakInstall, "r", false, "Install Riak package")
-
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
-		c.Fs.BoolVar(&c.Quiet, "quiet", false, "")
-		c.Fs.BoolVar(&c.Quiet, "q", false, "")
+		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
+		nilMsg := "Install megam cockpit ui"
+		c.Fs.BoolVar(&c.NilavuInstall, "nilavu", false, nilMsg)
+		c.Fs.BoolVar(&c.NilavuInstall, "n", false, nilMsg)
+		gwyMsg := "Install megam gateway apiserver"
+		c.Fs.BoolVar(&c.GatewayInstall, "gateway", false, gwyMsg)
+		c.Fs.BoolVar(&c.GatewayInstall, "g", false, gwyMsg)
+		megdMsg := "Install megam omni scheduler"
+		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, megdMsg)
+		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
+		snoMsg := "Install megam uidserver"
+		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
+		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 	}
+	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(), c.Fs)
 	return c.Fs
 }

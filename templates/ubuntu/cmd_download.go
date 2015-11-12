@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/dynport/urknall/utils"
+	"github.com/megamsys/urknall/utils"
 )
 
 const TMP_DOWNLOAD_DIR = "/tmp/downloads"

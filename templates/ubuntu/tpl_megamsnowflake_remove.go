@@ -17,30 +17,33 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
-var ubuntumegamsnowflakeremove *UbuntuMegamSnowflakeRemove
+var ubuntusnowflakeremove *UbuntuSnowflakeRemove
 
 func init() {
-	ubuntumegamsnowflakeremove = &UbuntuMegamSnowflakeRemove{}
-	templates.Register("UbuntuMegamSnowflakeRemove", ubuntumegamsnowflakeremove)
+	ubuntusnowflakeremove = &UbuntuSnowflakeRemove{}
+	templates.Register("UbuntuSnowflakeRemove", ubuntusnowflakeremove)
 }
 
-type UbuntuMegamSnowflakeRemove struct{}
+type UbuntuSnowflakeRemove struct{}
 
-func (tpl *UbuntuMegamSnowflakeRemove) Render(p urknall.Package) {
-	p.AddTemplate("snowflake", &UbuntuMegamSnowflakeRemoveTemplate{})
+func (tpl *UbuntuSnowflakeRemove) Render(p urknall.Package) {
+	p.AddTemplate("snowflake", &UbuntuSnowflakeRemoveTemplate{})
 }
 
-func (tpl *UbuntuMegamSnowflakeRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamSnowflakeRemove{})
+func (tpl *UbuntuSnowflakeRemove) Options(opts map[string]string) {
 }
 
-type UbuntuMegamSnowflakeRemoveTemplate struct{}
+func (tpl *UbuntuSnowflakeRemove) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuSnowflakeRemove{})
+}
 
-func (m *UbuntuMegamSnowflakeRemoveTemplate) Render(pkg urknall.Package) {
+type UbuntuSnowflakeRemoveTemplate struct{}
+
+func (m *UbuntuSnowflakeRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("megamsnowflake",
 		Shell("service snowflake stop"),
 		RemovePackage("megamsnowflake"),

@@ -13,7 +13,7 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-package one
+package megam
 
 import (
 	"github.com/megamsys/libgo/cmd"
@@ -21,26 +21,27 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-var 	REMOVE_PACKAGES = []string{"OneRemove"}
+var REPORT_PACKAGES = []string{"MegamReport"}
 
-type Oneremove struct {
-	Fs        *gnuflag.FlagSet
-	OneRemove bool
+type Megamreport struct {
+	Fs *gnuflag.FlagSet
 }
 
-func (g *Oneremove) Info() *cmd.Info {
+func (g *Megamreport) Info() *cmd.Info {
+	desc := `Report about megam installation.
+`
 	return &cmd.Info{
-		Name:    "oneremove",
-		Usage:   `oneremove [--help] ...`,
-		Desc:    `Remove opennebula frontend `,
+		Name:    "megamreport",
+		Usage:   `megamreport`,
+		Desc:    desc,
 		MinArgs: 0,
 	}
 }
 
-func (c *Oneremove) Run(context *cmd.Context) error {
-	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
+func (c *Megamreport) Run(context *cmd.Context) error {
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "report")
 	w := handler.NewWrap(c)
-	w.IfNoneAddPackages(REMOVE_PACKAGES)
+	w.IfNoneAddPackages(REPORT_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -49,7 +50,7 @@ func (c *Oneremove) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *Oneremove) Flags() *gnuflag.FlagSet {
+func (c *Megamreport) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 	}

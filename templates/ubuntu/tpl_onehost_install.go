@@ -17,17 +17,13 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
+	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
-	"net"
-	"fmt"
 )
 
 const (
-
-			ONEHOST_INSTALL_LOG="/var/log/megam/megamcib/opennebulahost.log"
-		)
-
+	ONEHOST_INSTALL_LOG = "/var/log/megam/megamcib/opennebulahost.log"
+)
 
 var ubuntuonehostinstall *UbuntuOneHostInstall
 
@@ -39,7 +35,10 @@ func init() {
 type UbuntuOneHostInstall struct{}
 
 func (tpl *UbuntuOneHostInstall) Render(p urknall.Package) {
-	p.AddTemplate("one", &UbuntuOneHostInstallTemplate{})
+	p.AddTemplate("onehost", &UbuntuOneHostInstallTemplate{})
+}
+
+func (tpl *UbuntuOneHostInstall) Options(opts map[string]string) {
 }
 
 func (tpl *UbuntuOneHostInstall) Run(target urknall.Target) error {
@@ -49,45 +48,28 @@ func (tpl *UbuntuOneHostInstall) Run(target urknall.Target) error {
 type UbuntuOneHostInstallTemplate struct{}
 
 func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
-
-	ip := ""
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		fmt.Println(err)
-	}
- for _, address := range addrs {
-			// check the address type and if it is not a loopback the display it
-			if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-					if ipnet.IP.To4() != nil {
-							//return ipnet.IP.String()
-							ip = ipnet.IP.String()
-							fmt.Println(ip)
-					}
-			}
-	}
-
-
 	pkg.AddCommands("repository",
-	Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
-	Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),
-  UpdatePackagesOmitError(),
- )
+		Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
+		Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),
+		UpdatePackagesOmitError(),
+	)
 
 	pkg.AddCommands("depends",
 		InstallPackages("build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils lvm2 ssh iproute iputils-arping make"),
 	)
 
-	pkg.AddCommands("onehost",
-		InstallPackages("opennebula-node"),
+	pkg.AddCommands("verify",
+		InstallPackages("qemu-system-x86 qemu-kvm cpu-checker"),
+		And("kvm=`kvm-ok  | grep 'KVM acceleration can be used'`"),
 	)
 
-	pkg.AddCommands("verify",
-			InstallPackages("qemu-system-x86 qemu-kvm cpu-checker"),
-			And("kvm=`kvm-ok  | grep 'KVM acceleration can be used'`"),
-		)
-  pkg.AddCommands("vswitch",
+	pkg.AddCommands("node",
+		InstallPackages("opennebula-node"),
+	)
+// sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin
+
+	pkg.AddCommands("vswitch",
 		InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),
-	Shell("echo '"+ "%" + "oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' >> //etc/sudoers.d/openvswitch"),
-	
-)
+	)
+
 }

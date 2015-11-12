@@ -47,14 +47,16 @@ func cmdRegistry(name string) *cmd.Manager {
 			log.SetLevel(log.DebugLevel)
 		}
 	})
-	m.Register(&megam.Megaminstall{})
+	m.Register(&megam.MegamInstall{})
 	m.Register(&megam.Megamremove{})
+	m.Register(&megam.Megamreport{})
 	m.Register(&one.Oneinstall{})
 	m.Register(&one.Oneremove{})
 	m.Register(&onehost.Onehostinstall{})
 	m.Register(&onehost.Onehostremove{})
 	m.Register(&ceph.Cephinstall{})
 	m.Register(&ceph.Cephremove{})
+	m.Register(&onehost.Createnetwork{})
 	return m
 }
 

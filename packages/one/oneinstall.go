@@ -16,92 +16,52 @@
 package one
 
 import (
-	"fmt"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
 	"launchpad.net/gnuflag"
-	"reflect"
-	//	"strconv"
 )
 
+var INSTALL_PACKAGES = []string{"OneInstall"}
+
 type Oneinstall struct {
-	Fs           			*gnuflag.FlagSet
-	OneInstall  	bool
-	Host		 			string
-	Username	 			string
-	Password     			string
-	Quiet        			bool
+	Fs         *gnuflag.FlagSet
+	OneInstall bool
+	Host       string
+	Username   string
+	Password   string
 }
 
 func (g *Oneinstall) Info() *cmd.Info {
-	desc := `starts megdc.
+	desc := `Install opennebula frontend
 
-If you use the '--quiet' flag megdc doesn't print the logs.
+Install opennebula frontend (master). This installs opennebula latest release 4.14.
+For megdc, available install plaform is ubuntu. We are working to support centos.
 
+For more information read http://docs.megam.io.
 `
 	return &cmd.Info{
 		Name:    "oneinstall",
-		Usage:   `oneinstall [--host] [--username]...`,
+		Usage:   `oneinstall [--help/-h]...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
 }
 
 func (c *Oneinstall) Run(context *cmd.Context) error {
-	fmt.Println("[main] starting megdc ...")
-
-	packages := make(map[string]string)
-	options := make(map[string]string)
-
-	s := reflect.ValueOf(c).Elem()
-	typ := s.Type()
-	if s.Kind() == reflect.Struct {
-		for i := 0; i < s.NumField(); i++ {
-			key := s.Field(i)
-			value := s.FieldByName(typ.Field(i).Name)
-			switch key.Interface().(type) {
-			case bool:
-				if value.Bool() {
-					packages[typ.Field(i).Name] = typ.Field(i).Name
-				}
-			case string:
-				if value.String() != "" {
-					options[typ.Field(i).Name] = value.String()
-				}
-			}
-		}
-	}
-
-	if handler, err := handler.NewHandler(); err != nil {
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
+	w := handler.NewWrap(c)
+	w.IfNoneAddPackages(INSTALL_PACKAGES)
+	if h, err := handler.NewHandler(w); err != nil {
 		return err
-	} else {
-		handler.SetTemplates(packages, options)
-        err := handler.Run()
-        if err != nil {
-        	return err
-        }
+	} else if err := h.Run(); err != nil {
+		return err
 	}
-
-	// goodbye.
 	return nil
 }
 
 func (c *Oneinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
-		/* Install package commands */
-		c.Fs.BoolVar(&c.OneInstall, "install", false, "Install Opennebula ")
-		c.Fs.BoolVar(&c.OneInstall, "i", false, "Install Opennebula ")
-
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
-		c.Fs.BoolVar(&c.Quiet, "quiet", false, "")
-		c.Fs.BoolVar(&c.Quiet, "q", false, "")
 	}
 	return c.Fs
 }

@@ -13,7 +13,7 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-package one
+package onehost
 
 import (
 	"github.com/megamsys/libgo/cmd"
@@ -21,26 +21,29 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-var 	REMOVE_PACKAGES = []string{"OneRemove"}
+var NETWORK_PACKAGES = []string{"CreateNetwork"}
 
-type Oneremove struct {
-	Fs        *gnuflag.FlagSet
-	OneRemove bool
+type Createnetwork struct {
+	Fs     *gnuflag.FlagSet
+	PhyDev string
+	Bridge string
 }
 
-func (g *Oneremove) Info() *cmd.Info {
+func (g *Createnetwork) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:    "oneremove",
-		Usage:   `oneremove [--help] ...`,
-		Desc:    `Remove opennebula frontend `,
+		Name:    "createnetwork",
+		Usage:   `createnetwork [--bridge] name --[phy] name`,
+		Desc:   `create network openvswitch network bridge to phydev
+		Default: bridge name:one, phydev:eth0
+	`,
 		MinArgs: 0,
 	}
 }
 
-func (c *Oneremove) Run(context *cmd.Context) error {
-	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
+func (c *Createnetwork) Run(context *cmd.Context) error {
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "createnetwork")
 	w := handler.NewWrap(c)
-	w.IfNoneAddPackages(REMOVE_PACKAGES)
+	w.IfNoneAddPackages(NETWORK_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -49,9 +52,11 @@ func (c *Oneremove) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *Oneremove) Flags() *gnuflag.FlagSet {
+func (c *Createnetwork) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
+		c.Fs.StringVar(&c.PhyDev, "phy", "eth0", "Physical device or Network interface")
+		c.Fs.StringVar(&c.Bridge, "bridge", "one", "The name of the bridge")
 	}
 	return c.Fs
 }

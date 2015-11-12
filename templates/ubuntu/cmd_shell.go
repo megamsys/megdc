@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/dynport/urknall/utils"
+	"github.com/megamsys/urknall/utils"
 )
 
 // A shell command is just that: something that is executed in a shell on the host to be provisioned. There is quite a

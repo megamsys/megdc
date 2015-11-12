@@ -21,32 +21,31 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var ubuntuoneremove *UbuntuOneRemove
+var ubunturabbitmqinstall *UbuntuRabbitmqInstall
 
 func init() {
-	ubuntuoneremove = &UbuntuOneRemove{}
-	templates.Register("UbuntuOneRemove", ubuntuoneremove)
+	ubunturabbitmqinstall = &UbuntuRabbitmqInstall{}
+	templates.Register("UbuntuRabbitmqInstall", ubunturabbitmqinstall)
 }
 
-type UbuntuOneRemove struct{}
+type UbuntuRabbitmqInstall struct{}
 
-func (tpl *UbuntuOneRemove) Render(p urknall.Package) {
-	p.AddTemplate("one", &UbuntuOneRemoveTemplate{})
+func (tpl *UbuntuRabbitmqInstall) Render(p urknall.Package) {
+	p.AddTemplate("rabbitmq", &UbuntuRabbitmqInstallTemplate{})
 }
 
-func (tpl *UbuntuOneRemove) Options(opts map[string]string) {
+func (tpl *UbuntuRabbitmqInstall) Options(opts map[string]string) {
 }
 
-func (tpl *UbuntuOneRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuOneRemove{})
+func (tpl *UbuntuRabbitmqInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuRabbitmqInstall{})
 }
 
-type UbuntuOneRemoveTemplate struct{}
+type UbuntuRabbitmqInstallTemplate struct{}
 
-func (m *UbuntuOneRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("one",
-		RemovePackage("opennebula opennebula-sunstone"),
-		RemovePackages(""),
-		PurgePackages("opennebula opennebula-sunstone"),
+func (m *UbuntuRabbitmqInstallTemplate) Render(pkg urknall.Package) {
+	pkg.AddCommands("rabbitmq",
+		UpdatePackagesOmitError(),
+		InstallPackages("rabbitmq-server"),
 	)
 }

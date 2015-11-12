@@ -16,19 +16,27 @@
 package handler
 
 import (
-	//"errors"
-	"github.com/megamsys/megdc/templates"
+	"fmt"
 	"io"
+	"runtime"
 	"strings"
+	"time"
+
+	pp "github.com/megamsys/libgo/cmd"
+	"github.com/megamsys/libgo/os"
+	"github.com/megamsys/megdc/templates"
 	_ "github.com/megamsys/megdc/templates/ubuntu"
-	//"fmt"
+	"github.com/tj/go-spin"
 )
 
-const (
-	HOST     = "host"
-	USERNAME = "username"
-	PASSWORD = "password"
-)
+const Logo = `
+	███╗   ███╗███████╗ ██████╗ ██████╗  ██████╗
+	████╗ ████║██╔════╝██╔════╝ ██╔══██╗██╔════╝
+	██╔████╔██║█████╗  ██║  ███╗██║  ██║██║
+	██║╚██╔╝██║██╔══╝  ██║   ██║██║  ██║██║
+	██║ ╚═╝ ██║███████╗╚██████╔╝██████╔╝╚██████╗
+	╚═╝     ╚═╝╚══════╝ ╚═════╝ ╚═════╝  ╚═════╝
+`
 
 type Handler struct {
 	writer    io.Writer
@@ -36,32 +44,32 @@ type Handler struct {
 	platform  string
 }
 
-func NewHandler() (*Handler, error) {
+func NewHandler(w *WrappedParms) (*Handler, error) {
 	h := &Handler{}
-
-	if platform_name, err := findPlatform(); err != nil {
-		return h, err
+	if os, err := supportedOS(); err != nil {
+		return nil, err
 	} else {
-		h.platform = platform_name
+		h.platform = os
 	}
-
+	fmt.Println(w)
+	h.SetTemplates(w)
 	return h, nil
-
 }
 
-func (h *Handler) SetTemplates(packages map[string]string, options map[string]string) {
-	for k, _ := range packages {
+func (h *Handler) SetTemplates(w *WrappedParms) {
+	for k, _ := range w.Packages {
 		template := templates.NewTemplate()
-		for ko, vo := range options {
-			if ko == HOST {
-				template.Host = vo
-			}
-			if ko == USERNAME {
-				template.UserName = vo
-			}
-			if ko == PASSWORD {
-				template.Password = vo
-			}
+		var v, ok = w.GetHost()
+		if ok {
+			template.Host = v
+		}
+		v, ok = w.GetUserName()
+		if ok {
+			template.UserName = v
+		}
+		v, ok = w.GetPassword()
+		if ok {
+			template.Password = v
 		}
 		template.Name = strings.Title(h.platform) + k
 		h.templates = append(h.templates, template)
@@ -78,9 +86,27 @@ func (h *Handler) Run() error {
 	}, nil, false)
 }
 
-func findPlatform() (string, error) {
-
+func supportedOS() (string, error) {
+	osh := os.HostOS()
+	switch runtime.GOOS {
+	case "linux":
+		if osh != os.Ubuntu {
+			return "", fmt.Errorf("unsupported operating system: %v, we support ubuntu.", osh)
+		}
+	default:
+		return "", fmt.Errorf("unsupported operating system: %v", runtime.GOOS)
+	}
 	return "ubuntu", nil
 }
 
+//Show a spinner until our services start.
+func FunSpin(vers string, logo string, task string) {
+	fmt.Printf("%s %s", vers, logo)
 
+	s := spin.New()
+	for i := 0; i < 10; i++ {
+		fmt.Printf("\r%s", fmt.Sprintf("%s %s %s", pp.Colorfy("starting", "green", "", "bold"), task, s.Next()))
+		time.Sleep(3 * time.Millisecond)
+	}
+	fmt.Printf("\n")
+}

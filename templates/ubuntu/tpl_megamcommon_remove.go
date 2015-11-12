@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/dynport/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntumegamcommonremove *UbuntuMegamCommonRemove
@@ -34,6 +34,9 @@ func (tpl *UbuntuMegamCommonRemove) Render(p urknall.Package) {
 	p.AddTemplate("common", &UbuntuMegamCommonRemoveTemplate{})
 }
 
+func (tpl *UbuntuMegamCommonRemove) Options(opts map[string]string) {
+}
+
 func (tpl *UbuntuMegamCommonRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuMegamCommonRemove{})
 }
@@ -45,6 +48,6 @@ func (m *UbuntuMegamCommonRemoveTemplate) Render(pkg urknall.Package) {
 		RemovePackage("megamcommon"),
 		RemovePackages(""),
 		PurgePackages("megamcommon"),
-		Shell("dpkg --get-selections megam*",),
+		Shell("dpkg --get-selections megam*"),
 	)
 }
