@@ -113,9 +113,7 @@ Shell("IP_ADDR=" + ip +""),
 	pkg.AddCommands("osd2",
 		Shell("mkdir "+Osd2+"/osd"),
 	)
-	pkg.AddCommands("osd3",
-		Shell("mkdir "+Osd3+"/osd"),
-	)
+	
 	pkg.AddCommands("getip",
 		Shell("ip3=`echo 103.56.92.24| cut -d'.' -f 1,2,3`"),
 	)
