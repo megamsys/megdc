@@ -19,6 +19,7 @@ package ubuntu
 import (
 	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"fmt"
 )
 
 const (
@@ -109,8 +110,8 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("ceph-conf",
 		AsUser(CephUser, Shell("mkdir "+User_home+"/ceph-cluster")),
-			AsUser(CephUser,Shell("cd "+User_home+"/ceph-cluster"),
-			AsUser(CephUser,Shell("ceph-deploy new "+Host+" "),
+			AsUser(CephUser,Shell("cd "+User_home+"/ceph-cluster")),
+			AsUser(CephUser,Shell("ceph-deploy new "+Host+" ")),
  //add cephconf 	 WriteFile(User_home+"/.ssh/ssh_config", StrictHostKey, CephUser, 0755),
 		AsUser(CephUser,Shell("ceph-deploy install "+Host+"")),
 		AsUser(CephUser,Shell("ceph-deploy mon create-initial")),

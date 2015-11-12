@@ -56,7 +56,6 @@ func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
 		Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),
 		UpdatePackagesOmitError(),
 	)
-
 	pkg.AddCommands("depends",
 		InstallPackages("build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils lvm2 ssh iproute iputils-arping make"),
 	)
@@ -69,8 +68,9 @@ func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("node",
 		InstallPackages("opennebula-node"),
 	)
-// sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin
-
+  pkg.AddCommands("node",
+		Shell("sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin"),
+	)
 	pkg.AddCommands("vswitch",
 		InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),
 	)
