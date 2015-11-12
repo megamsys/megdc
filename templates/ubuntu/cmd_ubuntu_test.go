@@ -16,8 +16,8 @@
 package ubuntu
 
 import (
-	"fmt"
-	"strings"
+	//"fmt"
+	//"strings"
 	"testing"
 
 	"gopkg.in/check.v1"
@@ -29,7 +29,7 @@ var _ = check.Suite(&S{})
 
 func Test(t *testing.T) { check.TestingT(t) }
 
-func (s *S) TestSubnetMaskLocalSize(c *check.C) {
+/*func (s *S) TestSubnetMaskLocalSize(c *check.C) {
   a, _ := IPNet().Mask.Size()
 	c.Assert(a, check.Equals, 22)
 }
@@ -41,3 +41,4 @@ func (s *S) TestSubnetMaskIP(c *check.C) {
 	si := fmt.Sprintf("%s/%d", strings.Join(p, "."), 24)
 	c.Assert(si, check.Equals, "192.168.1.0/24")
 }
+*/

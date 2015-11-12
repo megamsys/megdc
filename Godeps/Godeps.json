@@ -1,0 +1,60 @@
+{
+	"ImportPath": "github.com/megamsys/megdc",
+	"GoVersion": "go1.5.1",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.8.7-37-g6f383a9",
+			"Rev": "6f383a9b2998dd6f401704269c3e6e192f6175ad"
+		},
+		{
+			"ImportPath": "github.com/dynport/dgtk/pubsub",
+			"Rev": "6efda1e0c80cac5a0a6602b4b9a6d2b42540f4de"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/cmd",
+			"Rev": "f098de8d18d270ee5528b9484a88771d5e659581"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/fs",
+			"Rev": "f098de8d18d270ee5528b9484a88771d5e659581"
+		},
+		{
+			"ImportPath": "github.com/megamsys/libgo/os",
+			"Rev": "f098de8d18d270ee5528b9484a88771d5e659581"
+		},
+		{
+			"ImportPath": "github.com/megamsys/urknall",
+			"Rev": "8b01fcd370fc2196f0a65cb302852d632689e001"
+		},
+		{
+			"ImportPath": "github.com/sajari/fuzzy",
+			"Rev": "b6d13352e6a42cfdafe3cd204970a55f6f5b55a5"
+		},
+		{
+			"ImportPath": "github.com/tj/go-spin",
+			"Comment": "1.0.0-9-g4bd47d3",
+			"Rev": "4bd47d3603b5c0460028794fbbf207f881088c08"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/curve25519",
+			"Rev": "575fdbe86e5dd89229707ebec0575ce7d088a4a6"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh",
+			"Rev": "575fdbe86e5dd89229707ebec0575ce7d088a4a6"
+		},
+		{
+			"ImportPath": "gopkg.in/check.v1",
+			"Rev": "11d3bc7aa68e238947792f30573146a3231fc0f1"
+		},
+		{
+			"ImportPath": "launchpad.net/gnuflag",
+			"Comment": "14",
+			"Rev": "roger.peppe@canonical.com-20150127164241-i95i710z8ju182mx"
+		}
+	]
+}
