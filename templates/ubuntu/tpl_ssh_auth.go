@@ -38,12 +38,15 @@ func init() {
 
 type UbuntuSshPass struct{}
 
+
 func (tpl *UbuntuSshPass) Render(p urknall.Package) {
 	p.AddTemplate("onehost", &UbuntuSshPassTemplate{})
 }
 
 func (tpl *UbuntuSshPass) Options(opts map[string]string) {
+
 }
+
 
 func (tpl *UbuntuSshPass) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuSshPass{})
@@ -53,7 +56,7 @@ type UbuntuSshPassTemplate struct{}
 
 func (m *UbuntuSshPassTemplate) Render(pkg urknall.Package) {
 
-	ip := GetLocalIP()
+	ip := IP()
 
 	pkg.AddCommands("install-sshpass",
 	  InstallPackages("sshpass"),

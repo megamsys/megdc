@@ -49,7 +49,7 @@ type UbuntuOneInstallTemplate struct{}
 
 func (m *UbuntuOneInstallTemplate) Render(pkg urknall.Package) {
 
-	ip := GetLocalIP()
+	ip := IP()
 
 	pkg.AddCommands("repository",
 		Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),

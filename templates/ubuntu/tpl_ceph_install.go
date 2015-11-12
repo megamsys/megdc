@@ -17,31 +17,36 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
-	"github.com/megamsys/megdc/templates"
 	"fmt"
+	"os"
+	"strings"
+	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 const (
-	CephUser = "megdc"
-	User_home = "/home/" + CephUser
-	Osd1      = "/storage1"
-	Osd2      = "/storage2"
+	CEPHUSER = "username"
+	OSD1     = "osd1"
+	OSD2     = "osd2"
+
+	UserHomePrefix = "/home/"
+
 	StrictHostKey = `#!/bin/sh
 
 	ConnectTimeout 5
 	Host *
 	StrictHostKeyChecking no
 	`
+
 	SSHHostConfig = `#!/bin/sh
   Host %s
  Hostname %s
  User %s
 `
-CephConf = `osd crush chooseleaf type = 0
-osd_pool_default_size = 2
-public network = %s/%s
-cluster network = %s/%s
+	CephConf = `osd crush chooseleaf type = 0
+osd_pool_default_size = %s
+public network = %s
+cluster network = %s
 mon_pg_warn_max_per_osd = 0
 `
 )
@@ -53,79 +58,123 @@ func init() {
 	templates.Register("UbuntuCephInstall", ubuntucephinstall)
 }
 
-type UbuntuCephInstall struct{}
+type UbuntuCephInstall struct {
+	osd1     string
+	osd2     string
+	cephuser string
+	cephhome string
+}
 
 func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
+	if osd1, ok := opts[OSD1]; ok {
+		tpl.osd1 = osd1
+	}
+	if osd2, ok := opts[OSD2]; ok {
+		tpl.osd2 = osd2
+	}
+	if cephuser, ok := opts[CEPHUSER]; ok {
+		tpl.cephuser = cephuser
+	}
 }
 
 func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
-	p.AddTemplate("ceph", &UbuntuCephInstallTemplate{})
+	p.AddTemplate("ceph", &UbuntuCephInstallTemplate{
+		osd1:     tpl.osd1,
+		osd2:     tpl.osd2,
+		cephuser: tpl.cephuser,
+		cephhome: UserHomePrefix + tpl.cephuser,
+	})
 }
 
 func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCephInstall{})
 }
 
-type UbuntuCephInstallTemplate struct{}
+type UbuntuCephInstallTemplate struct {
+	osd1     string
+	osd2     string
+	cephuser string
+	cephhome string
+}
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
-	//Host := host()
-	Host := ""
-	ip := GetLocalIP()
+	host, _ := os.Hostname()
+	ip := IP()
 
-	pkg.AddCommands("sudoer",
+	Osd1 := m.osd1
+	Osd2 := m.osd2
+	CephUser := m.cephuser
+	CephHome := m.cephhome
+
+	pkg.AddCommands("cephuser sudoer",
 		Shell("echo ' "+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
 	)
-	pkg.AddCommands("changepermission",
+	pkg.AddCommands("chmod sudoer",
 		Shell("sudo chmod 0440 /etc/sudoers.d/"+CephUser+""),
 	)
 
-	pkg.AddCommands("ceph_install",
+	pkg.AddCommands("cephinstall",
 		Shell("sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list"),
 		Shell("sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -"),
 		Shell("sudo apt-get -y update"),
-    InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
+		InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
 	)
 
-	pkg.AddCommands("edithost",
-		Shell("echo '"+ip+" "+Host+"' >> /etc/hosts"),
-
+	pkg.AddCommands("etc host",
+		Shell("echo '"+ip+" "+host+"' >> /etc/hosts"),
 	)
 
 	pkg.AddCommands("ssh-keygen",
-		Mkdir(User_home +"/.ssh",CephUser,0700),
-		AsUser(CephUser, Shell("ssh-keygen -N '' -t rsa -f "+User_home+"/.ssh/id_rsa")),
-		AsUser(CephUser,	Shell("cp "+User_home+"/.ssh/id_rsa.pub "+User_home+"/.ssh/authorized_keys")),
+		Mkdir(CephHome+"/.ssh", CephUser, 0700),
+		AsUser(CephUser, Shell("ssh-keygen -N '' -t rsa -f "+CephHome+"/.ssh/id_rsa")),
+		AsUser(CephUser, Shell("cp "+CephHome+"/.ssh/id_rsa.pub "+CephHome+"/.ssh/authorized_keys")),
 	)
 
 	pkg.AddCommands("ssh_known_hosts",
-		 WriteFile(User_home+"/.ssh/ssh_config", StrictHostKey, CephUser, 0755),
-	   WriteFile(User_home+"/.ssh/ssh_config",fmt.Sprintf(SSHHostConfig,Host,Host,CephUser),CephUser, 0755),
+		WriteFile(CephHome+"/.ssh/ssh_config", StrictHostKey, CephUser, 0755),
+		WriteFile(CephHome+"/.ssh/ssh_config", fmt.Sprintf(SSHHostConfig, host, host, CephUser), CephUser, 0755),
 	)
 
 	pkg.AddCommands("mkdir_osd",
-			Mkdir(Osd1 +"/osd","",0755),
-	    Mkdir(Osd2 +"/osd","",0755),
+		Mkdir(Osd1+"/osd", "", 0755),
+		Mkdir(Osd2+"/osd", "", 0755),
 	)
 
-	pkg.AddCommands("ceph-conf",
-		AsUser(CephUser, Shell("mkdir "+User_home+"/ceph-cluster")),
-			AsUser(CephUser,Shell("cd "+User_home+"/ceph-cluster")),
-			AsUser(CephUser,Shell("ceph-deploy new "+Host+" ")),
- //add cephconf 	 WriteFile(User_home+"/.ssh/ssh_config", StrictHostKey, CephUser, 0755),
-		AsUser(CephUser,Shell("ceph-deploy install "+Host+"")),
-		AsUser(CephUser,Shell("ceph-deploy mon create-initial")),
-		AsUser(CephUser,Shell("ceph-deploy osd prepare "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd ")),
-		AsUser(CephUser,Shell("ceph-deploy osd activate "+Host+":"+Osd1+"/osd "+Host+":"+Osd2+"/osd ")),
-		AsUser(CephUser,Shell("ceph-deploy admin "+Host+"")),
-		AsUser(CephUser,Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring")),
-		AsUser(CephUser,Shell("sleep 180")),
-		AsUser(CephUser,Shell("ceph osd pool set rbd pg_num 100")),
-		AsUser(CephUser,Shell("sleep 180")),
-		AsUser(CephUser,Shell("ceph osd pool set rbd pgp_num 100")),
-	)
-	pkg.AddCommands("copy",
-		Shell("cp "+User_home+"/ceph-cluster/*.keyring /etc/ceph/"),
-	)
+	pkg.AddCommands("write_cephconf",
+		AsUser(CephUser, Shell("mkdir "+CephHome+"/ceph-cluster")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster")),
+		AsUser(CephUser, Shell("ceph-deploy new "+host+" ")),
+		WriteFile(CephHome+"/ceph-cluster/ceph.conf",
+			fmt.Sprintf(CephConf, m.osdPoolSize(Osd1, Osd2), m.slashIp(), m.slashIp()), CephUser, 0755),
 
+		AsUser(CephUser, Shell("ceph-deploy install "+host+"")),
+		AsUser(CephUser, Shell("ceph-deploy mon create-initial")),
+		AsUser(CephUser, Shell("ceph-deploy osd prepare "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
+		AsUser(CephUser, Shell("ceph-deploy osd activate "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
+		AsUser(CephUser, Shell("ceph-deploy admin "+host+"")),
+		AsUser(CephUser, Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring")),
+		AsUser(CephUser, Shell("sleep 180")),
+		AsUser(CephUser, Shell("ceph osd pool set rbd pg_num 100")),
+		AsUser(CephUser, Shell("sleep 180")),
+		AsUser(CephUser, Shell("ceph osd pool set rbd pgp_num 100")),
+	)
+	pkg.AddCommands("copy keyring",
+		Shell("cp "+CephHome+"/ceph-cluster/*.keyring /etc/ceph/"),
+	)
+}
+
+func (m *UbuntuCephInstallTemplate) noOfIpsFromMask() int {
+	si, _ := IPNet().Mask.Size() //from your netwwork
+	return si
+}
+
+func (m *UbuntuCephInstallTemplate) slashIp() string {
+	s := strings.Split(IP(), ".")
+	p := s[0 : len(s)-1]
+	p = append(p, "0")
+	return fmt.Sprintf("%s/%d", strings.Join(p, "."), m.noOfIpsFromMask())
+}
+
+func (m *UbuntuCephInstallTemplate) osdPoolSize(osds ...string) int {
+	return len(osds)
 }

@@ -45,10 +45,11 @@ func (w *WrappedParms) String() string {
 	for _, v := range w.Packages {
 		b.Write([]byte(v + "\n"))
 	}
-	b.Write([]byte("---\n"))
+	b.Write([]byte(cmd.Colorfy("Options", "blue", "", "") + "\n"))
 	for k, v := range w.Options {
 		b.Write([]byte(k + "\t" + v + "\n"))
 	}
+	b.Write([]byte("---\n"))
 	fmt.Fprintln(wt)
 	wt.Flush()
 	return strings.TrimSpace(b.String())
@@ -90,21 +91,29 @@ func (w *WrappedParms) Empty() bool {
 	return w.len() == 0
 }
 
-func (w *WrappedParms) AddPackage(k string) {
+func (w *WrappedParms) IfNoneAddPackages(p []string) {
+	if w.Empty() {
+		for i := range p {
+			w.addPackage(p[i])
+		}
+	}
+}
+
+func (w *WrappedParms) addPackage(k string) {
 	w.Packages[k] = k
 }
 
 func (w *WrappedParms) GetHost() (string, bool) {
 	k, v := w.Options[HOST]
-  return k, v
+	return k, v
 }
 
 func (w *WrappedParms) GetUserName() (string, bool) {
-	k,v := w.Options[USERNAME]
-	return k,v
+	k, v := w.Options[USERNAME]
+	return k, v
 }
 
 func (w *WrappedParms) GetPassword() (string, bool) {
-	k,v := w.Options[PASSWORD]
-	return k,v
+	k, v := w.Options[PASSWORD]
+	return k, v
 }

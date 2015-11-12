@@ -21,9 +21,14 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var REMOVE_PACKAGES = []string{"SnowflakeRemove",
+	"NilavuRemove",
+	"GatewayRemove",
+	"MegamdRemove"}
+
 type Megamremove struct {
-	Fs                   *gnuflag.FlagSet
-	All                  bool
+	Fs              *gnuflag.FlagSet
+	All             bool
 	NilavuRemove    bool
 	GatewayRemove   bool
 	MegamdRemove    bool
@@ -32,9 +37,9 @@ type Megamremove struct {
 
 func (g *Megamremove) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:    "megamremove",
-		Usage:   `megamremove [--nilavu/-n] [--gateway/-g] [--snowflake/-s]...`,
-		Desc:    `Remove megam (app orchestrator). For megdc, available install plaform is ubuntu.
+		Name:  "megamremove",
+		Usage: `megamremove [--nilavu/-n] [--gateway/-g] [--snowflake/-s]...`,
+		Desc: `Remove megam (app orchestrator). For megdc, available install plaform is ubuntu.
 We are working to support centos.
 In order to Remove individual packages use the following options.
 
@@ -50,8 +55,6 @@ This code name is snowflake packaged as megamsnowflake.
 The [[--megamd]] parameter removes megam omni scheduler.
 This code name is megamd packaged as megammegamd.
 
-To install again megam use megaminstall
-
 For more information read http://docs.megam.io.
 `,
 		MinArgs: 0,
@@ -59,8 +62,9 @@ For more information read http://docs.megam.io.
 }
 
 func (c *Megamremove) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "removing")
 	w := handler.NewWrap(c)
+	w.IfNoneAddPackages(REMOVE_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -71,7 +75,7 @@ func (c *Megamremove) Run(context *cmd.Context) error {
 
 func (c *Megamremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
-			/* Remove package commands */
+		/* Remove package commands */
 		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
 		nilMsg := "Uninstall megam cockpit ui"
 		c.Fs.BoolVar(&c.NilavuRemove, "nilavu", false, nilMsg)

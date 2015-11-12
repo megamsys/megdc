@@ -72,6 +72,7 @@ func (h *Handler) SetTemplates(w *WrappedParms) {
 			template.Password = v
 		}
 		template.Name = strings.Title(h.platform) + k
+		template.Options = w.Options
 		h.templates = append(h.templates, template)
 	}
 }
@@ -100,11 +101,7 @@ func supportedOS() (string, error) {
 }
 
 //Show a spinner until our services start.
-func FunSpin(vers string, logo string) {
-}
-
-//Show a spinner until our services start.
-func SunSpin(vers string, logo string, task string) {
+func FunSpin(vers string, logo string, task string) {
 	fmt.Printf("%s %s", vers, logo)
 
 	s := spin.New()

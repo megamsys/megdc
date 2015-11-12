@@ -21,25 +21,26 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var 	REMOVE_PACKAGES = []string{"OneRemove"}
+
 type Oneremove struct {
 	Fs        *gnuflag.FlagSet
 	OneRemove bool
-
 }
 
 func (g *Oneremove) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "oneremove",
 		Usage:   `oneremove [--help] ...`,
-		Desc:  `Remove opennebula frontend `,
+		Desc:    `Remove opennebula frontend `,
 		MinArgs: 0,
 	}
 }
 
 func (c *Oneremove) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
 	w := handler.NewWrap(c)
-	c.oneRemove(w)
+	w.IfNoneAddPackages(REMOVE_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -50,22 +51,7 @@ func (c *Oneremove) Run(context *cmd.Context) error {
 
 func (c *Oneremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
-		c.Fs = gnuflag.NewFlagSet("oneremove", gnuflag.ExitOnError)
-
-		/* Install package commands
-		oneMsg := "Remove Opennebula"
-		c.Fs.BoolVar(&c.OneRemove, "remove", false, oneMsg)
-		c.Fs.BoolVar(&c.OneRemove, "r", false, oneMsg)*/
-
+		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
 	}
 	return c.Fs
-}
-func (c *Oneremove) oneRemove(w *handler.WrappedParms) {
-	DEFAULT_PACKAGES := []string{"OneRemove"}
-
-	if w.Empty() {
-		for i := range DEFAULT_PACKAGES {
-			w.AddPackage(DEFAULT_PACKAGES[i])
-		}
-	}
 }

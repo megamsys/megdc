@@ -24,24 +24,24 @@ type SSHCommand struct {
 	Host     string
 	Username string
 	Password string
-	fs       *gnuflag.FlagSet
+	Fs       *gnuflag.FlagSet
 }
 
 func (cmd *SSHCommand) Flags() *gnuflag.FlagSet {
-	if cmd.fs == nil {
-		cmd.fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
+	if cmd.Fs == nil {
+		cmd.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
 		hostMsg := "The host of the server to ssh"
-		cmd.fs.StringVar(&cmd.Host, "zhost", "localhost", hostMsg)
-		cmd.fs.StringVar(&cmd.Host, "z", "localhost", hostMsg)
+		cmd.Fs.StringVar(&cmd.Host, "host", "localhost", hostMsg)
+		cmd.Fs.StringVar(&cmd.Host, "o", "localhost", hostMsg)
 		usrMsg := "The username of the server"
-		cmd.fs.StringVar(&cmd.Username, "username", "megdc", usrMsg)
-		cmd.fs.StringVar(&cmd.Username, "u", "megdc", usrMsg)
+		cmd.Fs.StringVar(&cmd.Username, "username", "megdc", usrMsg)
+		cmd.Fs.StringVar(&cmd.Username, "u", "megdc", usrMsg)
 		pwdMsg := "The password of the server"
-		cmd.fs.StringVar(&cmd.Password, "password", "megdc", pwdMsg)
-		cmd.fs.StringVar(&cmd.Password, "p", "megdc", pwdMsg)
+		cmd.Fs.StringVar(&cmd.Password, "password", "megdc", pwdMsg)
+		cmd.Fs.StringVar(&cmd.Password, "p", "megdc", pwdMsg)
 
 	}
-	return cmd.fs
+	return cmd.Fs
 }
 
 func (c *SSHCommand) Run(context *cmd.Context) error {

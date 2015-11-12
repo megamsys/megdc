@@ -21,6 +21,8 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var INSTALL_PACKAGES = []string{"OneInstall"}
+
 type Oneinstall struct {
 	Fs         *gnuflag.FlagSet
 	OneInstall bool
@@ -28,6 +30,11 @@ type Oneinstall struct {
 
 func (g *Oneinstall) Info() *cmd.Info {
 	desc := `Install opennebula frontend
+
+Install opennebula frontend (master). This installs opennebula latest release 4.14.
+For megdc, available install plaform is ubuntu. We are working to support centos.
+
+For more information read http://docs.megam.io.
 `
 	return &cmd.Info{
 		Name:    "oneinstall",
@@ -38,9 +45,9 @@ func (g *Oneinstall) Info() *cmd.Info {
 }
 
 func (c *Oneinstall) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
 	w := handler.NewWrap(c)
-	c.oneInstall(w)
+	w.IfNoneAddPackages(INSTALL_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -52,19 +59,6 @@ func (c *Oneinstall) Run(context *cmd.Context) error {
 func (c *Oneinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		/* Install package commands
-		oneMsg := "Install Opennebula"
-		c.Fs.BoolVar(&c.OneInstall, "install", false, oneMsg)
-		c.Fs.BoolVar(&c.OneInstall, "i", false, oneMsg)*/
 	}
 	return c.Fs
-}
-func (c *Oneinstall) oneInstall(w *handler.WrappedParms) {
-	DEFAULT_PACKAGES := []string{"OneInstall"}
-
-	if w.Empty() {
-		for i := range DEFAULT_PACKAGES {
-			w.AddPackage(DEFAULT_PACKAGES[i])
-		}
-	}
 }

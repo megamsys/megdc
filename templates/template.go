@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
@@ -54,11 +55,10 @@ func (t *Template) Run() error {
 	if t.Password != "" {
 		target, err = urknall.NewSshTargetWithPassword(t.Host, t.Password)
 	} else {
-		if t.Host == LOCALHOST {
+		if len(strings.TrimSpace(t.Host)) <= 0 || t.Host == LOCALHOST {
 			target, err = urknall.NewLocalTarget()
 		} else {
-			//target, e = urknall.NewSshTarget(t.Host)
-			target, err = urknall.NewLocalTarget()
+			target, err = urknall.NewSshTarget(t.Host) //this is with sshkey
 		}
 	}
 	if err != nil {
@@ -68,7 +68,7 @@ func (t *Template) Run() error {
 	runner, err := get(t.Name)
 
 	if err != nil {
-		log.Errorf("fatal error, couldn't located the Package %s", t.Name)
+		log.Errorf("fatal error, couldn't locate the package %s", t.Name)
 		return err
 	}
 
@@ -76,7 +76,7 @@ func (t *Template) Run() error {
 		initializeRunner.Options(t.Options)
 		return initializeRunner.Run(target)
 	}
-	return errors.New(fmt.Sprintf("fatal error, couldn't located the Package %q", t.Name))
+	return errors.New(fmt.Sprintf("fatal error, couldn't locate the package %q", t.Name))
 }
 
 type callbackFunc func(*Template, chan *Template) error
@@ -144,7 +144,6 @@ func get(name string) (TemplateRunnable, error) {
 	}
 	return p, nil
 }
-
 
 // Register registers a new repository manager, that can be later configured
 // and used.

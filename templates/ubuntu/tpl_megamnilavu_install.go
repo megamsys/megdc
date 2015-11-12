@@ -13,12 +13,12 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-
 package ubuntu
 
+
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 const (
@@ -51,7 +51,9 @@ func (tpl *UbuntuNilavuInstall) Run(target urknall.Target) error {
 type UbuntuNilavuInstallTemplate struct{}
 
 func (m *UbuntuNilavuInstallTemplate) Render(pkg urknall.Package) {
-pkg.AddCommands("repository",
+  //fail on ruby2.0 < check 
+
+	pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)

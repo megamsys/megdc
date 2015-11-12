@@ -18,12 +18,18 @@ package onehost
 import (
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
+	"github.com/megamsys/megdc/packages"
 	"launchpad.net/gnuflag"
 )
+var SSH_PASS = []string{"SshPass"}
 
 type Sshpass struct {
 	Fs       *gnuflag.FlagSet
+	Host string
+	Username string
+	Password string
 }
+
 
 func (g *Sshpass) Info() *cmd.Info {
 	return &cmd.Info{
@@ -36,9 +42,9 @@ func (g *Sshpass) Info() *cmd.Info {
 }
 
 func (c *Sshpass) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "auth")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "auth")
 	w := handler.NewWrap(c)
-	c.sshAuth(w)
+	w.IfNoneAddPackages(SSH_PASS)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -51,14 +57,8 @@ func (c *Sshpass) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("sshpass", gnuflag.ExitOnError)
 	}
-	return c.Fs
-}
-func (c *Sshpass) sshAuth(w *handler.WrappedParms) {
-	DEFAULT_PACKAGES := []string{"SshPass"}
+	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(),c.Fs)
 
-	if w.Empty() {
-		for i := range DEFAULT_PACKAGES {
-			w.AddPackage(DEFAULT_PACKAGES[i])
-		}
-	}
+	//fmt.Println(c.Fs)
+	return c.Fs
 }

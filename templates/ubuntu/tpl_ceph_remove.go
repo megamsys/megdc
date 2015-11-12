@@ -17,8 +17,10 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
+	"os"
+
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntucephremove *UbuntuCephRemove
@@ -28,32 +30,41 @@ func init() {
 	templates.Register("UbuntuCephRemove", ubuntucephremove)
 }
 
-type UbuntuCephRemove struct{}
+type UbuntuCephRemove struct {
+	cephuser string
+}
 
 func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
-	p.AddTemplate("nilavu", &UbuntuCephRemoveTemplate{})
+	p.AddTemplate("ceph", &UbuntuCephRemoveTemplate{})
 }
 
 func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
+	if cephuser, ok := opts[CEPHUSER]; ok {
+		tpl.cephuser = cephuser
+	}
 }
 
 func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCephRemove{})
 }
 
-type UbuntuCephRemoveTemplate struct{}
+type UbuntuCephRemoveTemplate struct {
+	cephuser string
+}
 
 func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
-	//Host := host()
-	Host := ""
+	host, _ := os.Hostname()
+
+	CephUser := m.cephuser
+
 	pkg.AddCommands("purgedata",
-		AsUser(CephUser,Shell("ceph-deploy purgedata `"+Host+"`")),
+		AsUser(CephUser, Shell("ceph-deploy purgedata `"+host+"`")),
 	)
 	pkg.AddCommands("forgetKeys",
-		AsUser(CephUser,Shell("ceph-deploy forgetkeys")),
+		AsUser(CephUser, Shell("ceph-deploy forgetkeys")),
 	)
 	pkg.AddCommands("purge",
-		AsUser(CephUser,Shell("ceph-deploy purge "+Host+"")),
+		AsUser(CephUser, Shell("ceph-deploy purge "+host+"")),
 	)
 	pkg.AddCommands("remove",
 		Shell("rm -r /var/lib/ceph/"),
