@@ -39,5 +39,5 @@ func (s *S) TestSubnetMaskIP(c *check.C) {
 	p := st[0 : len(st)-1]
 	p = append(p, "0")
 	si := fmt.Sprintf("%s/%d", strings.Join(p, "."), 24)
-	c.Assert(si, check.Equals, "192.168.0.0/24")
+	c.Assert(si, check.Equals, "192.168.1.0/24")
 }

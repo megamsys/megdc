@@ -26,9 +26,9 @@ import (
 )
 
 const (
-	CephUser = "username"
-	Osd1     = "osd1"
-	Osd2     = "osd2"
+	CephUser = "CephUser"
+	Osd1     = "Osd1"
+	Osd2     = "Osd2"
 
 	UserHomePrefix = "/home/"
 
@@ -63,11 +63,9 @@ type UbuntuCephInstall struct {
 	osd1     string
 	osd2     string
 	cephuser string
-	cephhome string
 }
 
 func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
-	fmt.Printf("***************************")
 fmt.Printf("%s",opts)
 		if osd1, ok := opts[Osd1]; ok {
 		tpl.osd1 = osd1
@@ -90,7 +88,12 @@ func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 }
 
 func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuCephInstall{})
+	return urknall.Run(target, &UbuntuCephInstall{
+		osd1:     tpl.osd1,
+		osd2:     tpl.osd2,
+		cephuser: tpl.cephuser,
+
+	})
 }
 
 type UbuntuCephInstallTemplate struct {
@@ -107,7 +110,6 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	Osd2 := m.osd2
 	CephUser := m.cephuser
 	CephHome := m.cephhome
-
 	pkg.AddCommands("cephuser_sudoer",
 		Shell("echo '"+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
 	)
