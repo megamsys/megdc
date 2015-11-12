@@ -66,7 +66,7 @@ type UbuntuCephInstall struct {
 }
 
 func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
-fmt.Printf("%s",opts)
+
 		if osd1, ok := opts[Osd1]; ok {
 		tpl.osd1 = osd1
 	}
