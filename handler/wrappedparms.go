@@ -45,10 +45,11 @@ func (w *WrappedParms) String() string {
 	for _, v := range w.Packages {
 		b.Write([]byte(v + "\n"))
 	}
-	b.Write([]byte("---\n"))
+	b.Write([]byte(cmd.Colorfy("Options", "blue", "", "") + "\n"))
 	for k, v := range w.Options {
 		b.Write([]byte(k + "\t" + v + "\n"))
 	}
+	b.Write([]byte("---\n"))
 	fmt.Fprintln(wt)
 	wt.Flush()
 	return strings.TrimSpace(b.String())
