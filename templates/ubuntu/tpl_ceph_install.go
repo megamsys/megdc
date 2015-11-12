@@ -27,9 +27,9 @@ import (
 )
 
 const (
-	CEPHUSER = "username"
-	OSD1     = "osd1"
-	OSD2     = "osd2"
+	CephUser = "username"
+	Osd1     = "osd1"
+	Osd2     = "osd2"
 
 	UserHomePrefix = "/home/"
 
@@ -68,13 +68,15 @@ type UbuntuCephInstall struct {
 }
 
 func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
-	if osd1, ok := opts[OSD1]; ok {
+	fmt.Printf("***************************")
+fmt.Printf("%s",opts)
+		if osd1, ok := opts[Osd1]; ok {
 		tpl.osd1 = osd1
 	}
-	if osd2, ok := opts[OSD2]; ok {
+	if osd2, ok := opts[Osd2]; ok {
 		tpl.osd2 = osd2
 	}
-	if cephuser, ok := opts[CEPHUSER]; ok {
+	if cephuser, ok := opts[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
 }
@@ -102,16 +104,15 @@ type UbuntuCephInstallTemplate struct {
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
 	ip := IP()
-
 	Osd1 := m.osd1
 	Osd2 := m.osd2
 	CephUser := m.cephuser
 	CephHome := m.cephhome
 
-	pkg.AddCommands("cephuser sudoer",
-		Shell("echo ' "+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
+	pkg.AddCommands("cephuser_sudoer",
+		Shell("echo '"+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
 	)
-	pkg.AddCommands("chmod sudoer",
+	pkg.AddCommands("chmod_sudoer",
 		Shell("sudo chmod 0440 /etc/sudoers.d/"+CephUser+""),
 	)
 
@@ -122,11 +123,10 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
 	)
 
-
 	pkg.AddCommands("getip",
 		Shell("ip3=`echo 103.56.92.24| cut -d'.' -f 1,2,3`"),
-
-	pkg.AddCommands("etc host",
+)
+	pkg.AddCommands("etchost",
 		Shell("echo '"+ip+" "+host+"' >> /etc/hosts"),
 	)
 
@@ -165,7 +165,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		AsUser(CephUser, Shell("sleep 180")),
 		AsUser(CephUser, Shell("ceph osd pool set rbd pgp_num 100")),
 	)
-	pkg.AddCommands("copy keyring",
+	pkg.AddCommands("copy_keyring",
 		Shell("cp "+CephHome+"/ceph-cluster/*.keyring /etc/ceph/"),
 	)
 }
