@@ -18,7 +18,6 @@ package ubuntu
 
 import (
 	"fmt"
-	"net"
 	"os"
 	"strings"
 
@@ -171,8 +170,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 }
 
 func (m *UbuntuCephInstallTemplate) noOfIpsFromMask() int {
-	dmask := IPNet().Mask.String() //from your netwwork
-	_, si := net.IPMask(net.ParseIP(dmask).To4()).Size()
+	si, _ := IPNet().Mask.Size() //from your netwwork
 	return si
 }
 
