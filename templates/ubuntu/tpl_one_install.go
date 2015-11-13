@@ -32,50 +32,24 @@ func init() {
 	templates.Register("UbuntuOneInstall", ubuntuoneinstall)
 }
 
-type UbuntuOneInstall struct{
-	Host string
-	Username string
-	Password string
-}
+type UbuntuOneInstall struct{}
 
 func (tpl *UbuntuOneInstall) Render(p urknall.Package) {
-	p.AddTemplate("one", &UbuntuOneInstallTemplate{
-		Host: tpl.Host,
-		Username:     tpl.Username,
-		Password: tpl.Password,
-	})
+	p.AddTemplate("one", &UbuntuOneInstallTemplate{})
 }
 
-func (tpl *UbuntuOneInstall) Options(opts map[string]string) {
-	if hs, ok := opts["Host"]; ok {
-		tpl.Host = hs
-	}
-	if us, ok := opts["Username"]; ok {
-		tpl.Username = us
-	}
-	if bg, ok := opts["Password"]; ok {
-		tpl.Password = bg
-	}
-}
+func (tpl *UbuntuOneInstall) Options(opts map[string]string) {}
 
 func (tpl *UbuntuOneInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuOneInstall{
-		Host: tpl.Host,
- 		Username:     tpl.Username,
- 		Password: tpl.Password,
-	})
+	return urknall.Run(target, &UbuntuOneInstall{})
 }
 
-type UbuntuOneInstallTemplate struct{
-	Host string
-	Username string
-	Password string
-}
+type UbuntuOneInstallTemplate struct{}
 
 func (m *UbuntuOneInstallTemplate) Render(pkg urknall.Package) {
 
 	ip := IP()
-	
+
 	pkg.AddCommands("repository",
 		Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
 		Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),

@@ -27,8 +27,6 @@ var SSH_PASS = []string{"SshPass"}
 type Sshpass struct {
 	Fs       *gnuflag.FlagSet
 	HOST string
-	USERNAME string
-	PASSWORD string
 }
 
 
@@ -59,14 +57,6 @@ func (c *Sshpass) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("sshpass", gnuflag.ExitOnError)
 		hostMsg := "The ip address of remote host"
 		c.Fs.StringVar(&c.HOST, "hostip", "localhost", hostMsg)
-		usrMsg := "The username of the server"
-		c.Fs.StringVar(&c.USERNAME, "usrname", "megdc", usrMsg)
-		pwdMsg := "The password of the server"
-		c.Fs.StringVar(&c.PASSWORD, "pswrd", "megdc", pwdMsg)
 	}
-
-	//c.Fs = cmd.MergeFlagSet(c.Fs,new(packages.SSHCommand).Flags())
-
-	//fmt.Println(c.Fs)
 	return c.Fs
 }
