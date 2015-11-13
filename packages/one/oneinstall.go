@@ -65,9 +65,9 @@ func (cmd *Oneinstall) Flags() *gnuflag.FlagSet {
 		hostMsg := "The host of the server to ssh"
 		cmd.Fs.StringVar(&cmd.Host, "host", "localhost", hostMsg)
 		usrMsg := "The username of the server"
-		cmd.Fs.StringVar(&cmd.Username, "username", "megdc", usrMsg)
+		cmd.Fs.StringVar(&cmd.Username, "username", "", usrMsg)
 		pwdMsg := "The password of the server"
-		cmd.Fs.StringVar(&cmd.Password, "password", "megdc", pwdMsg)
+		cmd.Fs.StringVar(&cmd.Password, "password", "", pwdMsg)
 
 	}
 	return cmd.Fs
