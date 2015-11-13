@@ -38,16 +38,12 @@ func init() {
 
 type UbuntuSshPass struct{
 	Host string
-	Username string
-	Password string
 }
 
 
 func (tpl *UbuntuSshPass) Render(p urknall.Package) {
 	p.AddTemplate("sshpass", &UbuntuSshPassTemplate{
 		Host: tpl.Host,
-		Username:     tpl.Username,
-		Password: tpl.Password,
 	})
 }
 
@@ -56,27 +52,17 @@ func (tpl *UbuntuSshPass) Options(opts map[string]string) {
 if hs, ok := opts["HOST"]; ok {
 	tpl.Host = hs
 }
-if us, ok := opts["USERNAME"]; ok {
-	tpl.Username = us
-}
-if bg, ok := opts["PASSWORD"]; ok {
-	tpl.Password = bg
-}
 }
 
 
 func (tpl *UbuntuSshPass) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuSshPass{
 		Host: tpl.Host,
-		Username:     tpl.Username,
-		Password: tpl.Password,
 	})
 }
 
 type UbuntuSshPassTemplate struct{
 	Host string
-	Username string
-	Password string
 }
 
 func (m *UbuntuSshPassTemplate) Render(pkg urknall.Package) {

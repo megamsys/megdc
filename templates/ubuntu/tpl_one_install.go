@@ -38,8 +38,7 @@ func (tpl *UbuntuOneInstall) Render(p urknall.Package) {
 	p.AddTemplate("one", &UbuntuOneInstallTemplate{})
 }
 
-func (tpl *UbuntuOneInstall) Options(opts map[string]string) {
-}
+func (tpl *UbuntuOneInstall) Options(opts map[string]string) {}
 
 func (tpl *UbuntuOneInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuOneInstall{})

@@ -51,7 +51,7 @@ func (m *UbuntuMegamdInstallTemplate) Render(pkg urknall.Package) {
 	)
 
 	pkg.AddCommands("megamd",
-		InstallPackages("megamd"),
+	InstallPackages("megamd"),
 	)
 
 }
