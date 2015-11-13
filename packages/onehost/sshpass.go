@@ -56,7 +56,7 @@ func (c *Sshpass) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("sshpass", gnuflag.ExitOnError)
 		hostMsg := "The ip address of remote host"
-		c.Fs.StringVar(&c.HOST, "hostip", "localhost", hostMsg)
+		c.Fs.StringVar(&c.HOST, "host", "localhost", hostMsg)
 	}
 	return c.Fs
 }
