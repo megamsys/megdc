@@ -22,7 +22,9 @@ import (
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
 )
-
+const (
+	CephUser = "CephUser"
+)
 var ubuntucephremove *UbuntuCephRemove
 
 func init() {
@@ -34,14 +36,15 @@ type UbuntuCephRemove struct {
 	cephuser string
 }
 
-func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
-	p.AddTemplate("ceph", &UbuntuCephRemoveTemplate{})
-}
-
 func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
 	if cephuser, ok := opts[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
+}
+func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
+	p.AddTemplate("ceph", &UbuntuCephRemoveTemplate{
+        cephuser: tpl.cephuser,
+})
 }
 
 func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
@@ -71,7 +74,7 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 	)
 	pkg.AddCommands("remove",
 		Shell("rm -r /var/lib/ceph/"),
-		Shell("rm -r /home/megdc/ceph-cluster"),
+		Shell("rm -r "+CephUser+"/ceph-cluster"),
 		Shell("apt-get -y remove ceph-deploy ceph-common ceph-mds"),
 		Shell("apt-get -y purge ceph-deploy ceph-common ceph-mds"),
 		Shell("apt-get -y autoremove"),
