@@ -26,9 +26,9 @@ var INSTALL_PACKAGES = []string{"OneInstall"}
 type Oneinstall struct {
 	Fs         *gnuflag.FlagSet
 	OneInstall bool
-	Host       string
-	Username   string
-	Password   string
+	Host string
+	Username string
+	Password string
 }
 
 func (g *Oneinstall) Info() *cmd.Info {
@@ -59,9 +59,16 @@ func (c *Oneinstall) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *Oneinstall) Flags() *gnuflag.FlagSet {
-	if c.Fs == nil {
-		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
+func (cmd *Oneinstall) Flags() *gnuflag.FlagSet {
+	if cmd.Fs == nil {
+		cmd.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
+		hostMsg := "The host of the server to ssh"
+		cmd.Fs.StringVar(&cmd.Host, "host", "localhost", hostMsg)
+		usrMsg := "The username of the server"
+		cmd.Fs.StringVar(&cmd.Username, "username", "", usrMsg)
+		pwdMsg := "The password of the server"
+		cmd.Fs.StringVar(&cmd.Password, "password", "", pwdMsg)
+
 	}
-	return c.Fs
+	return cmd.Fs
 }

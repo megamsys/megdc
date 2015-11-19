@@ -22,9 +22,7 @@ import (
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
 )
-const (
-	CephUser = "CephUser"
-)
+
 var ubuntucephremove *UbuntuCephRemove
 
 func init() {
@@ -50,7 +48,6 @@ func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
 func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCephRemove{
 		cephuser: tpl.cephuser,
-
 	})
 }
 

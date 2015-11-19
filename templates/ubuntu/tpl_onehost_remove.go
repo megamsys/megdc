@@ -45,8 +45,8 @@ type UbuntuOneHostRemoveTemplate struct{}
 
 func (m *UbuntuOneHostRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("onehost",
-		RemovePackage("opennebula-node"),
+		RemovePackage("opennebula-node openvswitch-common openvswitch-switch bridge-utils sshpass"),
 		RemovePackages(""),
-		PurgePackages("opennebula-node"),
+		PurgePackages("opennebula-node openvswitch-common openvswitch-switch bridge-utils sshpass"),
 	)
 }

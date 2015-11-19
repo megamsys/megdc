@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
 )

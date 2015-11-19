@@ -26,9 +26,9 @@ import (
 )
 
 const (
-	HOST     = "host"
-	USERNAME = "username"
-	PASSWORD = "password"
+	HOST     = "Host"
+	USERNAME = "Username"
+	PASSWORD = "Password"
 	PLATFORM = "platform"
 )
 

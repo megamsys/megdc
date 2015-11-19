@@ -18,7 +18,7 @@ package megam
 import (
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
-	"github.com/megamsys/megdc/packages"
+//	"github.com/megamsys/megdc/packages"
 	"launchpad.net/gnuflag"
 )
 
@@ -34,6 +34,9 @@ type MegamInstall struct {
 	GatewayInstall   bool
 	MegamdInstall    bool
 	SnowflakeInstall bool
+	Host string
+	Username string
+	Password string
 }
 
 func (c *MegamInstall) Info() *cmd.Info {
@@ -88,7 +91,13 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		snoMsg := "Install megam uidserver"
 		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
 		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
+		hostMsg := "The host of the server to ssh"
+		c.Fs.StringVar(&c.Host, "host", "localhost", hostMsg)
+		usrMsg := "The username of the server"
+		c.Fs.StringVar(&c.Username, "username", "", usrMsg)
+		pwdMsg := "The password of the server"
+		c.Fs.StringVar(&c.Password, "password", "", pwdMsg)
 	}
-	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(), c.Fs)
+	//	c.Fs = cmd.MergeFlagSet(new(packages.SSHCommand).Flags(), c.Fs)
 	return c.Fs
 }

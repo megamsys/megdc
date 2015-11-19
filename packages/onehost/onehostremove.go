@@ -26,10 +26,6 @@ var REMOVE_PACKAGES = []string{"OneHostRemove"}
 
 type Onehostremove struct {
 	Fs *gnuflag.FlagSet
-
-	Host     string
-	Username string
-	Password string
 }
 
 func (g *Onehostremove) Info() *cmd.Info {
@@ -58,7 +54,6 @@ func (c *Onehostremove) Run(context *cmd.Context) error {
 func (c *Onehostremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
 	}
 	return c.Fs
 }

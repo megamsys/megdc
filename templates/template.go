@@ -53,12 +53,14 @@ func (t *Template) Run() error {
 	var target urknall.Target
 	var err error
 	if t.Password != "" {
-		target, err = urknall.NewSshTargetWithPassword(t.Host, t.Password)
+		target, err = urknall.NewSshTargetWithPassword(t.UserName+"@"+t.Host, t.Password)
+
+
 	} else {
 		if len(strings.TrimSpace(t.Host)) <= 0 || t.Host == LOCALHOST {
 			target, err = urknall.NewLocalTarget()
 		} else {
-			target, err = urknall.NewSshTarget(t.Host) //this is with sshkey
+			target, err = urknall.NewSshTarget(t.UserName+"@"+t.Host) //this is with sshkey
 		}
 	}
 	if err != nil {

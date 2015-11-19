@@ -18,31 +18,32 @@ package onehost
 import (
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/megdc/handler"
+//		"github.com/megamsys/megdc/packages"
 	"launchpad.net/gnuflag"
+
 )
+var SSH_PASS = []string{"SshPass"}
 
-var INSTALL_PACKAGES = []string{"OneHostInstall"}
-
-
-type Onehostinstall struct {
+type Sshpass struct {
 	Fs       *gnuflag.FlagSet
+	HOST string
 }
 
-func (g *Onehostinstall) Info() *cmd.Info {
-	desc := `Install opennebula host.
-`
+
+func (g *Sshpass) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:    "onehostinstall",
-		Usage:   `onehostinstall [--help/-h] ...`,
-		Desc:    desc,
+		Name:    "sshpass",
+		Usage:   `sshpass [--help/-h] ...`,
+		Desc:    `Copy the authenticaton key.
+	`,
 		MinArgs: 0,
 	}
 }
 
-func (c *Onehostinstall) Run(context *cmd.Context) error {
-	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
+func (c *Sshpass) Run(context *cmd.Context) error {
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "auth")
 	w := handler.NewWrap(c)
-	w.IfNoneAddPackages(INSTALL_PACKAGES)
+	w.IfNoneAddPackages(SSH_PASS)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -51,9 +52,11 @@ func (c *Onehostinstall) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *Onehostinstall) Flags() *gnuflag.FlagSet {
+func (c *Sshpass) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
-		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
+		c.Fs = gnuflag.NewFlagSet("sshpass", gnuflag.ExitOnError)
+		hostMsg := "The ip address of remote host"
+		c.Fs.StringVar(&c.HOST, "host", "localhost", hostMsg)
 	}
 	return c.Fs
 }
