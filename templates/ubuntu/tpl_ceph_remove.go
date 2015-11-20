@@ -34,14 +34,15 @@ type UbuntuCephRemove struct {
 	cephuser string
 }
 
-func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
-	p.AddTemplate("ceph", &UbuntuCephRemoveTemplate{})
-}
-
 func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
 	if cephuser, ok := opts[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
+}
+func (tpl *UbuntuCephRemove) Render(p urknall.Package) {
+	p.AddTemplate("ceph", &UbuntuCephRemoveTemplate{
+        cephuser: tpl.cephuser,
+})
 }
 
 func (tpl *UbuntuCephRemove) Run(target urknall.Target) error {
@@ -60,7 +61,7 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 	CephUser := m.cephuser
 
 	pkg.AddCommands("purgedata",
-		AsUser(CephUser, Shell("ceph-deploy purgedata `"+host+"`")),
+		AsUser(CephUser, Shell("ceph-deploy purgedata "+host+"")),
 	)
 	pkg.AddCommands("forgetKeys",
 		AsUser(CephUser, Shell("ceph-deploy forgetkeys")),
@@ -70,6 +71,7 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 	)
 	pkg.AddCommands("remove",
 		Shell("rm -r /var/lib/ceph/"),
+		Shell("rm -r "+CephUser+"/ceph-cluster"),
 		Shell("apt-get -y remove ceph-deploy ceph-common ceph-mds"),
 		Shell("apt-get -y purge ceph-deploy ceph-common ceph-mds"),
 		Shell("apt-get -y autoremove"),
