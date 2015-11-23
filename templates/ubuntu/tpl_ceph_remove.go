@@ -76,7 +76,6 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 		Shell("apt-get -y purge ceph-deploy ceph-common ceph-mds"),
 		Shell("apt-get -y autoremove"),
 		Shell("rm -r /run/ceph"),
-		Shell("rm -r /var/lib/ceph"),
 		Shell("rm /var/log/upstart/ceph*"),
 		Shell("rm ~/ceph-cluster/*"),
 	)

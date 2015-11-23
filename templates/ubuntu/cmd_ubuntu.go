@@ -79,25 +79,37 @@ func EnsureRunning(service string) *ShellCommand {
 }
 
 // IPString returns the non loopback local IP of the host
-func IPNet() *net.IPNet {
+func IPNet(Netif string) *net.IPNet {
 	var ipnet_ptr *net.IPNet
-	addrs, err := net.InterfaceAddrs()
+	//addrs, err := net.InterfaceAddrs()
+	interfaces, err :=  net.Interfaces()
 	if err != nil {
 		return nil
 	}
-	for _, address := range addrs {
-		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				ipnet_ptr = ipnet
-			}
-		}
-	}
+
+  for _,inter := range interfaces {
+		if addrs,err := inter.Addrs(); err == nil {
+			for _,addr := range addrs {
+				if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+					if Netif != "" {
+						if ipnet.IP.To4() != nil && inter.Name == Netif {
+					    ipnet_ptr = ipnet
+				    }
+					} else {
+						if ipnet.IP.To4() != nil {
+					    ipnet_ptr = ipnet
+			  	  }
+					}
+			 }
+		 }
+	 }
+ }
 	return ipnet_ptr
 }
 
 // IPString returns the non loopback local IP of the host
-func IP() string {
-	ipnet := IPNet()
+func IP(netif string) string {
+	ipnet := IPNet(netif)
 	if ipnet != nil {
 		return ipnet.IP.String()
 	}

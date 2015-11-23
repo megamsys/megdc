@@ -93,7 +93,7 @@ func (m *UbuntuCephDatastoreTemplate) Render(pkg urknall.Package) {
 }
 
 func (m *UbuntuCephDatastoreTemplate) ip3(a string) string {
-	s := strings.Split(IP(), ".")
+	s := strings.Split(IP(""), ".")
 	p := s[0 : len(s)-1]
 	p = append(p, a)
 	return fmt.Sprintf("%s", strings.Join(p, "."))

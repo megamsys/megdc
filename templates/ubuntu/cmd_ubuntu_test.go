@@ -35,7 +35,7 @@ func Test(t *testing.T) { check.TestingT(t) }
 }
 
 func (s *S) TestSubnetMaskIP(c *check.C) {
-	st := strings.Split(IP(), ".")
+	st := strings.Split(IP(""), ".")
 	p := st[0 : len(st)-1]
 	p = append(p, "0")
 	si := fmt.Sprintf("%s/%d", strings.Join(p, "."), 24)
