@@ -28,22 +28,23 @@ const (
 	CephUser = "CephUser"
 	Osd1     = "Osd1"
 	Osd2     = "Osd2"
+	Netif    = "IF_name"
+
 	UserHomePrefix = "/home/"
 
-	StrictHostKey = `#!/bin/sh
-
+	StrictHostKey = `
 	ConnectTimeout 5
 	Host *
 	StrictHostKeyChecking no
 	`
 
-	SSHHostConfig = `#!/bin/sh
-  Host %s
+	SSHHostConfig = `
+Host %s
  Hostname %s
  User %s
 `
 	CephConf = `osd crush chooseleaf type = 0
-osd_pool_default_size = %s
+osd_pool_default_size = %d
 public network = %s
 cluster network = %s
 mon_pg_warn_max_per_osd = 0
@@ -86,8 +87,7 @@ func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 		osd2:     tpl.osd2,
 		cephuser: tpl.cephuser,
 		cephhome: UserHomePrefix + tpl.cephuser,
-		netif:   tpl.netif,
-
+		netif:    tpl.netif,
 	})
 }
 
@@ -96,7 +96,8 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 		osd1:     tpl.osd1,
 		osd2:     tpl.osd2,
 		cephuser: tpl.cephuser,
-    netif:   tpl.netif,
+		netif:    tpl.netif,
+
 	})
 }
 
@@ -115,8 +116,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	Osd2 := m.osd2
 	CephUser := m.cephuser
 	CephHome := m.cephhome
-
-
+	Ipaddr  := m.slashIp()
 	pkg.AddCommands("cephuser_sudoer",
 		Shell("echo '"+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
 	)
@@ -139,11 +139,12 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		Mkdir(CephHome+"/.ssh", CephUser, 0700),
 		AsUser(CephUser, Shell("ssh-keygen -N '' -t rsa -f "+CephHome+"/.ssh/id_rsa")),
 		AsUser(CephUser, Shell("cp "+CephHome+"/.ssh/id_rsa.pub "+CephHome+"/.ssh/authorized_keys")),
+
 	)
 
 	pkg.AddCommands("ssh_known_hosts",
 		WriteFile(CephHome+"/.ssh/ssh_config", StrictHostKey, CephUser, 0755),
-		WriteFile(CephHome+"/.ssh/ssh_config", fmt.Sprintf(SSHHostConfig, host, host, CephUser), CephUser, 0755),
+		WriteFile(CephHome+"/.ssh/config", fmt.Sprintf(SSHHostConfig, host, host, CephUser), CephUser, 0755),
 	)
 
 	pkg.AddCommands("mkdir_osd",
@@ -154,15 +155,17 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("write_cephconf",
 		AsUser(CephUser, Shell("mkdir "+CephHome+"/ceph-cluster")),
 		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster")),
-		AsUser(CephUser, Shell("ceph-deploy new "+host+" ")),
-		WriteFile(CephHome+"/ceph-cluster/ceph.conf",
-			fmt.Sprintf(CephConf, m.osdPoolSize(Osd1, Osd2), m.slashIp(), m.slashIp()), CephUser, 0755),
-
-		AsUser(CephUser, Shell("ceph-deploy install "+host+"")),
-		AsUser(CephUser, Shell("ceph-deploy mon create-initial")),
-		AsUser(CephUser, Shell("ceph-deploy osd prepare "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
-		AsUser(CephUser, Shell("ceph-deploy osd activate "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
-		AsUser(CephUser, Shell("ceph-deploy admin "+host+"")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy new "+host+" ")),
+	  	AsUser(CephUser, Shell("echo 'osd crush chooseleaf type = 0' >> "+CephHome+"/ceph-cluster/ceph.conf")),
+			AsUser(CephUser,Shell("echo 'osd_pool_default_size = 2' >> "+CephHome+"/ceph-cluster/ceph.conf")),
+		AsUser(CephUser,Shell("echo 'public network = "+Ipaddr+"' >> "+CephHome+"/ceph-cluster/ceph.conf")),
+		AsUser(CephUser,Shell("echo 'cluster network = "+Ipaddr+"' >> "+CephHome+"/ceph-cluster/ceph.conf")),
+		AsUser(CephUser,Shell("echo 'mon_pg_warn_max_per_osd = 0' >> "+CephHome+"/ceph-cluster/ceph.conf")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy install "+host+"")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy mon create-initial")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd prepare "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd activate "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy admin "+host+"")),
 		AsUser(CephUser, Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring")),
 		AsUser(CephUser, Shell("sleep 180")),
 		AsUser(CephUser, Shell("ceph osd pool set rbd pg_num 100")),

@@ -51,4 +51,7 @@ func (m *UbuntuSnowflakeRemoveTemplate) Render(pkg urknall.Package) {
 		PurgePackages("megamsnowflake"),
 		Shell("dpkg --get-selections megam*"),
 	)
+	pkg.AddCommands("snowflake-clean",
+		Shell("rm -r /var/lib/urknall/snowflake*"),
+	)
 }

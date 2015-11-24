@@ -49,4 +49,7 @@ func (m *UbuntuOneRemoveTemplate) Render(pkg urknall.Package) {
 		RemovePackages(""),
 		PurgePackages("opennebula opennebula-sunstone"),
 	)
+	pkg.AddCommands("one-clean",
+		Shell("rm -r /var/lib/urknall/one.*"),
+	)
 }

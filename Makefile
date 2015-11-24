@@ -83,7 +83,7 @@ _go_test:
 
 _megdc:
 	rm -f megdc
-	go build $(GO_EXTRAFLAGS) -o megdc ./cmd/megdc
+	go build $(GO_EXTRAFLAGS) -ldflags="-X main.date=$(shell date -u --iso-8601=seconds)" -o megdc ./cmd/megdc
 
 test: _go_test _megdc
 

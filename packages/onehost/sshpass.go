@@ -34,7 +34,9 @@ func (g *Sshpass) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "sshpass",
 		Usage:   `sshpass [--help/-h] ...`,
-		Desc:    `Copy the authenticaton key.
+		Desc:    `Pass opennebula frontend sshpub key to opennebula host.
+    The [[--host]] parameter defines the opennebulahost ip address
+		Default  is localhost
 	`,
 		MinArgs: 0,
 	}
@@ -55,7 +57,7 @@ func (c *Sshpass) Run(context *cmd.Context) error {
 func (c *Sshpass) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("sshpass", gnuflag.ExitOnError)
-		hostMsg := "The ip address of remote host"
+		hostMsg := "The hostname or ip address of the remote opennebula host"
 		c.Fs.StringVar(&c.HOST, "host", "localhost", hostMsg)
 	}
 	return c.Fs

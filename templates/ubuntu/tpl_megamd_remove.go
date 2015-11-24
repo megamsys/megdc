@@ -51,4 +51,7 @@ func (m *UbuntuMegamdRemoveTemplate) Render(pkg urknall.Package) {
 		PurgePackages("megamd"),
 		Shell("dpkg --get-selections megam*"),
 	)
+	pkg.AddCommands("megamd-clean",
+		Shell("rm -r /var/lib/urknall/megamd*"),
+	)
 }

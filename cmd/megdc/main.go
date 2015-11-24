@@ -31,6 +31,7 @@ var (
 	commit  string = "01"
 	branch  string = "master"
 	header  string = "Supported-Megdc"
+	date    string
 )
 
 func init() {
@@ -42,7 +43,7 @@ func init() {
 
 // Only log debug level when the -v flag is passed.
 func cmdRegistry(name string) *cmd.Manager {
-	m := cmd.BuildBaseManager(name, version, nil, func(modelvl int) {
+	m := cmd.BuildBaseManager(name, version+"  "+date, nil, func(modelvl int) {
 		if modelvl >= 1 {
 			log.SetLevel(log.DebugLevel)
 		}

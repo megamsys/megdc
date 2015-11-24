@@ -30,7 +30,7 @@ type Cephdatastore struct {
 }
 
 func (g *Cephdatastore) Info() *cmd.Info {
-	desc := `Ceph connect with DataStore.
+	desc := `add a datastore for ceph in opennebula.
 
 For more information read http://docs.megam.io.`
 	return &cmd.Info{

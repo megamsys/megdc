@@ -34,7 +34,7 @@ type Cephinstall struct {
 }
 
 func (g *Cephinstall) Info() *cmd.Info {
-	desc := `Install ceph with 2 OSDs (/storage1 /storage2).
+	desc := `Install ceph with 2 OSDs with partitions named (/storage1 /storage2).
 
 In order to ceph with 2 OSDs in a machine use the following options.
 
