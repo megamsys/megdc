@@ -52,7 +52,7 @@ default is megdc.
 The [[--cephpassword]] parameter defines password for the cephuser.
 default is megdc.
 
-The [[--netif]] parameter defines name of the interfacce to use for ceph network
+The [[--netif]] parameter defines name of the interface to use for ceph network
 default is eth0
 
 For more information read http://docs.megam.io.`
@@ -83,7 +83,7 @@ func (c *Cephinstall) Flags() *gnuflag.FlagSet {
 		c.Fs.StringVar(&c.Osd2, "osd2", "/storage2", "osd2 storage drive for hosted machine")
 		c.Fs.StringVar(&c.CephUser, "cephuser", "megdc", "userid used as ceph user")
 		c.Fs.StringVar(&c.CephPassword, "cephpassword", "megdc", "password of the ceph user")
-    c.Fs.StringVar(&c.IF_name, "netif", "eth0", "name of the interfacce to use for ceph network")
+    c.Fs.StringVar(&c.IF_name, "netif", "eth0", "name of the interface to use for ceph network")
 	}
 	return c.Fs
 }

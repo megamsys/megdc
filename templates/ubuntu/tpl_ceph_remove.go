@@ -80,8 +80,6 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 		Shell("apt-get -y autoremove"),
 		Shell("rm -r /run/ceph"),
 		Shell("rm /var/log/upstart/ceph*"),
-		//Shell("rm -r /storage1/osd")
-		//Shell("rm -r /storage2/osd")
 	)
 	pkg.AddCommands("cache-clean",
     Shell("rm -r /var/lib/urknall/ceph*"),

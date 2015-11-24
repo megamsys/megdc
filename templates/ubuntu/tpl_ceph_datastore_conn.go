@@ -27,15 +27,7 @@ const (
 	Ceph_User = "megdc"
   Poolname = "one"
   Uid =`uuidgen`
-	DsConf =`NAME = "cephds"
-DS_MAD = ceph
-TM_MAD = ceph
-DISK_TYPE = RBD
-CEPH_USER = libvirt
-POOL_NAME = %s
-BRIDGE_LIST = %s
-CEPH_HOST = %s
-`
+	
 Xml=`<secret ephemeral='no' private='no'>
   <uuid>%v</uuid>
   <usage type='ceph'>
