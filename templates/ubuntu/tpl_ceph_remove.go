@@ -69,6 +69,9 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("purge",
 		AsUser(CephUser, Shell("ceph-deploy purge "+host+"")),
 	)
+	pkg.AddCommands("rm-sshkey",
+		AsUser(CephUser, Shell("rm -r ~/.ssh")),
+	)
 	pkg.AddCommands("remove",
 		Shell("rm -r /var/lib/ceph/"),
 		Shell("rm -r "+CephUser+"/ceph-cluster"),
@@ -76,8 +79,10 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 		Shell("apt-get -y purge ceph-deploy ceph-common ceph-mds"),
 		Shell("apt-get -y autoremove"),
 		Shell("rm -r /run/ceph"),
-		Shell("rm -r /var/lib/ceph"),
 		Shell("rm /var/log/upstart/ceph*"),
-		Shell("rm ~/ceph-cluster/*"),
 	)
+	pkg.AddCommands("cache-clean",
+    Shell("rm -r /var/lib/urknall/ceph*"),
+	)
+
 }

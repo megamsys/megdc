@@ -50,4 +50,7 @@ func (m *UbuntuGatewayRemoveTemplate) Render(pkg urknall.Package) {
 		PurgePackages("megamgateway"),
 		Shell("dpkg --get-selections megam*"),
 	)
+	pkg.AddCommands("megamgateway-clean",
+		Shell("rm -r /var/lib/urknall/gateway*"),
+	)
 }

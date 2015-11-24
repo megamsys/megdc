@@ -50,4 +50,7 @@ func (m *UbuntuNilavuRemoveTemplate) Render(pkg urknall.Package) {
 		PurgePackages("megamnilavu"),
 		Shell("dpkg --get-selections megam*"),
 	)
+	pkg.AddCommands("nilavu-clean",
+		Shell("rm -r /var/lib/urknall/nilavu*"),
+	)
 }

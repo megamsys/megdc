@@ -28,7 +28,7 @@ type Megamreport struct {
 }
 
 func (g *Megamreport) Info() *cmd.Info {
-	desc := `Report about megam installation.
+	desc := `Report about megam Oja installation.
 `
 	return &cmd.Info{
 		Name:    "megamreport",

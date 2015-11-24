@@ -50,4 +50,7 @@ func (m *UbuntuMegamCommonRemoveTemplate) Render(pkg urknall.Package) {
 		PurgePackages("megamcommon"),
 		Shell("dpkg --get-selections megam*"),
 	)
+	pkg.AddCommands("common-clean",
+		Shell("rm -r /var/lib/urknall/common*"),
+	)
 }

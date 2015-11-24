@@ -28,6 +28,7 @@ const (
 	CephUser = "CephUser"
 	Osd1     = "Osd1"
 	Osd2     = "Osd2"
+	Netif    = "IF_name"
 
 	UserHomePrefix = "/home/"
 
@@ -61,6 +62,7 @@ type UbuntuCephInstall struct {
 	osd1     string
 	osd2     string
 	cephuser string
+	netif    string
 }
 
 func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
@@ -74,6 +76,9 @@ func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
 	if cephuser, ok := opts[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
+	if netif, ok := opts[Netif]; ok {
+		tpl.netif = netif
+	}
 }
 
 func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
@@ -82,6 +87,7 @@ func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 		osd2:     tpl.osd2,
 		cephuser: tpl.cephuser,
 		cephhome: UserHomePrefix + tpl.cephuser,
+		netif:    tpl.netif,
 	})
 }
 
@@ -90,6 +96,7 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 		osd1:     tpl.osd1,
 		osd2:     tpl.osd2,
 		cephuser: tpl.cephuser,
+		netif:    tpl.netif,
 
 	})
 }
@@ -99,11 +106,12 @@ type UbuntuCephInstallTemplate struct {
 	osd2     string
 	cephuser string
 	cephhome string
+	netif    string
 }
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
-	ip := IP()
+	ip := IP(m.netif)
 	Osd1 := m.osd1
 	Osd2 := m.osd2
 	CephUser := m.cephuser
@@ -123,9 +131,6 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
 	)
 
-	pkg.AddCommands("getip",
-		Shell("ip3=`echo 103.56.92.24| cut -d'.' -f 1,2,3`"),
-)
 	pkg.AddCommands("etchost",
 		Shell("echo '"+ip+" "+host+"' >> /etc/hosts"),
 	)
@@ -173,12 +178,12 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 }
 
 func (m *UbuntuCephInstallTemplate) noOfIpsFromMask() int {
-	si, _ := IPNet().Mask.Size() //from your netwwork
+	si, _ := IPNet(m.netif).Mask.Size() //from your netwwork
 	return si
 }
 
 func (m *UbuntuCephInstallTemplate) slashIp() string {
-	s := strings.Split(IP(), ".")
+	s := strings.Split(IP(m.netif), ".")
 	p := s[0 : len(s)-1]
 	p = append(p, "0")
 	return fmt.Sprintf("%s/%d", strings.Join(p, "."), m.noOfIpsFromMask())

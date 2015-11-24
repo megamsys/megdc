@@ -17,34 +17,25 @@
 package ubuntu
 
 import (
-	"fmt"
-	"os"
-	"strings"
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
+	"code.google.com/p/go-uuid/uuid"
+	"fmt"
 )
 
 const (
 	Ceph_User = "megdc"
   Poolname = "one"
   Uid =`uuidgen`
-	DsConf = `NAME = "cephds"
-DS_MAD = ceph
-TM_MAD = ceph
-DISK_TYPE = RBD
-CEPH_USER = libvirt
-CEPH_SECRET = %s
-POOL_NAME = %s
-BRIDGE_LIST = %s
-CEPH_HOST = %s
-`
+	
 Xml=`<secret ephemeral='no' private='no'>
-  <uuid>%s</uuid>
+  <uuid>%v</uuid>
   <usage type='ceph'>
           <name>client.libvirt secret</name>
   </usage>
-</secret>
-`
+</secret>`
+Setval=`sudo virsh secret-set-value --secret %v --base64 $(cat client.libvirt.key)`
+Echo =`echo '%v'`
 )
 
 var ubuntucephdatastore *UbuntuCephDatastore
@@ -59,7 +50,7 @@ type UbuntuCephDatastore struct {}
 func (tpl *UbuntuCephDatastore) Options(opts map[string]string) {}
 
 func (tpl *UbuntuCephDatastore) Render(p urknall.Package) {
-	p.AddTemplate("ceph", &UbuntuCephDatastoreTemplate{})
+	p.AddTemplate("cephds", &UbuntuCephDatastoreTemplate{})
 }
 
 func (tpl *UbuntuCephDatastore) Run(target urknall.Target) error {
@@ -69,32 +60,21 @@ func (tpl *UbuntuCephDatastore) Run(target urknall.Target) error {
 type UbuntuCephDatastoreTemplate struct {}
 
 func (m *UbuntuCephDatastoreTemplate) Render(pkg urknall.Package) {
-	host, _ := os.Hostname()
-	//ip := IP()
+Uid := uuid.NewUUID()
 		pkg.AddCommands("cephdatastore",
-	AsUser(Ceph_User,Shell("ceph osd pool create "+Poolname+" 150")),
+  	AsUser(Ceph_User,Shell("ceph osd pool create "+Poolname+" 150")),
 		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;ceph auth get-or-create client.libvirt mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool="+Poolname+"'"),
 		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;ceph auth get-key client.libvirt | tee client.libvirt.key"),
 		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;ceph auth get client.libvirt -o ceph.client.libvirt.keyring"),
 		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;cp ceph.client.* /etc/ceph"),
-		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;echo "+Uid+" >uid"),
+		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster; "+fmt.Sprintf(Echo,Uid)+" >uid"),
+		Shell("echo '*****************************************' "),
+		Shell(fmt.Sprintf(Echo,Uid)),
+		Shell("echo '*****************************************' "),
 		WriteFile(UserHomePrefix + Ceph_User + "/ceph-cluster" + "/secret.xml",fmt.Sprintf(Xml,Uid),"root",644),
 		InstallPackages("libvirt-bin"),
-		Shell("sudo virsh secret-define secret.xml"),
-		Shell("sudo virsh secret-set-value --secret "+Uid+" --base64 $(cat client.libvirt.key)"),
+		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;sudo virsh secret-define secret.xml"),
+		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;"+ fmt.Sprintf(Setval,Uid)),
 	)
 
-	pkg.AddCommands("crt-infra",
-	  AsUser("oneadmin",Shell("onehost create "+host+" -i kvm -v kvm -n ovswitch")),
-		InstallPackages("opennebula-tools"),
-		WriteFile("/var/lib/one/ds.conf",fmt.Sprintf(DsConf,Uid,Poolname,host,host),"oneadmin",664),
-		AsUser("oneadmin",Shell("onedatastore create /var/lib/one/ds.conf")),
-)
-}
-
-func (m *UbuntuCephDatastoreTemplate) ip3(a string) string {
-	s := strings.Split(IP(), ".")
-	p := s[0 : len(s)-1]
-	p = append(p, a)
-	return fmt.Sprintf("%s", strings.Join(p, "."))
 }

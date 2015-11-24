@@ -33,7 +33,7 @@ func (g *Createnetwork) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:    "createnetwork",
 		Usage:   `createnetwork [--bridge] name --[phy] name`,
-		Desc:   `create network openvswitch network bridge to phydev
+		Desc:   `create openvswitch bridge to phydev
 		Default: bridge name:one, phydev:eth0
 	`,
 		MinArgs: 0,
