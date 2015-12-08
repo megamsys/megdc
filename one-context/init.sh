@@ -1,8 +1,22 @@
 #!/bin/bash
-#root@megammaster:/megam# cat init.sh
-#stop megamgulpd
-#mkdir /$NODE_NAME
-#mkdir /$ASSEMBLY_ID
+
+if [ -f /etc/lsb-release ]; then
+    . /etc/lsb-release
+    DISTRO=$DISTRIB_ID
+elif [ -f /etc/debian_version ]; then
+    DISTRO=Debian
+    # XXX or Ubuntu
+elif [ -f /etc/redhat-release ]; then
+    DISTRO="Red Hat"
+    # XXX or CentOS or Fedora
+else
+    DISTRO=$(uname -s)
+fi
+
+
+
+if [ "$DISTRO" = "Red Hat" ]  || [ "$DISTRO" = "Ubuntu" ] || [ "$DISTRO" = "Debian" ]
+then
 
 cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
 
@@ -56,9 +70,54 @@ sed -i "s/^[ \t]*name_gulp.*/    name = \"$NODE_NAME\"/" /usr/share/megam/megamg
 sed -i "s/^[ \t]*cats_id.*/    cats_id = \"$ASSEMBLIES_ID\"/" /usr/share/megam/megamgulpd/conf/gulpd.conf
 sed -i "s/^[ \t]*cat_id.*/    cat_id = \"$ASSEMBLY_ID\"/" /usr/share/megam/megamgulpd/conf/gulpd.conf
 
+fi
 
 
+
+
+case "$DISTRO" in
+   "Ubuntu")
 stop megamgulpd
 start megamgulpd
+   ;;
+   "Debian")
+#systemctl stop megamgulpd.service
+systemctl start megamgulpd.service
+   ;;
+   "Red Hat")
+#systemctl stop megamgulpd.service
+systemctl start megamgulpd.service
+   ;;
+   "CoreOS")
+if [ -f /mnt/context.sh ]; then
+  . /mnt/context.sh
+fi
 
-sudo echo 3 > /proc/sys/vm/drop_caches
+sudo cat >> //home/core/.ssh/authorized_keys <<EOF
+$SSH_PUBLIC_KEY
+EOF
+
+sudo -s
+
+sudo cat > //etc/hostname <<EOF
+$HOSTNAME
+EOF
+
+sudo cat >> //etc/hosts <<EOF
+$IP_ADDRESS $HOSTNAME localhost
+
+EOF
+
+sudo cat > //etc/systemd/network/static.network <<EOF
+[Match]
+Name=ens3
+
+[Network]
+Address=$IP_ADDRESS/24
+Gateway=$GATEWAY
+EOF
+
+sudo systemctl restart systemd-networkd
+
+   ;;
+esac
