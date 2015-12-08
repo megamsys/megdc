@@ -47,9 +47,9 @@ func (tpl *UbuntuSshPass) Render(p urknall.Package) {
 	})
 }
 
-func (tpl *UbuntuSshPass) Options(opts map[string]string) {
+func (tpl *UbuntuSshPass) Options(t *templates.Template) {
 
-if hs, ok := opts["HOST"]; ok {
+if hs, ok := t.Options["HOST"]; ok {
 	tpl.Host = hs
 }
 }

@@ -34,7 +34,7 @@ func (tpl *UbuntuRabbitmqInstall) Render(p urknall.Package) {
 	p.AddTemplate("rabbitmq", &UbuntuRabbitmqInstallTemplate{})
 }
 
-func (tpl *UbuntuRabbitmqInstall) Options(opts map[string]string) {
+func (tpl *UbuntuRabbitmqInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuRabbitmqInstall) Run(target urknall.Target) error {

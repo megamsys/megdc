@@ -34,7 +34,7 @@ func (tpl *UbuntuGatewayInstall) Render(p urknall.Package) {
 	p.AddTemplate("gateway", &UbuntuGatewayInstallTemplate{})
 }
 
-func (tpl *UbuntuGatewayInstall) Options(opts map[string]string) {
+func (tpl *UbuntuGatewayInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuGatewayInstall) Run(target urknall.Target) error {

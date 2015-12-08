@@ -38,7 +38,7 @@ func (tpl *UbuntuOneHostInstall) Render(p urknall.Package) {
 	p.AddTemplate("onehost", &UbuntuOneHostInstallTemplate{})
 }
 
-func (tpl *UbuntuOneHostInstall) Options(opts map[string]string) {
+func (tpl *UbuntuOneHostInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuOneHostInstall) Run(target urknall.Target) error {

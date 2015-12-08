@@ -41,7 +41,7 @@ func (tpl *UbuntuNilavuInstall) Render(p urknall.Package) {
 	p.AddTemplate("nilavu", &UbuntuNilavuInstallTemplate{})
 }
 
-func (tpl *UbuntuNilavuInstall) Options(opts map[string]string) {
+func (tpl *UbuntuNilavuInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuNilavuInstall) Run(target urknall.Target) error {
@@ -51,7 +51,7 @@ func (tpl *UbuntuNilavuInstall) Run(target urknall.Target) error {
 type UbuntuNilavuInstallTemplate struct{}
 
 func (m *UbuntuNilavuInstallTemplate) Render(pkg urknall.Package) {
-  //fail on ruby2.0 < check 
+  //fail on ruby2.0 < check
 
 	pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),

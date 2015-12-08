@@ -34,7 +34,7 @@ func (tpl *UbuntuRiakRemove) Render(p urknall.Package) {
 	p.AddTemplate("riak", &UbuntuRiakRemoveTemplate{})
 }
 
-func (tpl *UbuntuRiakRemove) Options(opts map[string]string) {
+func (tpl *UbuntuRiakRemove) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuRiakRemove) Run(target urknall.Target) error {
