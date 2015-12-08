@@ -27,7 +27,7 @@ const (
 	Ceph_User = "megdc"
   Poolname = "one"
   Uid =`uuidgen`
-	
+
 Xml=`<secret ephemeral='no' private='no'>
   <uuid>%v</uuid>
   <usage type='ceph'>
@@ -47,7 +47,7 @@ func init() {
 
 type UbuntuCephDatastore struct {}
 
-func (tpl *UbuntuCephDatastore) Options(opts map[string]string) {}
+func (tpl *UbuntuCephDatastore) Options(t *templates.Template) {}
 
 func (tpl *UbuntuCephDatastore) Render(p urknall.Package) {
 	p.AddTemplate("cephds", &UbuntuCephDatastoreTemplate{})

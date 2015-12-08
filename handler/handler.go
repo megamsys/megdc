@@ -73,6 +73,7 @@ func (h *Handler) SetTemplates(w *WrappedParms) {
 		}
 		template.Name = strings.Title(h.platform) + k
 		template.Options = w.Options
+		template.Maps = w.Maps
 		h.templates = append(h.templates, template)
 	}
 }

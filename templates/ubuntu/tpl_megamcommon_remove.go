@@ -34,7 +34,7 @@ func (tpl *UbuntuMegamCommonRemove) Render(p urknall.Package) {
 	p.AddTemplate("common", &UbuntuMegamCommonRemoveTemplate{})
 }
 
-func (tpl *UbuntuMegamCommonRemove) Options(opts map[string]string) {
+func (tpl *UbuntuMegamCommonRemove) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuMegamCommonRemove) Run(target urknall.Target) error {

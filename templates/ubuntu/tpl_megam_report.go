@@ -40,7 +40,7 @@ func (tpl *UbuntuMegamReport) Render(p urknall.Package) {
 	p.AddTemplate("report", &UbuntuMegamReportTemplate{})
 }
 
-func (tpl *UbuntuMegamReport) Options(opts map[string]string) {
+func (tpl *UbuntuMegamReport) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuMegamReport) Run(target urknall.Target) error {

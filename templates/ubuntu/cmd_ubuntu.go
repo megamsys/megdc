@@ -115,3 +115,11 @@ func IP(netif string) string {
 	}
 	return ""
 }
+
+func ArraytoString(prefix,suffix string,value []string) string {
+	str := ""
+	for _,i := range value {
+     str = str + " " + prefix + i + suffix
+	}
+	return str
+}

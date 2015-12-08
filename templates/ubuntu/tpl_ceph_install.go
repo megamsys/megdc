@@ -22,14 +22,13 @@ import (
 	"strings"
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
+	//"github.com/megamsys/libgo/cmd"
 )
 
 const (
 	CephUser = "CephUser"
-	Osd1     = "Osd1"
-	Osd2     = "Osd2"
+	Osd     = "Osd"
 	Netif    = "IF_name"
-
 	UserHomePrefix = "/home/"
 
 	StrictHostKey = `
@@ -59,32 +58,26 @@ func init() {
 }
 
 type UbuntuCephInstall struct {
-	osd1     string
-	osd2     string
+	osds      []string
 	cephuser string
 	netif    string
 }
 
-func (tpl *UbuntuCephInstall) Options(opts map[string]string) {
-
-		if osd1, ok := opts[Osd1]; ok {
-		tpl.osd1 = osd1
+func (tpl *UbuntuCephInstall) Options(t *templates.Template) {
+	if osds, ok := t.Maps[Osd]; ok {
+		tpl.osds = osds
 	}
-	if osd2, ok := opts[Osd2]; ok {
-		tpl.osd2 = osd2
-	}
-	if cephuser, ok := opts[CephUser]; ok {
+	if cephuser, ok := t.Options[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
-	if netif, ok := opts[Netif]; ok {
+	if netif, ok := t.Options[Netif]; ok {
 		tpl.netif = netif
 	}
 }
 
 func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 	p.AddTemplate("ceph", &UbuntuCephInstallTemplate{
-		osd1:     tpl.osd1,
-		osd2:     tpl.osd2,
+		osds:     tpl.osds,
 		cephuser: tpl.cephuser,
 		cephhome: UserHomePrefix + tpl.cephuser,
 		netif:    tpl.netif,
@@ -93,8 +86,7 @@ func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 
 func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCephInstall{
-		osd1:     tpl.osd1,
-		osd2:     tpl.osd2,
+		osds:     tpl.osds,
 		cephuser: tpl.cephuser,
 		netif:    tpl.netif,
 
@@ -102,8 +94,7 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 }
 
 type UbuntuCephInstallTemplate struct {
-	osd1     string
-	osd2     string
+  osds     []string
 	cephuser string
 	cephhome string
 	netif    string
@@ -112,8 +103,8 @@ type UbuntuCephInstallTemplate struct {
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
 	ip := IP(m.netif)
-	Osd1 := m.osd1
-	Osd2 := m.osd2
+  osddir := ArraytoString("/","/osd",m.osds)
+	hostosd := ArraytoString(host+":/","/osd",m.osds)
 	CephUser := m.cephuser
 	CephHome := m.cephhome
 	Ipaddr  := m.slashIp()
@@ -139,7 +130,6 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		Mkdir(CephHome+"/.ssh", CephUser, 0700),
 		AsUser(CephUser, Shell("ssh-keygen -N '' -t rsa -f "+CephHome+"/.ssh/id_rsa")),
 		AsUser(CephUser, Shell("cp "+CephHome+"/.ssh/id_rsa.pub "+CephHome+"/.ssh/authorized_keys")),
-
 	)
 
 	pkg.AddCommands("ssh_known_hosts",
@@ -148,8 +138,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	)
 
 	pkg.AddCommands("mkdir_osd",
-		Mkdir(Osd1+"/osd", "", 0755),
-		Mkdir(Osd2+"/osd", "", 0755),
+		Mkdir(osddir,"", 0755),
 	)
 
 	pkg.AddCommands("write_cephconf",
@@ -163,8 +152,8 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		AsUser(CephUser,Shell("echo 'mon_pg_warn_max_per_osd = 0' >> "+CephHome+"/ceph-cluster/ceph.conf")),
 		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy install "+host+"")),
 		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy mon create-initial")),
-		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd prepare "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
-		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd activate "+host+":"+Osd1+"/osd "+host+":"+Osd2+"/osd ")),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd prepare "+ hostosd )),
+		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd activate "+ hostosd )),
 		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy admin "+host+"")),
 		AsUser(CephUser, Shell("sudo chmod +r /etc/ceph/ceph.client.admin.keyring")),
 		AsUser(CephUser, Shell("sleep 180")),

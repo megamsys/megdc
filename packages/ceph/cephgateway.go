@@ -21,9 +21,9 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-var INSTALL_PACKAGES = []string{"CephInstall"}
+var CEPH_GATEWAY = []string{"CephGateway"}
 
-type Cephinstall struct {
+type Cephgateway struct {
 	Fs *gnuflag.FlagSet
 
 	Osd cmd.MapFlag
@@ -32,36 +32,22 @@ type Cephinstall struct {
 	IF_name  string
 }
 
-func (g *Cephinstall) Info() *cmd.Info {
-	desc := `Install ceph with multiple Osds.
-
-In order to ceph with atleast 2 OSDs in a machine use the following options.
-
-The [--osd osd1=storage1 --osd osd2=storage2] parameter describes the storage partitioned all osds. This can be an individual hard disk
-
-
-The [[--cephuser]] parameter defines username chosen as the cephuser. The default user other root can be used.
-default is megdc.
-
-The [[--cephpassword]] parameter defines password for the cephuser.
-default is megdc.
-
-The [[--netif]] parameter defines name of the interface to use for ceph network
-default is eth0
+func (g *Cephgateway) Info() *cmd.Info {
+	desc := `Install Ceph object gateway.
 
 For more information read http://docs.megam.io.`
 	return &cmd.Info{
-		Name:    "cephinstall",
-		Usage:   `cephinstall`,
+		Name:    "cephgateway",
+		Usage:   `cephgateway`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
 }
 
-func (c *Cephinstall) Run(context *cmd.Context) error {
+func (c *Cephgateway) Run(context *cmd.Context) error {
 	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
 	w := handler.NewWrap(c)
-	w.IfNoneAddPackages(INSTALL_PACKAGES)
+	w.IfNoneAddPackages(CEPH_GATEWAY)
 
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
@@ -71,13 +57,9 @@ func (c *Cephinstall) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *Cephinstall) Flags() *gnuflag.FlagSet {
+func (c *Cephgateway) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.Var(&c.Osd, "osd", "list of osd storage drive for hosted machine")
-		c.Fs.StringVar(&c.CephUser, "cephuser", "megdc", "userid used as ceph user")
-		c.Fs.StringVar(&c.CephPassword, "cephpassword", "megdc", "password of the ceph user")
-    c.Fs.StringVar(&c.IF_name, "netif", "eth0", "name of the interface to use for ceph network")
 	}
 	return c.Fs
 }

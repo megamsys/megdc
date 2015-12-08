@@ -34,7 +34,7 @@ func (tpl *UbuntuOneRemove) Render(p urknall.Package) {
 	p.AddTemplate("one", &UbuntuOneRemoveTemplate{})
 }
 
-func (tpl *UbuntuOneRemove) Options(opts map[string]string) {
+func (tpl *UbuntuOneRemove) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuOneRemove) Run(target urknall.Target) error {

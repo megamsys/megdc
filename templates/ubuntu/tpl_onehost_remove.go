@@ -34,7 +34,7 @@ func (tpl *UbuntuOneHostRemove) Render(p urknall.Package) {
 	p.AddTemplate("onehost", &UbuntuOneHostRemoveTemplate{})
 }
 
-func (tpl *UbuntuOneHostRemove) Options(opts map[string]string) {
+func (tpl *UbuntuOneHostRemove) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuOneHostRemove) Run(target urknall.Target) error {

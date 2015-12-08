@@ -32,7 +32,7 @@ const LOCALHOST = "localhost"
 var runnables map[string]TemplateRunnable
 
 type TemplateRunnable interface {
-	Options(options map[string]string)
+	Options(t *Template)
 	Run(target urknall.Target) error
 }
 
@@ -42,6 +42,7 @@ type Template struct {
 	UserName string
 	Password string
 	Options  map[string]string
+	Maps map[string][]string
 }
 
 func NewTemplate() *Template {
@@ -75,7 +76,7 @@ func (t *Template) Run() error {
 	}
 
 	if initializeRunner, ok := runner.(TemplateRunnable); ok {
-		initializeRunner.Options(t.Options)
+		initializeRunner.Options(t)
 		return initializeRunner.Run(target)
 	}
 	return errors.New(fmt.Sprintf("fatal error, couldn't locate the package %q", t.Name))

@@ -34,7 +34,7 @@ func (tpl *UbuntuSnowflakeInstall) Render(p urknall.Package) {
 	p.AddTemplate("snowflake", &UbuntuSnowflakeInstallTemplate{})
 }
 
-func (tpl *UbuntuSnowflakeInstall) Options(opts map[string]string) {
+func (tpl *UbuntuSnowflakeInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuSnowflakeInstall) Run(target urknall.Target) error {

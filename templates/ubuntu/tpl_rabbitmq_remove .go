@@ -34,7 +34,7 @@ func (tpl *UbuntuRabbitmqRemove) Render(p urknall.Package) {
 	p.AddTemplate("rabbitmq", &UbuntuRabbitRemoveTemplate{})
 }
 
-func (tpl *UbuntuRabbitmqRemove) Options(opts map[string]string) {
+func (tpl *UbuntuRabbitmqRemove) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuRabbitmqRemove) Run(target urknall.Target) error {

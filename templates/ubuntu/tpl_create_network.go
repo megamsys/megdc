@@ -38,12 +38,12 @@ type UbuntuCreateNetwork struct {
 	PhyDev     string
 }
 
-func (tpl *UbuntuCreateNetwork) Options(opts map[string]string) {
-	if bg, ok := opts[BRIDGE_NAME]; ok {
+func (tpl *UbuntuCreateNetwork) Options(t *templates.Template) {
+	if bg, ok := t.Options[BRIDGE_NAME]; ok {
 		tpl.BridgeName = bg
 	}
 
-	if ph, ok := opts[PHY_DEV]; ok {
+	if ph, ok := t.Options[PHY_DEV]; ok {
 		tpl.PhyDev = ph
 	}
 }

@@ -21,7 +21,6 @@ import (
 	"reflect"
 	"strings"
 	"text/tabwriter"
-
 	"github.com/megamsys/libgo/cmd"
 )
 
@@ -35,6 +34,7 @@ const (
 type WrappedParms struct {
 	Packages map[string]string
 	Options  map[string]string
+	Maps     map[string][]string
 }
 
 func (w *WrappedParms) String() string {
@@ -59,13 +59,14 @@ func NewWrap(c interface{}) *WrappedParms {
 	w := WrappedParms{}
 	packages := make(map[string]string)
 	options := make(map[string]string)
-
+  maps := make(map[string][]string)
 	s := reflect.ValueOf(c).Elem()
 	typ := s.Type()
 	if s.Kind() == reflect.Struct {
 		for i := 0; i < s.NumField(); i++ {
 			key := s.Field(i)
 			value := s.FieldByName(typ.Field(i).Name)
+
 			switch key.Interface().(type) {
 			case bool:
 				if value.Bool() {
@@ -75,11 +76,21 @@ func NewWrap(c interface{}) *WrappedParms {
 				if value.String() != "" {
 					options[typ.Field(i).Name] = value.String()
 				}
+			case cmd.MapFlag:
+				c := make([]string, len(value.MapKeys()))
+        if len(value.MapKeys()) > 0 {
+					for k,v := range value.MapKeys() {
+					   	c[k] = value.MapIndex(v).String()
+					}
+          maps[typ.Field(i).Name] = c
+				}
 			}
 		}
 	}
+
 	w.Packages = packages
 	w.Options = options
+	w.Maps    = maps
 	return &w
 }
 

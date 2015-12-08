@@ -34,7 +34,7 @@ func (tpl *UbuntuSnowflakeRemove) Render(p urknall.Package) {
 	p.AddTemplate("snowflake", &UbuntuSnowflakeRemoveTemplate{})
 }
 
-func (tpl *UbuntuSnowflakeRemove) Options(opts map[string]string) {
+func (tpl *UbuntuSnowflakeRemove) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuSnowflakeRemove) Run(target urknall.Target) error {

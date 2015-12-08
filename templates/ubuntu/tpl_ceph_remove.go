@@ -34,8 +34,8 @@ type UbuntuCephRemove struct {
 	cephuser string
 }
 
-func (tpl *UbuntuCephRemove) Options(opts map[string]string) {
-	if cephuser, ok := opts[CephUser]; ok {
+func (tpl *UbuntuCephRemove) Options(t *templates.Template) {
+	if cephuser, ok := t.Options[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
 }
@@ -59,7 +59,9 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
 
 	CephUser := m.cephuser
-
+	pkg.AddCommands("cache-clean",
+    Shell("rm -r /var/lib/urknall/ceph*"),
+	)
 	pkg.AddCommands("purgedata",
 		AsUser(CephUser, Shell("ceph-deploy purgedata "+host+"")),
 	)
@@ -80,9 +82,6 @@ func (m *UbuntuCephRemoveTemplate) Render(pkg urknall.Package) {
 		Shell("apt-get -y autoremove"),
 		Shell("rm -r /run/ceph"),
 		Shell("rm /var/log/upstart/ceph*"),
-	)
-	pkg.AddCommands("cache-clean",
-    Shell("rm -r /var/lib/urknall/ceph*"),
 	)
 
 }

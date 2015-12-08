@@ -34,7 +34,7 @@ func (tpl *UbuntuMegamdInstall) Render(p urknall.Package) {
 	p.AddTemplate("megamd", &UbuntuMegamdInstallTemplate{})
 }
 
-func (tpl *UbuntuMegamdInstall) Options(opts map[string]string) {
+func (tpl *UbuntuMegamdInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuMegamdInstall) Run(target urknall.Target) error {

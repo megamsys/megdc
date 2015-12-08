@@ -34,7 +34,7 @@ func (tpl *UbuntuRiakInstall) Render(p urknall.Package) {
 	p.AddTemplate("riak", &UbuntuRiakInstallTemplate{})
 }
 
-func (tpl *UbuntuRiakInstall) Options(opts map[string]string) {
+func (tpl *UbuntuRiakInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuRiakInstall) Run(target urknall.Target) error {
