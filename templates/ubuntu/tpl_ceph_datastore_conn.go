@@ -19,7 +19,7 @@ package ubuntu
 import (
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
-	"code.google.com/p/go-uuid/uuid"
+	"github.com/pborman/uuid"
 	"fmt"
 )
 
