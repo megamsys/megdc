@@ -28,7 +28,7 @@ import (
 const (
 	CephUser = "CephUser"
 	Osd     = "Osd"
-	Netif    = "IF_name"
+	Phydev    = "PhyDev"
 	UserHomePrefix = "/home/"
 
 	StrictHostKey = `
@@ -60,7 +60,7 @@ func init() {
 type UbuntuCephInstall struct {
 	osds      []string
 	cephuser string
-	netif    string
+	phydev    string
 }
 
 func (tpl *UbuntuCephInstall) Options(t *templates.Template) {
@@ -70,8 +70,8 @@ func (tpl *UbuntuCephInstall) Options(t *templates.Template) {
 	if cephuser, ok := t.Options[CephUser]; ok {
 		tpl.cephuser = cephuser
 	}
-	if netif, ok := t.Options[Netif]; ok {
-		tpl.netif = netif
+	if phydev, ok := t.Options[Phydev]; ok {
+		tpl.phydev = phydev
 	}
 }
 
@@ -80,7 +80,7 @@ func (tpl *UbuntuCephInstall) Render(p urknall.Package) {
 		osds:     tpl.osds,
 		cephuser: tpl.cephuser,
 		cephhome: UserHomePrefix + tpl.cephuser,
-		netif:    tpl.netif,
+		phydev:    tpl.phydev,
 	})
 }
 
@@ -88,7 +88,7 @@ func (tpl *UbuntuCephInstall) Run(target urknall.Target) error {
 	return urknall.Run(target, &UbuntuCephInstall{
 		osds:     tpl.osds,
 		cephuser: tpl.cephuser,
-		netif:    tpl.netif,
+		phydev:    tpl.phydev,
 
 	})
 }
@@ -97,12 +97,12 @@ type UbuntuCephInstallTemplate struct {
   osds     []string
 	cephuser string
 	cephhome string
-	netif    string
+	phydev    string
 }
 
 func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
-	ip := IP(m.netif)
+	ip := IP(m.phydev)
   osddir := ArraytoString("/","/osd",m.osds)
 	hostosd := ArraytoString(host+":/","/osd",m.osds)
 	CephUser := m.cephuser
@@ -167,12 +167,12 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 }
 
 func (m *UbuntuCephInstallTemplate) noOfIpsFromMask() int {
-	si, _ := IPNet(m.netif).Mask.Size() //from your netwwork
+	si, _ := IPNet(m.phydev).Mask.Size() //from your netwwork
 	return si
 }
 
 func (m *UbuntuCephInstallTemplate) slashIp() string {
-	s := strings.Split(IP(m.netif), ".")
+	s := strings.Split(IP(m.phydev), ".")
 	p := s[0 : len(s)-1]
 	p = append(p, "0")
 	return fmt.Sprintf("%s/%d", strings.Join(p, "."), m.noOfIpsFromMask())
