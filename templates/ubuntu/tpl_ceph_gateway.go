@@ -27,7 +27,7 @@ import (
 const (
   Ceph_conf = `
 [client.radosgw.admin]
-host = {%s}
+host = %s
 keyring = /etc/ceph/ceph.client.radosgw.keyring
 rgw socket path =   /var/run/ceph/ceph.radosgw.admin.fastcgi.sock
 log file = /var/log/radosgw/client.radosgw.admin.log
@@ -101,7 +101,7 @@ host, _ := os.Hostname()
 	pkg.AddCommands("apache2",
 		UpdatePackagesOmitError(),
 		InstallPackages("apache2 libapache2-mod-fastcgi"),
-		Shell("echo '"+host+" mon-server' >>/etc/apache2/apache2.conf"),
+		Shell("echo 'ServerName "+host+"' >>/etc/apache2/apache2.conf"),
 	  Shell("sudo a2enmod rewrite"),
     Shell("sudo a2enmod fastcgi"),
 		Shell("service apache2 start"),
@@ -136,8 +136,8 @@ host, _ := os.Hostname()
 	)
   pkg.AddCommands("ceph-conf",
 		Shell("cat >> /etc/ceph/ceph.conf <<'EOF' "+fmt.Sprintf(Ceph_conf,host)+"EOF"),
-		Shell("ceph-deploy --overwrite-conf config pull {"+host+"}"),
-    Shell("ceph-deploy --overwrite-conf config push "+host+""),
+		Shell("ceph-deploy --overwrite-conf config pull "+host),
+    Shell("ceph-deploy --overwrite-conf config push "+host),
 	)
 	/*	pkg.AddCommands("copy_keyring",
 			Shell("sudo scp /etc/ceph/ceph.client.admin.keyring  "+ USERNAME+"@"+GATEWAY_IP+":/home/"+USERNAME),
@@ -148,7 +148,7 @@ host, _ := os.Hostname()
 		Mkdir("/var/lib/ceph/radosgw/ceph-radosgw.admin","",0755),
 		Shell("sudo /etc/init.d/radosgw start"),
 		WriteFile("/etc/apache2/sites-available/rgw.conf",Rgw_conf,"root",0644),
-		Shell("sudo s2dissite 000-default"),
+		Shell("sudo a2dissite 000-default"),
 		Shell("sudo a2ensite rgw.conf"),
 		Shell("sudo service apache2 restart"),
 	)
