@@ -49,7 +49,7 @@ cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
 	cookbook = "megam_run"
 	repository = "github"
 	repository_path = "https://github.com/megamsys/chef-repo.git"
-  repository_tar_path = "https://github.com/megamsys/chef-repo/archive/0.95.1.tar.gz"
+  repository_tar_path = "https://github.com/megamsys/chef-repo/archive/0.96.tar.gz"
 
   ###
   ### [http]

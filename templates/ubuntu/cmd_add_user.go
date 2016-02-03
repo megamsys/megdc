@@ -1,7 +1,6 @@
 package ubuntu
 
 import "fmt"
-
 // AddUser adds a new linux user (normal or system user) if it does not exist already
 func AddUser(name string, systemUser bool) *ShellCommand {
 	testForUser := "id " + name + " 2>&1 > /dev/null"

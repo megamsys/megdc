@@ -88,9 +88,6 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		megdMsg := "Install megam omni scheduler"
 		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, megdMsg)
 		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
-		snoMsg := "Install megam uidserver"
-		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
-		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 		hostMsg := "The host of the server to ssh"
 		c.Fs.StringVar(&c.Host, "host", "localhost", hostMsg)
 		usrMsg := "The username of the server"
