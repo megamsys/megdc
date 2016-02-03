@@ -108,8 +108,7 @@ func (m *DebianCephInstallTemplate) Render(pkg urknall.Package) {
 	hostosd := u.ArraytoString(host+":/","/osd",m.osds)
 	CephUser := m.cephuser
 	CephHome := m.cephhome
-
-
+	
  pkg.AddCommands("cephinstall",
 		u.Shell("echo deb https://download.ceph.com/debian-infernalis/ jessie main | tee /etc/apt/sources.list.d/ceph.list"),
 		u.Shell("wget -q -O- 'https://download.ceph.com/keys/release.asc' | apt-key add -"),
@@ -147,6 +146,7 @@ func (m *DebianCephInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("mkdir_osd",
 		u.Mkdir(osddir,"", 0755),
+		u.Shell("sudo chown -R"+CephUser+":"+CephUser+" "+osddir ),
 	)
 
 	pkg.AddCommands("write_cephconf",
@@ -157,7 +157,7 @@ func (m *DebianCephInstallTemplate) Render(pkg urknall.Package) {
 		u.AsUser(CephUser,u.Shell("echo 'osd_pool_default_size = 2' >> "+CephHome+"/ceph-cluster/ceph.conf")),
 		u.AsUser(CephUser,u.Shell("echo 'mon_pg_warn_max_per_osd = 0' >> "+CephHome+"/ceph-cluster/ceph.conf")),
 		u.AsUser(CephUser, u.Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy install "+host+"")),
-		u.AsUser(CephUser, u.Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy mon create-initial || ceph-deploy mon create-initial")),
+		u.AsUser(CephUser, u.Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy mon create-initial | ceph-deploy mon create-initial")),
 		u.AsUser(CephUser, u.Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd prepare "+ hostosd )),
 		u.AsUser(CephUser, u.Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy osd activate "+ hostosd )),
 		u.AsUser(CephUser, u.Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy admin "+host+"")),

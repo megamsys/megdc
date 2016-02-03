@@ -50,17 +50,13 @@ type DebianOneHostInstallTemplate struct{}
 
 func (m *DebianOneHostInstallTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("repository",
+		u.InstallPackages("sudo"),
 		u.Shell("wget -q -O- http://downloads.opennebula.org/repo/Debian/repo.key | apt-key add -"),
 		u.Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Debian/8 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),
 		u.UpdatePackagesOmitError(),
 	)
 	pkg.AddCommands("depends",
-		u.InstallPackages("qemu-system-x86 qemu-kvm qemu-kvm libvirt-bin build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils lvm2 ssh iproute iputils-arping make"),
-	)
-
-	pkg.AddCommands("verify",
-		u.InstallPackages("qemu-system-x86 qemu-kvm cpu-checker"),
-		u.And("kvm=`kvm-ok  | grep 'KVM acceleration can be used'`"),
+		u.InstallPackages("qemu-system-x86 qemu-kvm libvirt-bin build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils lvm2 ssh iproute iputils-arping make"),
 	)
 
 	pkg.AddCommands("one-node",
