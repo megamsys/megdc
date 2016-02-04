@@ -26,6 +26,7 @@ import (
 	"github.com/megamsys/libgo/os"
 	"github.com/megamsys/megdc/templates"
 	_ "github.com/megamsys/megdc/templates/ubuntu"
+	_ "github.com/megamsys/megdc/templates/debian"
 	"github.com/tj/go-spin"
 )
 
@@ -92,13 +93,13 @@ func supportedOS() (string, error) {
 	osh := os.HostOS()
 	switch runtime.GOOS {
 	case "linux":
-		if osh != os.Ubuntu {
+		if osh != os.Ubuntu && osh != os.Debian && osh != os.CentOS {
 			return "", fmt.Errorf("unsupported operating system: %v, we support ubuntu.", osh)
 		}
 	default:
 		return "", fmt.Errorf("unsupported operating system: %v", runtime.GOOS)
 	}
-	return "ubuntu", nil
+	return strings.ToLower(osh.String()), nil
 }
 
 //Show a spinner until our services start.

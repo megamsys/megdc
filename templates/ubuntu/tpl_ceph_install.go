@@ -107,7 +107,10 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	hostosd := ArraytoString(host+":/","/osd",m.osds)
 	CephUser := m.cephuser
 	CephHome := m.cephhome
-	Ipaddr  := m.slashIp()
+
+	pkg.AddCommands("cephuser_add",
+	 AddUser(CephUser,false),
+	)
 	pkg.AddCommands("cephuser_sudoer",
 		Shell("echo '"+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
 	)
@@ -116,11 +119,12 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	)
 
 	pkg.AddCommands("cephinstall",
-		Shell("sudo echo deb http://ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list"),
-		Shell("sudo wget -q -O- 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' | sudo apt-key add -"),
-		Shell("sudo apt-get -y update"),
-		InstallPackages("ceph-deploy", "ceph-common", "ceph-mds", "dnsmasq", "openssh-server", "ntp", "sshpass"),
-	)
+		 Shell("echo deb https://download.ceph.com/debian-infernalis/ jessie main | tee /etc/apt/sources.list.d/ceph.list"),
+		 Shell("wget -q -O- 'https://download.ceph.com/keys/release.asc' | apt-key add -"),
+		 InstallPackages("apt-transport-https  sudo"),
+		 UpdatePackagesOmitError(),
+		 InstallPackages("ceph-deploy ceph-common ceph-mds dnsmasq openssh-server ntp sshpass ceph ceph-mds ceph-deploy radosgw"),
+	 )
 
 	pkg.AddCommands("etchost",
 		Shell("echo '"+ip+" "+host+"' >> /etc/hosts"),
@@ -139,6 +143,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("mkdir_osd",
 		Mkdir(osddir,"", 0755),
+		Shell("sudo chown -R"+CephUser+":"+CephUser+" "+osddir ),
 	)
 
 	pkg.AddCommands("write_cephconf",
@@ -147,8 +152,6 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy new "+host+" ")),
 	  	AsUser(CephUser, Shell("echo 'osd crush chooseleaf type = 0' >> "+CephHome+"/ceph-cluster/ceph.conf")),
 			AsUser(CephUser,Shell("echo 'osd_pool_default_size = 2' >> "+CephHome+"/ceph-cluster/ceph.conf")),
-		AsUser(CephUser,Shell("echo 'public network = "+Ipaddr+"' >> "+CephHome+"/ceph-cluster/ceph.conf")),
-		AsUser(CephUser,Shell("echo 'cluster network = "+Ipaddr+"' >> "+CephHome+"/ceph-cluster/ceph.conf")),
 		AsUser(CephUser,Shell("echo 'mon_pg_warn_max_per_osd = 0' >> "+CephHome+"/ceph-cluster/ceph.conf")),
 		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy install "+host+"")),
 		AsUser(CephUser, Shell("cd "+CephHome+"/ceph-cluster;ceph-deploy mon create-initial")),

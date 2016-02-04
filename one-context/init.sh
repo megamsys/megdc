@@ -30,13 +30,9 @@ cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
   ###
 
   [meta]
-    debug = true
-    hostname = "localhost"
-    bind_address = "192.168.1.105:7777"
-    dir = "/var/lib/megam/gulp/meta"
     riak = ["192.168.1.105:8087"]
     api  = "https://api.megam.io/v2"
-    amqp = "amqp://guest:guest@192.168.1.105:5672/"
+    nsqd = ["103.56.92.4:4151"]
 
   ###
   ### [gulpd]
@@ -45,6 +41,7 @@ cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
   ###
 
   [gulpd]
+    enabled =true
     name_gulp = "hostname"
     cats_id = "AMS1259077729232486400"
     cat_id = "ASM1260230009767985152"
@@ -52,6 +49,7 @@ cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
 	cookbook = "megam_run"
 	repository = "github"
 	repository_path = "https://github.com/megamsys/chef-repo.git"
+  repository_tar_path = "https://github.com/megamsys/chef-repo/archive/0.96.tar.gz"
 
   ###
   ### [http]
@@ -61,8 +59,8 @@ cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
   ###
 
   [http]
-    enabled = true
-    bind-address = "localhost:6666"
+    enabled = false
+    bind-address = "127.0.0.1:6666"
 
 EOF
 
@@ -81,12 +79,16 @@ stop megamgulpd
 start megamgulpd
    ;;
    "Debian")
-#systemctl stop megamgulpd.service
+systemctl stop megamgulpd.service
 systemctl start megamgulpd.service
+systemctl stop cadvisor.service
+systemctl start cadvisor.service
    ;;
    "Red Hat")
-#systemctl stop megamgulpd.service
+systemctl stop megamgulpd.service
 systemctl start megamgulpd.service
+systemctl stop cadvisor.service
+systemctl start cadvisor.service
    ;;
    "CoreOS")
 if [ -f /mnt/context.sh ]; then
