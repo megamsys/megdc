@@ -83,7 +83,7 @@ DEPLOY_HOSTS="%s"
 APP_USER="%s"
 APP_GROUP="%s"
 # optional SSH Key to login to deploy server
-#SSH_KEY=/path/to/keyfile.pem
+SSH_KEY=%s
 INSTALL_DIR=%s
 LOG_DIR=/var/log/job-server
 PIDFILE=spark-jobserver.pid
@@ -153,6 +153,7 @@ func (m *UbuntuMesosMasterInstallTemplate) Render(pkg urknall.Package) {
 		job := ""+sparkhome+"spark-"+Sparkvrs+""
 		executeuri := "/home/spark-"+Sparkvrs+".tgz"
 		installdir := ""+sparkhome+"jobserver"
+		sshkey := "/home/id_rsa"
 
    pkg.AddCommands("meglyticsdir",
    Shell("cd /var/lib;mkdir meglytics1"),
@@ -230,7 +231,7 @@ pkg.AddCommands("export",
 )
 
   pkg.AddCommands("sh",
-    WriteFile(sparkhome+"spark-jobserver/config/megam.sh", fmt.Sprintf(MEGAMSH, ip, "root", "root", installdir, Sparkvrs, job, executeuri), "root", 0755),
+    WriteFile(sparkhome+"spark-jobserver/config/megam.sh", fmt.Sprintf(MEGAMSH, ip, "root", "root", sshkey,  installdir, Sparkvrs, job, executeuri), "root", 0755),
 )
 pkg.AddCommands("run",
 Shell("cd "+sparkhome+"spark-jobserver/bin;./server_deploy.sh megam"),

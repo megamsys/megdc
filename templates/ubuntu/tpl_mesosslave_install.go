@@ -20,7 +20,7 @@ import (
 	"os"
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
-	"fmt"
+	
 	//"github.com/megamsys/libgo/cmd"
 )
 
