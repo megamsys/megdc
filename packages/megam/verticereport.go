@@ -21,7 +21,7 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-var REPORT_PACKAGES = []string{"MegamReport"}
+var REPORT_PACKAGES = []string{"VerticeReport"}
 
 type Megamreport struct {
 	Fs *gnuflag.FlagSet
@@ -31,8 +31,8 @@ func (g *Megamreport) Info() *cmd.Info {
 	desc := `Report about megam Oja installation.
 `
 	return &cmd.Info{
-		Name:    "megamreport",
-		Usage:   `megamreport`,
+		Name:    "verticerepot",
+		Usage:   `show status of all the vertice packages`,
 		Desc:    desc,
 		MinArgs: 0,
 	}

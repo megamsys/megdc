@@ -27,29 +27,29 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var debianmegamreport *DebianMegamReport
+var debianverticereport *DebianVerticeReport
 
 func init() {
-	debianmegamreport = &DebianMegamReport{}
-	templates.Register("DebianMegamReport", debianmegamreport)
+	debianverticereport = &DebianVerticeReport{}
+	templates.Register("DebianVerticeReport", debianverticereport)
 }
 
-type DebianMegamReport struct{}
+type DebianVerticeReport struct{}
 
-func (tpl *DebianMegamReport) Render(p urknall.Package) {
-	p.AddTemplate("report", &DebianMegamReportTemplate{})
+func (tpl *DebianVerticeReport) Render(p urknall.Package) {
+	p.AddTemplate("report", &DebianVerticeReportTemplate{})
 }
 
-func (tpl *DebianMegamReport) Options(t *templates.Template) {
+func (tpl *DebianVerticeReport) Options(t *templates.Template) {
 }
 
-func (tpl *DebianMegamReport) Run(target urknall.Target) error {
-	return urknall.Run(target, &DebianMegamReport{})
+func (tpl *DebianVerticeReport) Run(target urknall.Target) error {
+	return urknall.Run(target, &DebianVerticeReport{})
 }
 
-type DebianMegamReportTemplate struct{}
+type DebianVerticeReportTemplate struct{}
 
-func (m *DebianMegamReportTemplate) Render(pkg urknall.Package) {
+func (m *DebianVerticeReportTemplate) Render(pkg urknall.Package) {
 
 	if err := writefile(); err != nil {
 		return
@@ -206,7 +206,7 @@ help() {
 
 report_megam() {
 
-  pkgnames=( megamcommon megamnilavu megamsnowflake megamgateway megamd riak rabbitmq-server ruby2.0 openjdk-7-jdk)
+  pkgnames=( verticecommon verticenilavu vertice verticegateway vertice riak rabbitmq-server ruby2.0 openjdk-7-jdk)
 
   howdy_pkgs pkgnames[@]
 

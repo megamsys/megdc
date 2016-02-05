@@ -13,47 +13,45 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-package debian
 
+package debian
 
 import (
 	"github.com/megamsys/megdc/templates"
-	 u "github.com/megamsys/megdc/templates/ubuntu"
+	u "github.com/megamsys/megdc/templates/ubuntu"
 	"github.com/megamsys/urknall"
 )
 
-var debiannilavuinstall *DebianNilavuInstall
+var debiangatewayinstall *DebianGatewayInstall
 
 func init() {
-	debiannilavuinstall = &DebianNilavuInstall{}
-	templates.Register("DebianNilavuInstall", debiannilavuinstall)
+	debiangatewayinstall = &DebianGatewayInstall{}
+	templates.Register("DebianGatewayInstall", debiangatewayinstall)
 }
 
-type DebianNilavuInstall struct{}
+type DebianGatewayInstall struct{}
 
-func (tpl *DebianNilavuInstall) Render(p urknall.Package) {
-	p.AddTemplate("nilavu", &DebianNilavuInstallTemplate{})
+func (tpl *DebianGatewayInstall) Render(p urknall.Package) {
+	p.AddTemplate("gateway", &DebianGatewayInstallTemplate{})
 }
 
-func (tpl *DebianNilavuInstall) Options(t *templates.Template) {
+func (tpl *DebianGatewayInstall) Options(t *templates.Template) {
 }
 
-func (tpl *DebianNilavuInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &DebianNilavuInstall{})
+func (tpl *DebianGatewayInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &DebianGatewayInstall{})
 }
 
-type DebianNilavuInstallTemplate struct{}
+type DebianGatewayInstallTemplate struct{}
 
-func (m *DebianNilavuInstallTemplate) Render(pkg urknall.Package) {
-  //fail on ruby2.0 < check
-
+func (m *DebianGatewayInstallTemplate) Render(pkg urknall.Package) {
+	//fail on Java -version (1.8 check)
 	pkg.AddCommands("repository",
 		u.Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		u.UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamnilavu",
-		u.InstallPackages(" sdfaskld megamnilavu"),
+	pkg.AddCommands("verticegateway",
+		u.InstallPackages("verticegateway"),
 	)
-
 }

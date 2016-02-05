@@ -20,8 +20,11 @@ import (
 	"gopkg.in/check.v1"
 )
 
+type S struct{}
 
-func (s *S) TestMegamRemoveStartInfo(c *check.C) {
+var _ = check.Suite(&S{})
+
+func (s *S) TestMegamStartInfo(c *check.C) {
 	desc := `starts megdc.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
@@ -29,11 +32,11 @@ If you use the '--quiet' flag megdc doesn't print the logs.
 `
 
 	expected := &cmd.Info{
-		Name:    "megamremove",
-		Usage:   `megamremove [--all] [--nilavu]...`,
+		Name:    "megaminstall",
+		Usage:   `megaminstall [--all] [--nilavu]...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
-	command := Megamremove{}
+	command := VerticeInstall{}
 	c.Assert(command.Info(), check.DeepEquals, expected)
 }

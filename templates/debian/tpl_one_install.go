@@ -65,7 +65,7 @@ func (m *DebianOneInstallTemplate) Render(pkg urknall.Package) {
 		u.Shell("echo 'oneadmin ALL = (root) NOPASSWD:ALL' | tee /etc/sudoers.d/oneadmin"),
 		u.Shell(" chmod 0440 /etc/sudoers.d/oneadmin"),
 		u.Shell(" rm /usr/share/one/install_gems"),
-		u.Shell(" cp /usr/share/megam/megdc/conf/trusty/opennebula/install_gems /usr/share/one/install_gems"),
+		u.Shell(" cp /usr/share/megam/megdc/conf/install_gems /usr/share/one/install_gems"),
 		u.Shell(" chmod 755 /usr/share/one/install_gems"),
 		u.Shell("/usr/share/one/install_gems sunstone"),
 		u.Shell("sed -i 's/^[ \t]*:host:.*/:host: "+ip+"/' /etc/one/sunstone-server.conf"),

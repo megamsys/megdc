@@ -22,11 +22,11 @@ import (
 )
 
 
-var ubuntumegamcommoninstall *UbuntuMegamCommonInstall
+var ubuntuverticecommoninstall *UbuntuMegamCommonInstall
 
 func init() {
-	ubuntumegamcommoninstall = &UbuntuMegamCommonInstall{}
-	templates.Register("UbuntuMegamCommonInstall", ubuntumegamcommoninstall)
+	ubuntuverticecommoninstall = &UbuntuMegamCommonInstall{}
+	templates.Register("UbuntuMegamCommonInstall", ubuntuverticecommoninstall)
 }
 
 type UbuntuMegamCommonInstall struct{}
@@ -50,8 +50,8 @@ func (m *UbuntuMegamCommonInstallTemplate) Render(pkg urknall.Package) {
 		Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
 		UpdatePackagesOmitError(),
 	)
-	pkg.AddCommands("megamcommon",
-		InstallPackages("megamcommon"),
+	pkg.AddCommands("verticecommon",
+		InstallPackages("verticecommon"),
 
 	)
 }

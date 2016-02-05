@@ -27,7 +27,7 @@ var INSTALL_PACKAGES = []string{"SnowflakeInstall",
 	"GatewayInstall",
 	"MegamdInstall"}
 
-type MegamInstall struct {
+type VerticeInstall struct {
 	Fs               *gnuflag.FlagSet
 	All              bool
 	NilavuInstall    bool
@@ -39,32 +39,32 @@ type MegamInstall struct {
 	Password string
 }
 
-func (c *MegamInstall) Info() *cmd.Info {
+func (c *VerticeInstall) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:  "megaminstall",
-		Usage: "megaminstall [--nilavu/-n] [--gateway/-g] [--snowflake/-s]",
+		Name:  "verticeinstall",
+		Usage: "verticeinstall [--nilavu/-n] [--gateway/-g] [--snowflake/-s]",
 		Desc: `Install megam Oja orchestrator. For megdc, available install plaform is ubuntu.
 We are working to support centos.
 In order to install individual packages use the following options.
 
 The [[--nilavu]] parameter defines megam cockpit ui to install.
-This code name is nilavu packaged as megamnilavu.
+This code name is nilavu packaged as verticenilavu.
 
 The [[--gateway]] parameter defines megam gateway apiserver to install.
-This code name is gateway packaged as megamgateway.
+This code name is gateway packaged as verticegateway.
 
 The [[--snowflake]] parameter defines megam uidserver to install.
-This code name is snowflake packaged as megamsnowflake.
+This code name is snowflake packaged as vertice.
 
-The [[--megamd]] parameter defines megam omni scheduler to install.
-This code name is megamd packaged as megammegamd.
+The [[--vertice]] parameter defines megam omni scheduler to install.
+This code name is vertice packaged as vertice.
 
 For more information read http://docs.megam.io.`,
 		MinArgs: 0,
 	}
 }
 
-func (c *MegamInstall) Run(context *cmd.Context) error {
+func (c *VerticeInstall) Run(context *cmd.Context) error {
 	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "installing")
 	w := handler.NewWrap(c)
 	w.IfNoneAddPackages(INSTALL_PACKAGES)
@@ -76,7 +76,7 @@ func (c *MegamInstall) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *MegamInstall) Flags() *gnuflag.FlagSet {
+func (c *VerticeInstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
 		nilMsg := "Install megam cockpit ui"
@@ -85,8 +85,11 @@ func (c *MegamInstall) Flags() *gnuflag.FlagSet {
 		gwyMsg := "Install megam gateway apiserver"
 		c.Fs.BoolVar(&c.GatewayInstall, "gateway", false, gwyMsg)
 		c.Fs.BoolVar(&c.GatewayInstall, "g", false, gwyMsg)
+		snoMsg := "Install megam uidserver"
+		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
+		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 		megdMsg := "Install megam omni scheduler"
-		c.Fs.BoolVar(&c.MegamdInstall, "megamd", false, megdMsg)
+		c.Fs.BoolVar(&c.MegamdInstall, "vertice", false, megdMsg)
 		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
 		hostMsg := "The host of the server to ssh"
 		c.Fs.StringVar(&c.Host, "host", "localhost", hostMsg)

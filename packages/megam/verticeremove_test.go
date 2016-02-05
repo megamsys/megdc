@@ -21,7 +21,7 @@ import (
 )
 
 
-func (s *S) TestMegamReportStartInfo(c *check.C) {
+func (s *S) TestVerticeRemoveStartInfo(c *check.C) {
 	desc := `starts megdc.
 
 If you use the '--quiet' flag megdc doesn't print the logs.
@@ -29,11 +29,11 @@ If you use the '--quiet' flag megdc doesn't print the logs.
 `
 
 	expected := &cmd.Info{
-		Name:    "megamreport",
-		Usage:   `megamreport [--all] [--nilavu]...`,
+		Name:    "verticeremove",
+		Usage:   `verticeremove [--all] [--nilavu]...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
-	command := Megamreport{}
+	command := Megamremove{}
 	c.Assert(command.Info(), check.DeepEquals, expected)
 }

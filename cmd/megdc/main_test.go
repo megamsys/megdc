@@ -43,9 +43,9 @@ func (s *S) TestCommandsFromBaseManagerAreRegistered(c *check.C) {
 
 func (s *S) TestStartIsRegistered(c *check.C) {
 	manager := cmdRegistry("megdc")
-	create, ok := manager.Commands["megaminstall"]
+	create, ok := manager.Commands["verticeinstall"]
 	c.Assert(ok, check.Equals, true)
-	c.Assert(create, check.FitsTypeOf, &megam.MegamInstall{})
+	c.Assert(create, check.FitsTypeOf, &megam.VerticeInstall{})
 }
 
 func (s *S) TestStartcephIsRegistered(c *check.C) {

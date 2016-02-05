@@ -27,34 +27,34 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var ubuntumegamreport *UbuntuMegamReport
+var ubuntuverticereport *UbuntuVerticeReport
 
 func init() {
-	ubuntumegamreport = &UbuntuMegamReport{}
-	templates.Register("UbuntuMegamReport", ubuntumegamreport)
+	ubuntuverticereport = &UbuntuVerticeReport{}
+	templates.Register("UbuntuVerticeReport", ubuntuverticereport)
 }
 
-type UbuntuMegamReport struct{}
+type UbuntuVerticeReport struct{}
 
-func (tpl *UbuntuMegamReport) Render(p urknall.Package) {
-	p.AddTemplate("report", &UbuntuMegamReportTemplate{})
+func (tpl *UbuntuVerticeReport) Render(p urknall.Package) {
+	p.AddTemplate("report", &UbuntuVerticeReportTemplate{})
 }
 
-func (tpl *UbuntuMegamReport) Options(t *templates.Template) {
+func (tpl *UbuntuVerticeReport) Options(t *templates.Template) {
 }
 
-func (tpl *UbuntuMegamReport) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamReport{})
+func (tpl *UbuntuVerticeReport) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuVerticeReport{})
 }
 
-type UbuntuMegamReportTemplate struct{}
+type UbuntuVerticeReportTemplate struct{}
 
-func (m *UbuntuMegamReportTemplate) Render(pkg urknall.Package) {
+func (m *UbuntuVerticeReportTemplate) Render(pkg urknall.Package) {
 
 	if err := writefile(); err != nil {
 		return
 	} else {
-		commands := "bash /var/lib/megam/report.sh megam"
+		commands := "bash /var/lib/megam/report.sh vertice"
 
 		commandWords := strings.Fields(commands)
 		out, err := exe_cmd(commandWords[0], commandWords[1:])
@@ -176,7 +176,7 @@ parseParameters()   {
   for item in "$@"
   do
     case $item in
-      [mM][eE][gG][aA][mM])
+      [vV][eE][rR][tT][iI][cC][eE])
       report_megam
       ;;
       [oO][nN][eE])
@@ -206,7 +206,7 @@ help() {
 
 report_megam() {
 
-  pkgnames=( megamcommon megamnilavu megamsnowflake megamgateway megamd riak rabbitmq-server ruby2.0 openjdk-7-jdk)
+  pkgnames=( verticecommon verticenilavu vertice verticegateway vertice riak megamnsqd ruby2.0 openjdk-7-jdk)
 
   howdy_pkgs pkgnames[@]
 
