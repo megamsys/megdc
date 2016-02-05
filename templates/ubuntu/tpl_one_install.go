@@ -62,15 +62,13 @@ func (m *UbuntuOneInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("requires",
 		Shell("echo 'oneadmin ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/oneadmin"),
-		//Shell("sudo apt-get -y install ntp ruby2.0 ruby2.0-dev ruby-dev"),
 		Shell("rm /usr/bin/ruby"),
 		Shell("rm /usr/bin/gem"),
 		Shell("ln -s /usr/bin/ruby2.0 /usr/bin/ruby"),
 		Shell("ln -s /usr/bin/gem2.0 /usr/bin/gem"),
 		Shell("sudo chmod 0440 /etc/sudoers.d/oneadmin"),
 		Shell("sudo rm /usr/share/one/install_gems"),
-		//Shell("sudo cp ~/install_gems /usr/share/one/install_gems"),
-		Shell("sudo cp /usr/share/megam/megdc/conf/trusty/opennebula/install_gems /usr/share/one/install_gems"),
+		Shell("sudo cp /usr/share/megam/megdc/conf/install_gems /usr/share/one/install_gems"),
 		Shell("sudo chmod 755 /usr/share/one/install_gems"),
 		Shell("sudo /usr/share/one/install_gems sunstone"),
 		Shell("sed -i 's/^[ \t]*:host:.*/:host: "+ip+"/' /etc/one/sunstone-server.conf"),
@@ -80,7 +78,6 @@ func (m *UbuntuOneInstallTemplate) Render(pkg urknall.Package) {
 		AsUser("oneadmin",Shell("onedatastore update 2 /tmp/ds_tm_mad")),
 		Shell("sunstone-server start"),
 		Shell("econe-server start"),
-
 		Shell("sudo -H -u oneadmin bash -c 'one restart'"),
 		Shell("service opennebula restart"),
 	)

@@ -22,17 +22,17 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var debianmegamdinstall *DebianMegamdInstall
+var debianverticeinstall *DebianMegamdInstall
 
 func init() {
-	debianmegamdinstall = &DebianMegamdInstall{}
-	templates.Register("DebianMegamdInstall", debianmegamdinstall)
+	debianverticeinstall = &DebianMegamdInstall{}
+	templates.Register("DebianMegamdInstall", debianverticeinstall)
 }
 
 type DebianMegamdInstall struct{}
 
 func (tpl *DebianMegamdInstall) Render(p urknall.Package) {
-	p.AddTemplate("megamd", &DebianMegamdInstallTemplate{})
+	p.AddTemplate("vertice", &DebianMegamdInstallTemplate{})
 }
 
 func (tpl *DebianMegamdInstall) Options(t *templates.Template) {
@@ -51,8 +51,8 @@ func (m *DebianMegamdInstallTemplate) Render(pkg urknall.Package) {
 		u.UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamd",
-	u.InstallPackages("megamd"),
+	pkg.AddCommands("vertice",
+	u.InstallPackages("vertice"),
 	)
 
 }

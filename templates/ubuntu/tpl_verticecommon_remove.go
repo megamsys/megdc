@@ -21,11 +21,11 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var ubuntumegamcommonremove *UbuntuMegamCommonRemove
+var ubuntuverticecommonremove *UbuntuMegamCommonRemove
 
 func init() {
-	ubuntumegamcommonremove = &UbuntuMegamCommonRemove{}
-	templates.Register("UbuntuMegamCommonRemove", ubuntumegamcommonremove)
+	ubuntuverticecommonremove = &UbuntuMegamCommonRemove{}
+	templates.Register("UbuntuMegamCommonRemove", ubuntuverticecommonremove)
 }
 
 type UbuntuMegamCommonRemove struct{}
@@ -44,10 +44,10 @@ func (tpl *UbuntuMegamCommonRemove) Run(target urknall.Target) error {
 type UbuntuMegamCommonRemoveTemplate struct{}
 
 func (m *UbuntuMegamCommonRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("megamcommon",
-		RemovePackage("megamcommon"),
+	pkg.AddCommands("verticecommon",
+		RemovePackage("verticecommon"),
 		RemovePackages(""),
-		PurgePackages("megamcommon"),
+		PurgePackages("verticecommon"),
 		Shell("dpkg --get-selections megam*"),
 	)
 	pkg.AddCommands("common-clean",

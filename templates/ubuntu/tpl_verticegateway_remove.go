@@ -44,13 +44,13 @@ func (tpl *UbuntuGatewayRemove) Run(target urknall.Target) error {
 type UbuntuGatewayRemoveTemplate struct{}
 
 func (m *UbuntuGatewayRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("megamgateway",
-		RemovePackage("megamgateway"),
+	pkg.AddCommands("verticegateway",
+		RemovePackage("verticegateway"),
 		RemovePackages(""),
-		PurgePackages("megamgateway"),
+		PurgePackages("verticegateway"),
 		Shell("dpkg --get-selections megam*"),
 	)
-	pkg.AddCommands("megamgateway-clean",
+	pkg.AddCommands("verticegateway-clean",
 		Shell("rm -r /var/lib/urknall/gateway*"),
 	)
 }

@@ -37,23 +37,23 @@ type Megamremove struct {
 
 func (g *Megamremove) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:  "megamremove",
-		Usage: `megamremove [--nilavu/-n] [--gateway/-g] [--snowflake/-s]...`,
+		Name:  "verticeremove",
+		Usage: `verticeremove [--nilavu/-n] [--gateway/-g] [--snowflake/-s]...`,
 		Desc: `Remove megam Oja orchestrator. For megdc, available install plaform is ubuntu.
 We are working to support centos.
 In order to Remove individual packages use the following options.
 
 The [[--nilavu]] parameter removes megam cockpit ui.
-This code name is nilavu packaged as megamnilavu.
+This code name is nilavu packaged as verticenilavu.
 
 The [[--gateway]] parameter removes megam gateway apiserver.
-This code name is gateway packaged as megamgateway.
+This code name is gateway packaged as verticegateway.
 
 The [[--snowflake]] parameter removes megam uidserver.
-This code name is snowflake packaged as megamsnowflake.
+This code name is snowflake packaged as vertice.
 
-The [[--megamd]] parameter removes megam omni scheduler.
-This code name is megamd packaged as megammegamd.
+The [[--vertice]] parameter removes megam omni scheduler.
+This code name is vertice packaged as megamvertice.
 
 For more information read http://docs.megam.io.
 `,
@@ -84,7 +84,7 @@ func (c *Megamremove) Flags() *gnuflag.FlagSet {
 		c.Fs.BoolVar(&c.GatewayRemove, "gateway", false, gwyMsg)
 		c.Fs.BoolVar(&c.GatewayRemove, "g", false, gwyMsg)
 		megdMsg := "Uninstall megam omni scheduler"
-		c.Fs.BoolVar(&c.MegamdRemove, "megamd", false, megdMsg)
+		c.Fs.BoolVar(&c.MegamdRemove, "vertice", false, megdMsg)
 		c.Fs.BoolVar(&c.MegamdRemove, "d", false, megdMsg)
 		snoMsg := "Uninstall megam uidserver"
 		c.Fs.BoolVar(&c.SnowflakeRemove, "snowflake", false, snoMsg)

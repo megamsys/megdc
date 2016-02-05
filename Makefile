@@ -21,7 +21,7 @@ GOPATH  := $(GOPATH):$(shell pwd)/../../../../
 
 define HG_ERROR
 
-FATAL: you need mercurial (hg) to download megamd dependencies.
+FATAL: you need mercurial (hg) to download vertice dependencies.
        Check README.md for details
 
 
@@ -29,13 +29,13 @@ endef
 
 define GIT_ERROR
 
-FATAL: you need git to download megamd dependencies.
+FATAL: you need git to download vertice dependencies.
        Check README.md for details
 endef
 
 define BZR_ERROR
 
-FATAL: you need bazaar (bzr) to download megamd dependencies.
+FATAL: you need bazaar (bzr) to download vertice dependencies.
        Check README.md for details
 endef
 

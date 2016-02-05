@@ -13,13 +13,13 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-
 package debian
 
+
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
 	 u "github.com/megamsys/megdc/templates/ubuntu"
+	"github.com/megamsys/urknall"
 )
 
 const (
@@ -29,36 +29,38 @@ const (
 	ListFilePath = "/etc/apt/sources.list.d/megam.list"
 )
 
-var debianmegamcommoninstall *DebianMegamCommonInstall
+var debiannilavuinstall *DebianNilavuInstall
 
 func init() {
-	debianmegamcommoninstall = &DebianMegamCommonInstall{}
-	templates.Register("DebianMegamCommonInstall", debianmegamcommoninstall)
+	debiannilavuinstall = &DebianNilavuInstall{}
+	templates.Register("DebianNilavuInstall", debiannilavuinstall)
 }
 
-type DebianMegamCommonInstall struct{}
+type DebianNilavuInstall struct{}
 
-func (tpl *DebianMegamCommonInstall) Render(p urknall.Package) {
-	p.AddTemplate("common", &DebianMegamCommonInstallTemplate{})
+func (tpl *DebianNilavuInstall) Render(p urknall.Package) {
+	p.AddTemplate("nilavu", &DebianNilavuInstallTemplate{})
 }
 
-func (tpl *DebianMegamCommonInstall) Options(t *templates.Template) {
+func (tpl *DebianNilavuInstall) Options(t *templates.Template) {
 }
 
-func (tpl *DebianMegamCommonInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &DebianMegamCommonInstall{})
+func (tpl *DebianNilavuInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &DebianNilavuInstall{})
 }
 
-type DebianMegamCommonInstallTemplate struct{}
+type DebianNilavuInstallTemplate struct{}
 
-func (m *DebianMegamCommonInstallTemplate) Render(pkg urknall.Package) {
+func (m *DebianNilavuInstallTemplate) Render(pkg urknall.Package) {
+  //fail on ruby2.0 < check
 
 	pkg.AddCommands("repository",
-		u.Shell("echo 'deb [arch=amd64] " + DefaultMegamRepo + "' > " + ListFilePath),
+		u.Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		u.UpdatePackagesOmitError(),
 	)
-	pkg.AddCommands("megamcommon",
-		u.InstallPackages("megamcommon"),
 
+	pkg.AddCommands("verticenilavu",
+		u.InstallPackages(" sdfaskld verticenilavu"),
 	)
+
 }

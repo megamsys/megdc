@@ -23,7 +23,7 @@ import (
 
 const (
 	// DefaultMegamRepo is the default megam repository to install if its not provided.
-	DefaultMegamRepo = "http://get.megam.io/0.9/ubuntu/14.04/ trusty testing"
+	DefaultMegamRepo = "http://get.megam.io/0.9/ubuntu/14.04/ trusty nightly"
 
 	ListFilePath = "/etc/apt/sources.list.d/megam.list"
 )
@@ -58,8 +58,8 @@ func (m *UbuntuNilavuInstallTemplate) Render(pkg urknall.Package) {
 		UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamnilavu",
-		InstallPackages("megamnilavu"),
+	pkg.AddCommands("verticenilavu",
+		InstallPackages("verticenilavu"),
 	)
 
 }

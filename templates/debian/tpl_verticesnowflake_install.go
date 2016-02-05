@@ -22,36 +22,36 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var debiangatewayinstall *DebianGatewayInstall
+var debiansnowflakeinstall *DebianSnowflakeInstall
 
 func init() {
-	debiangatewayinstall = &DebianGatewayInstall{}
-	templates.Register("DebianGatewayInstall", debiangatewayinstall)
+	debiansnowflakeinstall = &DebianSnowflakeInstall{}
+	templates.Register("DebianSnowflakeInstall", debiansnowflakeinstall)
 }
 
-type DebianGatewayInstall struct{}
+type DebianSnowflakeInstall struct{}
 
-func (tpl *DebianGatewayInstall) Render(p urknall.Package) {
-	p.AddTemplate("gateway", &DebianGatewayInstallTemplate{})
+func (tpl *DebianSnowflakeInstall) Render(p urknall.Package) {
+	p.AddTemplate("snowflake", &DebianSnowflakeInstallTemplate{})
 }
 
-func (tpl *DebianGatewayInstall) Options(t *templates.Template) {
+func (tpl *DebianSnowflakeInstall) Options(t *templates.Template) {
 }
 
-func (tpl *DebianGatewayInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &DebianGatewayInstall{})
+func (tpl *DebianSnowflakeInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &DebianSnowflakeInstall{})
 }
 
-type DebianGatewayInstallTemplate struct{}
+type DebianSnowflakeInstallTemplate struct{}
 
-func (m *DebianGatewayInstallTemplate) Render(pkg urknall.Package) {
-	//fail on Java -version (1.8 check)
+func (m *DebianSnowflakeInstallTemplate) Render(pkg urknall.Package) {
+
 	pkg.AddCommands("repository",
 		u.Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		u.UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamgateway",
-		u.InstallPackages("megamgateway"),
+	pkg.AddCommands("verticesnowflake",
+		u.InstallPackages("verticesnowflake"),
 	)
 }

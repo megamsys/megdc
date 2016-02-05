@@ -21,37 +21,36 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var ubuntumegamdinstall *UbuntuMegamdInstall
+var ubuntusnowflakeinstall *UbuntuSnowflakeInstall
 
 func init() {
-	ubuntumegamdinstall = &UbuntuMegamdInstall{}
-	templates.Register("UbuntuMegamdInstall", ubuntumegamdinstall)
+	ubuntusnowflakeinstall = &UbuntuSnowflakeInstall{}
+	templates.Register("UbuntuSnowflakeInstall", ubuntusnowflakeinstall)
 }
 
-type UbuntuMegamdInstall struct{}
+type UbuntuSnowflakeInstall struct{}
 
-func (tpl *UbuntuMegamdInstall) Render(p urknall.Package) {
-	p.AddTemplate("megamd", &UbuntuMegamdInstallTemplate{})
+func (tpl *UbuntuSnowflakeInstall) Render(p urknall.Package) {
+	p.AddTemplate("snowflake", &UbuntuSnowflakeInstallTemplate{})
 }
 
-func (tpl *UbuntuMegamdInstall) Options(t *templates.Template) {
+func (tpl *UbuntuSnowflakeInstall) Options(t *templates.Template) {
 }
 
-func (tpl *UbuntuMegamdInstall) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamdInstall{})
+func (tpl *UbuntuSnowflakeInstall) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuSnowflakeInstall{})
 }
 
-type UbuntuMegamdInstallTemplate struct{}
+type UbuntuSnowflakeInstallTemplate struct{}
 
-func (m *UbuntuMegamdInstallTemplate) Render(pkg urknall.Package) {
+func (m *UbuntuSnowflakeInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("repository",
 		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
 		UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamd",
-	InstallPackages("megamd"),
+	pkg.AddCommands("verticesnowflake",
+		InstallPackages("verticesnowflake"),
 	)
-
 }
