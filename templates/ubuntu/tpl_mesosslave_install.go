@@ -52,7 +52,6 @@ func (tpl *UbuntuMesosSlaveInstall) Options(t *templates.Template) {
 if sparkversion, ok := t.Options[SparkVersion]; ok {
   tpl.sparkversion = sparkversion
 }
-fmt.Println(tpl.sparkversion)
 
 }
 func (tpl *UbuntuMesosSlaveInstall) Render(p urknall.Package) {
