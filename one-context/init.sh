@@ -117,6 +117,8 @@ Name=ens3
 [Network]
 Address=$IP_ADDRESS/24
 Gateway=$GATEWAY
+DNS=8.8.8.8
+DNS=8.8.4.4
 EOF
 
 sudo systemctl restart systemd-networkd
