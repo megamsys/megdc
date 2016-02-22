@@ -21,37 +21,36 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var ubuntumegamdremove *UbuntuMegamdRemove
+var ubuntunilavuremove *UbuntuNilavuRemove
 
 func init() {
-	ubuntumegamdremove = &UbuntuMegamdRemove{}
-	templates.Register("UbuntuMegamdRemove", ubuntumegamdremove)
+	ubuntunilavuremove = &UbuntuNilavuRemove{}
+	templates.Register("UbuntuNilavuRemove", ubuntunilavuremove)
 }
 
-type UbuntuMegamdRemove struct{}
+type UbuntuNilavuRemove struct{}
 
-func (tpl *UbuntuMegamdRemove) Render(p urknall.Package) {
-	p.AddTemplate("megamd", &UbuntuMegamdRemoveTemplate{})
+func (tpl *UbuntuNilavuRemove) Render(p urknall.Package) {
+	p.AddTemplate("nilavu", &UbuntuNilavuRemoveTemplate{})
 }
 
-func (tpl *UbuntuMegamdRemove) Options(t *templates.Template) {
+func (tpl *UbuntuNilavuRemove) Options(t *templates.Template) {
 }
 
-func (tpl *UbuntuMegamdRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &UbuntuMegamdRemove{})
+func (tpl *UbuntuNilavuRemove) Run(target urknall.Target) error {
+	return urknall.Run(target, &UbuntuNilavuRemove{})
 }
 
-type UbuntuMegamdRemoveTemplate struct{}
+type UbuntuNilavuRemoveTemplate struct{}
 
-func (m *UbuntuMegamdRemoveTemplate) Render(pkg urknall.Package) {
-
-	pkg.AddCommands("megamd",
-		RemovePackage("megamd"),
+func (m *UbuntuNilavuRemoveTemplate) Render(pkg urknall.Package) {
+	pkg.AddCommands("verticenilavu",
+		RemovePackage("verticenilavu"),
 		RemovePackages(""),
-		PurgePackages("megamd"),
+		PurgePackages("verticenilavu"),
 		Shell("dpkg --get-selections megam*"),
 	)
-	pkg.AddCommands("megamd-clean",
-		Shell("rm -r /var/lib/urknall/megamd*"),
+	pkg.AddCommands("nilavu-clean",
+		Shell("rm -r /var/lib/urknall/nilavu*"),
 	)
 }

@@ -49,7 +49,7 @@ func cmdRegistry(name string) *cmd.Manager {
 			log.SetLevel(log.DebugLevel)
 		}
 	})
-	m.Register(&megam.MegamInstall{})
+	m.Register(&megam.VerticeInstall{})
 	m.Register(&megam.Megamremove{})
 	m.Register(&megam.Megamreport{})
 	m.Register(&one.Oneinstall{})

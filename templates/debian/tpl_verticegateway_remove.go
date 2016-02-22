@@ -22,37 +22,36 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var debianmegamdremove *DebianMegamdRemove
+var debiangatewayremove *DebianGatewayRemove
 
 func init() {
-	debianmegamdremove = &DebianMegamdRemove{}
-	templates.Register("DebianMegamdRemove", debianmegamdremove)
+	debiangatewayremove = &DebianGatewayRemove{}
+	templates.Register("DebianGatewayRemove", debiangatewayremove)
 }
 
-type DebianMegamdRemove struct{}
+type DebianGatewayRemove struct{}
 
-func (tpl *DebianMegamdRemove) Render(p urknall.Package) {
-	p.AddTemplate("megamd", &DebianMegamdRemoveTemplate{})
+func (tpl *DebianGatewayRemove) Render(p urknall.Package) {
+	p.AddTemplate("gateway", &DebianGatewayRemoveTemplate{})
 }
 
-func (tpl *DebianMegamdRemove) Options(t *templates.Template) {
+func (tpl *DebianGatewayRemove) Options(t *templates.Template) {
 }
 
-func (tpl *DebianMegamdRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &DebianMegamdRemove{})
+func (tpl *DebianGatewayRemove) Run(target urknall.Target) error {
+	return urknall.Run(target, &DebianGatewayRemove{})
 }
 
-type DebianMegamdRemoveTemplate struct{}
+type DebianGatewayRemoveTemplate struct{}
 
-func (m *DebianMegamdRemoveTemplate) Render(pkg urknall.Package) {
-
-	pkg.AddCommands("megamd",
-		u.RemovePackage("megamd"),
+func (m *DebianGatewayRemoveTemplate) Render(pkg urknall.Package) {
+	pkg.AddCommands("verticegateway",
+		u.RemovePackage("verticegateway"),
 		u.RemovePackages(""),
-		u.PurgePackages("megamd"),
+		u.PurgePackages("verticegateway"),
 		u.Shell("dpkg --get-selections megam*"),
 	)
-	pkg.AddCommands("megamd-clean",
-		u.Shell("rm -r /var/lib/urknall/megamd*"),
+	pkg.AddCommands("verticegateway-clean",
+		u.Shell("rm -r /var/lib/urknall/gateway*"),
 	)
 }

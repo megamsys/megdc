@@ -22,36 +22,36 @@ import (
 	"github.com/megamsys/urknall"
 )
 
-var debianmegamcommonremove *DebianMegamCommonRemove
+var debiannilavuremove *DebianNilavuRemove
 
 func init() {
-	debianmegamcommonremove = &DebianMegamCommonRemove{}
-	templates.Register("DebianMegamCommonRemove", debianmegamcommonremove)
+	debiannilavuremove = &DebianNilavuRemove{}
+	templates.Register("DebianNilavuRemove", debiannilavuremove)
 }
 
-type DebianMegamCommonRemove struct{}
+type DebianNilavuRemove struct{}
 
-func (tpl *DebianMegamCommonRemove) Render(p urknall.Package) {
-	p.AddTemplate("common", &DebianMegamCommonRemoveTemplate{})
+func (tpl *DebianNilavuRemove) Render(p urknall.Package) {
+	p.AddTemplate("nilavu", &DebianNilavuRemoveTemplate{})
 }
 
-func (tpl *DebianMegamCommonRemove) Options(t *templates.Template) {
+func (tpl *DebianNilavuRemove) Options(t *templates.Template) {
 }
 
-func (tpl *DebianMegamCommonRemove) Run(target urknall.Target) error {
-	return urknall.Run(target, &DebianMegamCommonRemove{})
+func (tpl *DebianNilavuRemove) Run(target urknall.Target) error {
+	return urknall.Run(target, &DebianNilavuRemove{})
 }
 
-type DebianMegamCommonRemoveTemplate struct{}
+type DebianNilavuRemoveTemplate struct{}
 
-func (m *DebianMegamCommonRemoveTemplate) Render(pkg urknall.Package) {
-	pkg.AddCommands("megamcommon",
-		u.RemovePackage("megamcommon"),
+func (m *DebianNilavuRemoveTemplate) Render(pkg urknall.Package) {
+	pkg.AddCommands("verticenilavu",
+		u.RemovePackage("verticenilavu"),
 		u.RemovePackages(""),
-		u.PurgePackages("megamcommon"),
+		u.PurgePackages("verticenilavu"),
 		u.Shell("dpkg --get-selections megam*"),
 	)
-	pkg.AddCommands("common-clean",
-		u.Shell("rm -r /var/lib/urknall/common*"),
+	pkg.AddCommands("nilavu-clean",
+		u.Shell("rm -r /var/lib/urknall/nilavu*"),
 	)
 }

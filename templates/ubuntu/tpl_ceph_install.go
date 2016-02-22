@@ -108,23 +108,23 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 	CephUser := m.cephuser
 	CephHome := m.cephhome
 
-	pkg.AddCommands("cephuser_add",
-	 AddUser(CephUser,false),
-	)
-	pkg.AddCommands("cephuser_sudoer",
-		Shell("echo '"+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
-	)
-	pkg.AddCommands("chmod_sudoer",
-		Shell("sudo chmod 0440 /etc/sudoers.d/"+CephUser+""),
-	)
-
 	pkg.AddCommands("cephinstall",
-		 Shell("echo deb https://download.ceph.com/debian-infernalis/ jessie main | tee /etc/apt/sources.list.d/ceph.list"),
+		 Shell("echo deb https://download.ceph.com/debian-infernalis/ $(lsb_release -sc) main | tee /etc/apt/sources.list.d/ceph.list"),
 		 Shell("wget -q -O- 'https://download.ceph.com/keys/release.asc' | apt-key add -"),
 		 InstallPackages("apt-transport-https  sudo"),
 		 UpdatePackagesOmitError(),
 		 InstallPackages("ceph-deploy ceph-common ceph-mds dnsmasq openssh-server ntp sshpass ceph ceph-mds ceph-deploy radosgw"),
 	 )
+
+	 pkg.AddCommands("cephuser_add",
+ 	 AddUser(CephUser,false),
+ 	)
+ 	pkg.AddCommands("cephuser_sudoer",
+ 		Shell("echo '"+CephUser+" ALL = (root) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/"+CephUser+""),
+ 	)
+ 	pkg.AddCommands("chmod_sudoer",
+ 		Shell("sudo chmod 0440 /etc/sudoers.d/"+CephUser+""),
+ 	)
 
 	pkg.AddCommands("etchost",
 		Shell("echo '"+ip+" "+host+"' >> /etc/hosts"),

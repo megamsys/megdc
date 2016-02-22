@@ -50,7 +50,7 @@ func (m *UbuntuGatewayInstallTemplate) Render(pkg urknall.Package) {
 		UpdatePackagesOmitError(),
 	)
 
-	pkg.AddCommands("megamgateway",
-		InstallPackages("megamgateway"),
+	pkg.AddCommands("verticegateway",
+		InstallPackages("verticegateway"),
 	)
 }
