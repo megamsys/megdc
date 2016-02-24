@@ -20,7 +20,7 @@ import (
 	"os"
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
-	
+
 	//"github.com/megamsys/libgo/cmd"
 )
 
@@ -87,6 +87,10 @@ func (m *UbuntuMesosSlaveInstallTemplate) Render(pkg urknall.Package) {
   sparkhome := SparkHome
   spark := Sparketc
 
+	pkg.AddCommands("meglyticsdir",
+  Shell("cd /var/lib;mkdir meglytics"),
+  )
+	
   pkg.AddCommands("MesospherRepo",
 	 Shell("apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF"),
    Shell("DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')"),

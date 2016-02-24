@@ -156,7 +156,7 @@ func (m *UbuntuMesosMasterInstallTemplate) Render(pkg urknall.Package) {
 		sshkey := "/home/id_rsa"
 
    pkg.AddCommands("meglyticsdir",
-   Shell("cd /var/lib;mkdir meglytics1"),
+   Shell("cd /var/lib;mkdir meglytics"),
 	 )
 	pkg.AddCommands("MesospherRepo",
     Shell("apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF"),
@@ -236,9 +236,7 @@ pkg.AddCommands("export",
 pkg.AddCommands("run",
 Shell("cd "+sparkhome+"spark-jobserver/bin;./server_deploy.sh megam"),
 )
-pkg.AddCommands("cadvisor",
-Shell("stop cadvisor"),
-)
+
 pkg.AddCommands("job",
 	Shell("cd "+sparkhome+"jobserver;./server_start.sh"),
 )
