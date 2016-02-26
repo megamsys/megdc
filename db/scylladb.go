@@ -17,6 +17,7 @@ type TableInfo struct {
 	Name    string
 	Pks     []string
 	Ccms    []string
+  Query   map[string]string
 }
 
 var noips = []string{"103.56.92.24"}

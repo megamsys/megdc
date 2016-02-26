@@ -45,6 +45,7 @@ func (c *Config) Validate() error {
 func ParseConfig() (*Config, error) {
 
 	config := NewConfig()
+	path := config.Common.Home
 	if path == "" {
 		path = config.Common.Home + "/megdc.conf"
 	}
@@ -52,7 +53,6 @@ func ParseConfig() (*Config, error) {
 	if _, err := toml.DecodeFile(path, &config); err != nil {
 		return nil, err
 	}
-
 	log.Debug(config)
 	return config, nil
 }
