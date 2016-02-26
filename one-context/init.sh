@@ -17,8 +17,12 @@ fi
 
 if [ "$DISTRO" = "Red Hat" ]  || [ "$DISTRO" = "Ubuntu" ] || [ "$DISTRO" = "Debian" ]
 then
-
-cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
+CONF='//usr/share/megam/verticegulpd/conf/gulpd.conf'
+else if [ "$DISTRO" = "CoreOS" ]; then
+  CONF='//var/lib/megam/verticegulpd/conf/gulpd.conf'
+fi
+fi
+cat >$CONF  << 'EOF'
 
 ### Welcome to the Gulpd configuration file.
 
@@ -64,29 +68,24 @@ cat > //usr/share/megam/megamgulpd/conf/gulpd.conf << 'EOF'
 
 EOF
 
-sed -i "s/^[ \t]*name_gulp.*/    name = \"$NODE_NAME\"/" /usr/share/megam/megamgulpd/conf/gulpd.conf
-sed -i "s/^[ \t]*cats_id.*/    cats_id = \"$ASSEMBLIES_ID\"/" /usr/share/megam/megamgulpd/conf/gulpd.conf
-sed -i "s/^[ \t]*cat_id.*/    cat_id = \"$ASSEMBLY_ID\"/" /usr/share/megam/megamgulpd/conf/gulpd.conf
-
-fi
-
-
-
+sed -i "s/^[ \t]*name_gulp.*/    name = \"$NODE_NAME\"/" $CONF
+sed -i "s/^[ \t]*cats_id.*/    cats_id = \"$ASSEMBLIES_ID\"/" $CONF
+sed -i "s/^[ \t]*cat_id.*/    cat_id = \"$ASSEMBLY_ID\"/" $CONF
 
 case "$DISTRO" in
    "Ubuntu")
-stop megamgulpd
-start megamgulpd
+stop verticegulpd
+start verticegulpd
    ;;
    "Debian")
-systemctl stop megamgulpd.service
-systemctl start megamgulpd.service
+systemctl stop verticegulpd.service
+systemctl start verticegulpd.service
 systemctl stop cadvisor.service
 systemctl start cadvisor.service
    ;;
    "Red Hat")
-systemctl stop megamgulpd.service
-systemctl start megamgulpd.service
+systemctl stop verticegulpd.service
+systemctl start verticegulpd.service
 systemctl stop cadvisor.service
 systemctl start cadvisor.service
    ;;
@@ -94,6 +93,11 @@ systemctl start cadvisor.service
 if [ -f /mnt/context.sh ]; then
   . /mnt/context.sh
 fi
+
+systemctl stop verticegulpd.service
+systemctl start verticegulpd.service
+systemctl stop cadvisor.service
+systemctl start cadvisor.service
 
 sudo cat >> //home/core/.ssh/authorized_keys <<EOF
 $SSH_PUBLIC_KEY
