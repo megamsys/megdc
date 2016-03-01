@@ -19,6 +19,7 @@ import (
 	"os"
 	log "github.com/Sirupsen/logrus"
 	"github.com/megamsys/megdc/packages/megam"
+	"github.com/megamsys/megdc/packages/config"
 	"github.com/megamsys/megdc/packages/one"
 	"github.com/megamsys/megdc/packages/onehost"
 	"github.com/megamsys/megdc/packages/ceph"
@@ -52,6 +53,7 @@ func cmdRegistry(name string) *cmd.Manager {
 	m.Register(&megam.VerticeInstall{})
 	m.Register(&megam.Megamremove{})
 	m.Register(&megam.Megamreport{})
+	m.Register(&config.VerticeConf{})
 	m.Register(&one.Oneinstall{})
 	m.Register(&one.Oneremove{})
 	m.Register(&onehost.Onehostinstall{})

@@ -69,6 +69,7 @@ bzr:
 
 
 get-code:
+	rm -rf ~/.go
 	go get $(GO_EXTRAFLAGS) -u -d -t -insecure ./...
 
 godep:
