@@ -22,6 +22,7 @@ import (
 	"github.com/megamsys/megdc/packages/one"
 	"github.com/megamsys/megdc/packages/onehost"
 	"github.com/megamsys/megdc/packages/ceph"
+	"github.com/megamsys/megdc/packages/mesos"
 	"github.com/megamsys/libgo/cmd"
 )
 
@@ -61,6 +62,8 @@ func cmdRegistry(name string) *cmd.Manager {
 	m.Register(&onehost.Sshpass{})
 	m.Register(&ceph.Cephinstall{})
 	m.Register(&ceph.Cephgateway{})
+	m.Register(&mesos.MesosMasterInstall{})
+	m.Register(&mesos.MesosSlaveInstall{})
 	return m
 }
 
