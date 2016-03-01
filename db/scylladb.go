@@ -19,7 +19,7 @@ type TableInfo struct {
 //A global function which helps to avoid passing config of riak everywhere.
 func newDBConn(noips string) (*db.ScyllaDB, error) {
 	 r,err := db.NewScyllaDB(db.ScyllaDBOpts{
-  		KeySpaceName: "testing",
+  		KeySpaceName: "vertice",
   		NodeIps:      []string{noips},
   		Username:     "",
   		Password:     "",

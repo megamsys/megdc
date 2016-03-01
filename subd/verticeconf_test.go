@@ -3,7 +3,6 @@ package subd
 import (
 //  "fmt"
   "testing"
-
 	"github.com/BurntSushi/toml"
 	"gopkg.in/check.v1"
 )
