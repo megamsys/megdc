@@ -25,17 +25,11 @@ import (
 type VerticeConf struct {
 	Fs               *gnuflag.FlagSet
 	All				 			 bool
-  VerticeConfig    bool
-	Path 						 string
-	Username 				 string
-	Host						 string
-	Password				 string
-
 }
 func (c *VerticeConf) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:  "config",
-		Usage: "config [--nilavu/-n] [--gateway/-g] [--vertice/-v]",
+		Usage: "config [-h]",
 		Desc: `Configure megam Oja orchestrator. For megdc, available setup.
 
 For more information read http://docs.megam.io.`,
@@ -59,10 +53,6 @@ func (c *VerticeConf) Run(context *cmd.Context) error {
 func (c *VerticeConf) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("", gnuflag.ExitOnError)
-		cfgMsg := "Vertice Configure with new settings"
-		c.Fs.BoolVar(&c.VerticeConfig, "config", false, cfgMsg)
-		tmlMsg := "Select your  file path [by default /var/lib/megam/vertice.conf]"
-		c.Fs.StringVar(&c.Path, "path", "/var/lib/megam/vertice.conf", tmlMsg)
 	}
 	return c.Fs
 }

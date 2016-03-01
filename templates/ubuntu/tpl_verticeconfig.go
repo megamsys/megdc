@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
+	"github.com/megamsys/megdc/subd"
 	"github.com/megamsys/megdc/db"
 )
 
@@ -34,8 +35,7 @@ type UbuntuVerticeConfig struct{
 }
 
 func (tpl *UbuntuVerticeConfig) Render(p urknall.Package) {
-	p.AddTemplate("vertice-conf", &UbuntuVerticeConfigTemplate{
-	})
+	p.AddTemplate("verticeconf", &UbuntuVerticeConfigTemplate{})
 }
 
 func (tpl *UbuntuVerticeConfig) Options(t *templates.Template) {
@@ -46,13 +46,12 @@ func (tpl *UbuntuVerticeConfig) Run(target urknall.Target) error {
 }
 
 type UbuntuVerticeConfigTemplate struct{
-	path string
 }
 
 func (m *UbuntuVerticeConfigTemplate) Render(pkg urknall.Package) {
-  c,_ := db.ParseConfig()
-  fmt.Println("************************************************")
-	fmt.Println(c)
-	err := db.StoreDB(c.Common)
-	fmt.Println(err)
+  c,_ := subd.ParseConfig()
+	err := db.StoreDB(c,c.Hosts.Scylla)
+	if err != nil {
+		fmt.Println(err)
+	}
 }

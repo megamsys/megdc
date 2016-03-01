@@ -1,31 +1,26 @@
 package db
 
 import (
-  "fmt"
 	log "github.com/Sirupsen/logrus"
-	"github.com/megamsys/gocassa"
+//	"github.com/megamsys/gocassa"
 	"github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/libgo/db"
 )
 
 
-type S struct{
-  sy *db.ScyllaDB
-}
-
 type TableInfo struct {
 	Name    string
 	Pks     []string
 	Ccms    []string
+  Db      string
   Query   map[string]string
 }
 
-var noips = []string{"103.56.92.24"}
 //A global function which helps to avoid passing config of riak everywhere.
-func newDBConn() (*db.ScyllaDB, error) {
+func newDBConn(noips string) (*db.ScyllaDB, error) {
 	 r,err := db.NewScyllaDB(db.ScyllaDBOpts{
   		KeySpaceName: "testing",
-  		NodeIps:      noips,
+  		NodeIps:      []string{noips},
   		Username:     "",
   		Password:     "",
   		Debug:        true,
@@ -38,17 +33,17 @@ func newDBConn() (*db.ScyllaDB, error) {
 
 
 func newScyllaTable(tinfo TableInfo, data interface{}) (*db.ScyllaTable) {
-  t, err := newDBConn()
+  t, err := newDBConn(tinfo.Db)
 	if err != nil {
 		return nil
 	}
 	log.Debugf("%s (%s, %s)", cmd.Colorfy("  > [scylla] fetch", "blue", "", "bold"),tinfo.Name)
 	tbl := t.Table(tinfo.Name, tinfo.Pks, tinfo.Ccms, data)
-  errors := tbl.T.(gocassa.TableChanger).CreateIfNotExist()
+  /*errors := tbl.T.(gocassa.TableChanger).CreateIfNotExist()
   if errors != nil {
     fmt.Println(errors)
     return nil
-  }
+  }*/
 	return tbl
 }
 
