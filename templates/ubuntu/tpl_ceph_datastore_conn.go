@@ -76,5 +76,4 @@ Uid := uuid.NewUUID()
 		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;sudo virsh secret-define secret.xml"),
 		Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;"+ fmt.Sprintf(Setval,Uid)),
 	)
-
 }
