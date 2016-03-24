@@ -22,8 +22,7 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-var INSTALL_PACKAGES = []string{"SnowflakeInstall",
-	"NilavuInstall",
+var INSTALL_PACKAGES = []string{"NilavuInstall",
 	"GatewayInstall",
 	"MegamdInstall"}
 
@@ -42,7 +41,7 @@ type VerticeInstall struct {
 func (c *VerticeInstall) Info() *cmd.Info {
 	return &cmd.Info{
 		Name:  "verticeinstall",
-		Usage: "verticeinstall [--nilavu/-n] [--gateway/-g] [--snowflake/-s]",
+		Usage: "verticeinstall [--nilavu/-n] [--gateway/-g] ",
 		Desc: `Install megam Oja orchestrator. For megdc, available install plaform is ubuntu.
 We are working to support centos.
 In order to install individual packages use the following options.
@@ -85,9 +84,6 @@ func (c *VerticeInstall) Flags() *gnuflag.FlagSet {
 		gwyMsg := "Install megam gateway apiserver"
 		c.Fs.BoolVar(&c.GatewayInstall, "gateway", false, gwyMsg)
 		c.Fs.BoolVar(&c.GatewayInstall, "g", false, gwyMsg)
-		snoMsg := "Install megam uidserver"
-		c.Fs.BoolVar(&c.SnowflakeInstall, "snowflake", false, snoMsg)
-		c.Fs.BoolVar(&c.SnowflakeInstall, "s", false, snoMsg)
 		megdMsg := "Install megam omni scheduler"
 		c.Fs.BoolVar(&c.MegamdInstall, "vertice", false, megdMsg)
 		c.Fs.BoolVar(&c.MegamdInstall, "d", false, megdMsg)
