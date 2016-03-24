@@ -21,17 +21,35 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var INSTALL_PACKAGES = []string{"CephInstall"}
+
 type Cephinstall struct {
 	Fs *gnuflag.FlagSet
 
-	Osd1 string
-	Osd2 string
+	Osd cmd.MapFlag
+	CephUser string
+	CephPassword string
+	PhyDev  string
 }
 
 func (g *Cephinstall) Info() *cmd.Info {
-	desc := `Install ceph with 2 OSDs (/storage1 /storage2).
+	desc := `Install ceph with multiple Osds.
 
-`
+In order to ceph with atleast 2 OSDs in a machine use the following options.
+
+The [--osd osd1=storage1 --osd osd2=storage2] parameter describes the storage partitioned all osds. This can be an individual hard disk
+
+
+The [[--cephuser]] parameter defines username chosen as the cephuser. The default user other root can be used.
+default is megdc.
+
+The [[--cephpassword]] parameter defines password for the cephuser.
+default is megdc.
+
+The [[--phy]] parameter defines name of the interface to use for ceph network
+default is eth0
+
+For more information read http://docs.megam.io.`
 	return &cmd.Info{
 		Name:    "cephinstall",
 		Usage:   `cephinstall`,
@@ -41,8 +59,10 @@ func (g *Cephinstall) Info() *cmd.Info {
 }
 
 func (c *Cephinstall) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
 	w := handler.NewWrap(c)
+	w.IfNoneAddPackages(INSTALL_PACKAGES)
+
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -54,8 +74,10 @@ func (c *Cephinstall) Run(context *cmd.Context) error {
 func (c *Cephinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.StringVar(&c.Osd1, "osd1", "", "osd1 storage drive for hosted machine")
-		c.Fs.StringVar(&c.Osd2, "osd2", "", "osd2 storage drive for hosted machine")
+		c.Fs.Var(&c.Osd, "osd", "list of osd storage drive for hosted machine")
+		c.Fs.StringVar(&c.CephUser, "cephuser", "megdc", "userid used as ceph user")
+		c.Fs.StringVar(&c.CephPassword, "cephpassword", "megdc", "password of the ceph user")
+    c.Fs.StringVar(&c.PhyDev, "phy", "eth0", "Physical device or Network interface")
 	}
 	return c.Fs
 }

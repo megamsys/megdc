@@ -21,7 +21,7 @@ GOPATH  := $(GOPATH):$(shell pwd)/../../../../
 
 define HG_ERROR
 
-FATAL: you need mercurial (hg) to download megamd dependencies.
+FATAL: you need mercurial (hg) to download vertice dependencies.
        Check README.md for details
 
 
@@ -29,13 +29,13 @@ endef
 
 define GIT_ERROR
 
-FATAL: you need git to download megamd dependencies.
+FATAL: you need git to download vertice dependencies.
        Check README.md for details
 endef
 
 define BZR_ERROR
 
-FATAL: you need bazaar (bzr) to download megamd dependencies.
+FATAL: you need bazaar (bzr) to download vertice dependencies.
        Check README.md for details
 endef
 
@@ -69,6 +69,7 @@ bzr:
 
 
 get-code:
+	rm -rf ~/.go
 	go get $(GO_EXTRAFLAGS) -u -d -t -insecure ./...
 
 godep:
@@ -83,7 +84,7 @@ _go_test:
 
 _megdc:
 	rm -f megdc
-	go build $(GO_EXTRAFLAGS) -o megdc ./cmd/megdc
+	go build $(GO_EXTRAFLAGS) -ldflags="-X main.date=$(shell date -u --iso-8601=seconds)" -o megdc ./cmd/megdc
 
 test: _go_test _megdc
 

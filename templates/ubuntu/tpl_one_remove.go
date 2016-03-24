@@ -17,8 +17,8 @@
 package ubuntu
 
 import (
-	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/templates"
+	"github.com/megamsys/urknall"
 )
 
 var ubuntuoneremove *UbuntuOneRemove
@@ -34,7 +34,7 @@ func (tpl *UbuntuOneRemove) Render(p urknall.Package) {
 	p.AddTemplate("one", &UbuntuOneRemoveTemplate{})
 }
 
-func (tpl *UbuntuOneRemove) Options(opts map[string]string) {
+func (tpl *UbuntuOneRemove) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuOneRemove) Run(target urknall.Target) error {
@@ -48,5 +48,8 @@ func (m *UbuntuOneRemoveTemplate) Render(pkg urknall.Package) {
 		RemovePackage("opennebula opennebula-sunstone"),
 		RemovePackages(""),
 		PurgePackages("opennebula opennebula-sunstone"),
+	)
+	pkg.AddCommands("one-clean",
+		Shell("rm -r /var/lib/urknall/one.*"),
 	)
 }

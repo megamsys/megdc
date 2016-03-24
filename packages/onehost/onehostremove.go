@@ -21,12 +21,11 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var REMOVE_PACKAGES = []string{"OneHostRemove"}
+
+
 type Onehostremove struct {
 	Fs *gnuflag.FlagSet
-
-	Host     string
-	Username string
-	Password string
 }
 
 func (g *Onehostremove) Info() *cmd.Info {
@@ -41,8 +40,9 @@ func (g *Onehostremove) Info() *cmd.Info {
 }
 
 func (c *Onehostremove) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
 	w := handler.NewWrap(c)
+	w.IfNoneAddPackages(REMOVE_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -54,13 +54,6 @@ func (c *Onehostremove) Run(context *cmd.Context) error {
 func (c *Onehostremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
 	}
 	return c.Fs
 }

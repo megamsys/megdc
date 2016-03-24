@@ -21,22 +21,22 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var REMOVE_PACKAGES = []string{"CephRemove"}
+
 type Cephremove struct {
-	Fs            *gnuflag.FlagSet
-	All           bool
-	CephRemove    bool
-	CEPH_LOG      string
-	ceph_user     string
-	ceph_password string
-	ceph_group    string
-	user_home     string
-	Host          string
-	osd1          string
-	osd2          string
+	Fs       *gnuflag.FlagSet
+	CephUser string
 }
 
 func (g *Cephremove) Info() *cmd.Info {
-	desc := `Remove ceph and delete 2 OSDs.
+	desc := `Remove ceph and delete your (2) OSDs.
+
+In order to remove ceph in a machine use the following options.
+
+The [[--cephuser]] parameter defines username chosen as the cephuser. The default user other root can be used.
+default is megdc.
+
+For more information read http://docs.megam.io.
 `
 	return &cmd.Info{
 		Name:    "cephremove",
@@ -47,8 +47,9 @@ func (g *Cephremove) Info() *cmd.Info {
 }
 
 func (c *Cephremove) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "remove")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "removing")
 	w := handler.NewWrap(c)
+	w.IfNoneAddPackages(REMOVE_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -60,6 +61,8 @@ func (c *Cephremove) Run(context *cmd.Context) error {
 func (c *Cephremove) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
+		c.Fs.StringVar(&c.CephUser, "cephuser", "megdc", "userid of the ceph user")
+
 	}
 	return c.Fs
 }

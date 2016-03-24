@@ -21,11 +21,11 @@ import (
 	"launchpad.net/gnuflag"
 )
 
+var INSTALL_PACKAGES = []string{"OneHostInstall"}
+
+
 type Onehostinstall struct {
 	Fs       *gnuflag.FlagSet
-	Host     string
-	Username string
-	Password string
 }
 
 func (g *Onehostinstall) Info() *cmd.Info {
@@ -33,15 +33,16 @@ func (g *Onehostinstall) Info() *cmd.Info {
 `
 	return &cmd.Info{
 		Name:    "onehostinstall",
-		Usage:   `onehostinstall [--host][-i] [--username]...`,
+		Usage:   `onehostinstall [--help/-h] ...`,
 		Desc:    desc,
 		MinArgs: 0,
 	}
 }
 
 func (c *Onehostinstall) Run(context *cmd.Context) error {
-	handler.SunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
+	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
 	w := handler.NewWrap(c)
+	w.IfNoneAddPackages(INSTALL_PACKAGES)
 	if h, err := handler.NewHandler(w); err != nil {
 		return err
 	} else if err := h.Run(); err != nil {
@@ -53,12 +54,6 @@ func (c *Onehostinstall) Run(context *cmd.Context) error {
 func (c *Onehostinstall) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-		c.Fs.StringVar(&c.Host, "host", "", "host address for machine")
-		c.Fs.StringVar(&c.Host, "h", "", "host address for machine")
-		c.Fs.StringVar(&c.Username, "username", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Username, "u", "", "username for hosted machine")
-		c.Fs.StringVar(&c.Password, "password", "", "password for hosted machine")
-		c.Fs.StringVar(&c.Password, "p", "", "password for hosted machine")
 	}
 	return c.Fs
 }

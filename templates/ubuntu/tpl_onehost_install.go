@@ -38,7 +38,7 @@ func (tpl *UbuntuOneHostInstall) Render(p urknall.Package) {
 	p.AddTemplate("onehost", &UbuntuOneHostInstallTemplate{})
 }
 
-func (tpl *UbuntuOneHostInstall) Options(opts map[string]string) {
+func (tpl *UbuntuOneHostInstall) Options(t *templates.Template) {
 }
 
 func (tpl *UbuntuOneHostInstall) Run(target urknall.Target) error {
@@ -48,26 +48,25 @@ func (tpl *UbuntuOneHostInstall) Run(target urknall.Target) error {
 type UbuntuOneHostInstallTemplate struct{}
 
 func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
-
-	//ip := GetLocalIP()
-
 	pkg.AddCommands("repository",
 		Shell("wget -q -O- http://downloads.opennebula.org/repo/Ubuntu/repo.key | apt-key add -"),
 		Shell("echo 'deb http://downloads.opennebula.org/repo/4.14/Ubuntu/14.04 stable opennebula' > /etc/apt/sources.list.d/opennebula.list"),
 		UpdatePackagesOmitError(),
 	)
-
 	pkg.AddCommands("depends",
 		InstallPackages("build-essential genromfs autoconf libtool qemu-utils libvirt0 bridge-utils lvm2 ssh iproute iputils-arping make"),
-	)
-
-	pkg.AddCommands("node",
-		InstallPackages("opennebula-node"),
 	)
 
 	pkg.AddCommands("verify",
 		InstallPackages("qemu-system-x86 qemu-kvm cpu-checker"),
 		And("kvm=`kvm-ok  | grep 'KVM acceleration can be used'`"),
+	)
+
+	pkg.AddCommands("one-node",
+		InstallPackages("opennebula-node"),
+	)
+  pkg.AddCommands("node",
+		Shell("sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin"),
 	)
 	pkg.AddCommands("vswitch",
 		InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),

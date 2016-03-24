@@ -26,6 +26,7 @@ import (
 	"github.com/megamsys/libgo/os"
 	"github.com/megamsys/megdc/templates"
 	_ "github.com/megamsys/megdc/templates/ubuntu"
+	_ "github.com/megamsys/megdc/templates/debian"
 	"github.com/tj/go-spin"
 )
 
@@ -72,6 +73,8 @@ func (h *Handler) SetTemplates(w *WrappedParms) {
 			template.Password = v
 		}
 		template.Name = strings.Title(h.platform) + k
+		template.Options = w.Options
+		template.Maps = w.Maps
 		h.templates = append(h.templates, template)
 	}
 }
@@ -90,21 +93,17 @@ func supportedOS() (string, error) {
 	osh := os.HostOS()
 	switch runtime.GOOS {
 	case "linux":
-		if osh != os.Ubuntu {
+		if osh != os.Ubuntu && osh != os.Debian && osh != os.CentOS {
 			return "", fmt.Errorf("unsupported operating system: %v, we support ubuntu.", osh)
 		}
 	default:
 		return "", fmt.Errorf("unsupported operating system: %v", runtime.GOOS)
 	}
-	return "ubuntu", nil
+	return strings.ToLower(osh.String()), nil
 }
 
 //Show a spinner until our services start.
-func FunSpin(vers string, logo string) {
-}
-
-//Show a spinner until our services start.
-func SunSpin(vers string, logo string, task string) {
+func FunSpin(vers string, logo string, task string) {
 	fmt.Printf("%s %s", vers, logo)
 
 	s := spin.New()

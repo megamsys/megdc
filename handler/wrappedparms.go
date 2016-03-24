@@ -21,20 +21,20 @@ import (
 	"reflect"
 	"strings"
 	"text/tabwriter"
-
 	"github.com/megamsys/libgo/cmd"
 )
 
 const (
-	HOST     = "host"
-	USERNAME = "username"
-	PASSWORD = "password"
+	HOST     = "Host"
+	USERNAME = "Username"
+	PASSWORD = "Password"
 	PLATFORM = "platform"
 )
 
 type WrappedParms struct {
 	Packages map[string]string
 	Options  map[string]string
+	Maps     map[string][]string
 }
 
 func (w *WrappedParms) String() string {
@@ -45,10 +45,11 @@ func (w *WrappedParms) String() string {
 	for _, v := range w.Packages {
 		b.Write([]byte(v + "\n"))
 	}
-	b.Write([]byte("---\n"))
+	b.Write([]byte(cmd.Colorfy("Options", "blue", "", "") + "\n"))
 	for k, v := range w.Options {
 		b.Write([]byte(k + "\t" + v + "\n"))
 	}
+	b.Write([]byte("---\n"))
 	fmt.Fprintln(wt)
 	wt.Flush()
 	return strings.TrimSpace(b.String())
@@ -58,13 +59,14 @@ func NewWrap(c interface{}) *WrappedParms {
 	w := WrappedParms{}
 	packages := make(map[string]string)
 	options := make(map[string]string)
-
+  maps := make(map[string][]string)
 	s := reflect.ValueOf(c).Elem()
 	typ := s.Type()
 	if s.Kind() == reflect.Struct {
 		for i := 0; i < s.NumField(); i++ {
 			key := s.Field(i)
 			value := s.FieldByName(typ.Field(i).Name)
+
 			switch key.Interface().(type) {
 			case bool:
 				if value.Bool() {
@@ -74,11 +76,21 @@ func NewWrap(c interface{}) *WrappedParms {
 				if value.String() != "" {
 					options[typ.Field(i).Name] = value.String()
 				}
+			case cmd.MapFlag:
+				c := make([]string, len(value.MapKeys()))
+        if len(value.MapKeys()) > 0 {
+					for k,v := range value.MapKeys() {
+					   	c[k] = value.MapIndex(v).String()
+					}
+          maps[typ.Field(i).Name] = c
+				}
 			}
 		}
 	}
+
 	w.Packages = packages
 	w.Options = options
+	w.Maps    = maps
 	return &w
 }
 
@@ -90,21 +102,29 @@ func (w *WrappedParms) Empty() bool {
 	return w.len() == 0
 }
 
-func (w *WrappedParms) AddPackage(k string) {
+func (w *WrappedParms) IfNoneAddPackages(p []string) {
+	if w.Empty() {
+		for i := range p {
+			w.addPackage(p[i])
+		}
+	}
+}
+
+func (w *WrappedParms) addPackage(k string) {
 	w.Packages[k] = k
 }
 
 func (w *WrappedParms) GetHost() (string, bool) {
 	k, v := w.Options[HOST]
-  return k, v
+	return k, v
 }
 
 func (w *WrappedParms) GetUserName() (string, bool) {
-	k,v := w.Options[USERNAME]
-	return k,v
+	k, v := w.Options[USERNAME]
+	return k, v
 }
 
 func (w *WrappedParms) GetPassword() (string, bool) {
-	k,v := w.Options[PASSWORD]
-	return k,v
+	k, v := w.Options[PASSWORD]
+	return k, v
 }

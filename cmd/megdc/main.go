@@ -19,9 +19,11 @@ import (
 	"os"
 	log "github.com/Sirupsen/logrus"
 	"github.com/megamsys/megdc/packages/megam"
+	"github.com/megamsys/megdc/packages/config"
 	"github.com/megamsys/megdc/packages/one"
 	"github.com/megamsys/megdc/packages/onehost"
 	"github.com/megamsys/megdc/packages/ceph"
+	"github.com/megamsys/megdc/packages/mesos"
 	"github.com/megamsys/libgo/cmd"
 )
 
@@ -31,6 +33,7 @@ var (
 	commit  string = "01"
 	branch  string = "master"
 	header  string = "Supported-Megdc"
+	date    string
 )
 
 func init() {
@@ -42,21 +45,27 @@ func init() {
 
 // Only log debug level when the -v flag is passed.
 func cmdRegistry(name string) *cmd.Manager {
-	m := cmd.BuildBaseManager(name, version, nil, func(modelvl int) {
+	m := cmd.BuildBaseManager(name, version+"  "+date, nil, func(modelvl int) {
 		if modelvl >= 1 {
 			log.SetLevel(log.DebugLevel)
 		}
 	})
-	m.Register(&megam.MegamInstall{})
+	m.Register(&megam.VerticeInstall{})
 	m.Register(&megam.Megamremove{})
 	m.Register(&megam.Megamreport{})
+	m.Register(&config.VerticeConf{})
 	m.Register(&one.Oneinstall{})
 	m.Register(&one.Oneremove{})
 	m.Register(&onehost.Onehostinstall{})
 	m.Register(&onehost.Onehostremove{})
-	m.Register(&ceph.Cephinstall{})
 	m.Register(&ceph.Cephremove{})
-	m.Register(&onehost.Bridge{})
+	m.Register(&ceph.Cephdatastore{})
+	m.Register(&onehost.Createnetwork{})
+	m.Register(&onehost.Sshpass{})
+	m.Register(&ceph.Cephinstall{})
+	m.Register(&ceph.Cephgateway{})
+	m.Register(&mesos.MesosMasterInstall{})
+	m.Register(&mesos.MesosSlaveInstall{})
 	return m
 }
 
