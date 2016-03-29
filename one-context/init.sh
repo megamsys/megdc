@@ -34,9 +34,11 @@ cat >$CONF  << 'EOF'
   ###
 
   [meta]
-    riak = ["192.168.1.105:8087"]
-    api  = "https://api.megam.io/v2"
-    nsqd = ["103.56.92.4:4151"]
+  [meta]
+      user = "root"
+      nsqd = ["192.168.1.100:4150"]
+      scylla = ["192.168.1.100"]
+      scylla_keyspace = "vertice"
 
   ###
   ### [gulpd]
@@ -94,11 +96,6 @@ if [ -f /mnt/context.sh ]; then
   . /mnt/context.sh
 fi
 
-systemctl stop verticegulpd.service
-systemctl start verticegulpd.service
-systemctl stop cadvisor.service
-systemctl start cadvisor.service
-
 sudo cat >> //home/core/.ssh/authorized_keys <<EOF
 $SSH_PUBLIC_KEY
 EOF
@@ -109,23 +106,27 @@ sudo cat > //etc/hostname <<EOF
 $HOSTNAME
 EOF
 
-sudo cat >> //etc/hosts <<EOF
-$IP_ADDRESS $HOSTNAME localhost
+sudo cat > //etc/hosts <<EOF
+$ETHO_IP $HOSTNAME localhost
 
 EOF
-
 sudo cat > //etc/systemd/network/static.network <<EOF
 [Match]
 Name=ens3
 
 [Network]
-Address=$IP_ADDRESS/24
-Gateway=$GATEWAY
+Address=$ETH0_IP/24
+Gateway=$ETH0_GATEWAY
 DNS=8.8.8.8
 DNS=8.8.4.4
 EOF
 
 sudo systemctl restart systemd-networkd
+systemctl stop verticegulpd.service
+systemctl start verticegulpd.service
+systemctl stop cadvisor.service
+systemctl start cadvisor.service
+
 
    ;;
 esac

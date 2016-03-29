@@ -53,7 +53,7 @@ func cmdRegistry(name string) *cmd.Manager {
 	m.Register(&megam.VerticeInstall{})
 	m.Register(&megam.Megamremove{})
 	m.Register(&megam.Megamreport{})
-	m.Register(&config.VerticeConf{})
+	#m.Register(&config.VerticeConf{})
 	m.Register(&one.Oneinstall{})
 	m.Register(&one.Oneremove{})
 	m.Register(&onehost.Onehostinstall{})
