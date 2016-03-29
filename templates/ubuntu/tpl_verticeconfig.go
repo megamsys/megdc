@@ -12,16 +12,16 @@
 ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
- */
+*/
 
 package ubuntu
-
+/*
 import (
 	"fmt"
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
 	"github.com/megamsys/megdc/subd"
-	"github.com/megamsys/megdc/db"
+	//"github.com/megamsys/megdc/db"
 )
 
 var ubuntuverticeconfig *UbuntuVerticeConfig
@@ -54,4 +54,4 @@ func (m *UbuntuVerticeConfigTemplate) Render(pkg urknall.Package) {
 	if err != nil {
 		fmt.Println(err)
 	}
-}
+}*/
