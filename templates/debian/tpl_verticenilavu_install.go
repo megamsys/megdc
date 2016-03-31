@@ -24,7 +24,8 @@ import (
 
 const (
 	// DefaultMegamRepo is the default megam repository to install if its not provided.
-	DefaultMegamRepo = "http://get.megam.io/0.9/debian/8/ jessie testing"
+	DefaultMegamRepo = "http://get.megam.io/1.0/debian/8/ jessie testing"
+
 
 	ListFilePath = "/etc/apt/sources.list.d/megam.list"
 )
@@ -60,7 +61,7 @@ func (m *DebianNilavuInstallTemplate) Render(pkg urknall.Package) {
 	)
 
 	pkg.AddCommands("verticenilavu",
-		u.InstallPackages(" sdfaskld verticenilavu"),
+		u.InstallPackages("verticenilavu"),
 	)
 
 }

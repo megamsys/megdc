@@ -29,7 +29,7 @@ import (
 
 // These variables are populated via the Go linker.
 var (
-	version string = "0.9"
+	version string = "1.0"
 	commit  string = "01"
 	branch  string = "master"
 	header  string = "Supported-Megdc"
