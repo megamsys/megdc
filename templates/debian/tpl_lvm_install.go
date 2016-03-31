@@ -15,7 +15,7 @@
  */
 
 package debian
-
+/*
 import (
 	"fmt"
 	"os"
@@ -86,17 +86,18 @@ type DebianLvmInstallTemplate struct {
 func (m *DebianLvmInstallTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
 	ip := u.IP(m.phydev)
-  osddir := u.ArraytoString("/","/osd",m.osds)
-	hostosd := u.ArraytoString(host+":/","/osd",m.osds)
-	LvmUser := m.bridge
+  osddir := u.ArraytoString("/dev","/",m.osds)
+	LvmBride := m.bridge
 	LvmHome := m.lvmhome
 
  pkg.AddCommands("lvminstall",
 	  u.UpdatePackagesOmitError(),
-		u.InstallPackages("lvm lvm2"),
+		u.InstallPackages("clvm lvm2 kvm libvirt-bin ruby nfs-common bridge-utils"),
 	)
+	pkg.AddCommands("lvminstall",
+ 	  u.Shell("echo "+ osddir +">test")
+ 	)
 
-	)
 }
 
 func (m *DebianLvmInstallTemplate) noOfIpsFromMask() int {
@@ -114,3 +115,4 @@ func (m *DebianLvmInstallTemplate) slashIp() string {
 func (m *DebianLvmInstallTemplate) osdPoolSize(osds ...string) int {
 	return len(osds)
 }
+*/

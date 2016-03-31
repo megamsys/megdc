@@ -54,7 +54,7 @@ func (g *Lvminstall) Info() *cmd.Info {
   func (c *Lvminstall) Run(context *cmd.Context) error {
   	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "install")
   	w := handler.NewWrap(c)
-  	w.IfNoneAddPackages(INSTALL_PACKAGES)
+  	w.IfNoneAddPackages(INSTALL_LVM)
 
   	if h, err := handler.NewHandler(w); err != nil {
   		return err
