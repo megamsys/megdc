@@ -29,7 +29,7 @@ import (
 
 // These variables are populated via the Go linker.
 var (
-	version string = "0.9"
+	version string = "1.0"
 	commit  string = "01"
 	branch  string = "master"
 	header  string = "Supported-Megdc"
@@ -53,11 +53,7 @@ func cmdRegistry(name string) *cmd.Manager {
 	m.Register(&megam.VerticeInstall{})
 	m.Register(&megam.Megamremove{})
 	m.Register(&megam.Megamreport{})
-<<<<<<< HEAD
-	#m.Register(&config.VerticeConf{})
-=======
 	//m.Register(&config.VerticeConf{})
->>>>>>> fcc7db0a6b85418338257d9abbbf23e86544f2c5
 	m.Register(&one.Oneinstall{})
 	m.Register(&one.Oneremove{})
 	m.Register(&onehost.Onehostinstall{})
