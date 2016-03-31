@@ -16,21 +16,20 @@
 
 package ubuntu
 
+/*
 import (
 	"fmt"
 	"os"
 	"strings"
 	"github.com/megamsys/megdc/templates"
-	u "github.com/megamsys/megdc/templates/ubuntu"
 	"github.com/megamsys/urknall"
 	//"github.com/megamsys/libgo/cmd"
 )
 
 const (
 	Bridge = "Bridge"
-	Osd     = "Osd"
+	Hdd     = "Hdd"
 	Phydev    = "PhyDev"
-	UserHomePrefix = "/home/"
 )
 
 var ubuntulvminstall *UbuntuLvmInstall
@@ -86,21 +85,17 @@ type UbuntuLvmInstallTemplate struct {
 func (m *UbuntuLvmInstallTemplate) Render(pkg urknall.Package) {
 	host, _ := os.Hostname()
 	ip := u.IP(m.phydev)
-  osddir := u.ArraytoString("/","/osd",m.osds)
+  osddir := u.ArraytoString("/dev","/osd",m.osds)
 	hostosd := u.ArraytoString(host+":/","/osd",m.osds)
 	LvmUser := m.bridge
 	LvmHome := m.lvmhome
 
  pkg.AddCommands("lvminstall",
-	  u.UpdatePackagesOmitError(),
-		u.InstallPackages("lvm lvm2"),
+	  UpdatePackagesOmitError(),
+		InstallPackages("clvm lvm2 kvm libvirt-bin ruby nfs-common bridge-utils"),
 	)
-
-	pkg.AddCommands("bridge_add",
-	 u.AddUser(LvmUser,false),
-	)
-
-
+	pkg.AddCommands("lvminstall",
+		Shell("echo "+ osddir +">test")
 	)
 }
 
@@ -119,3 +114,4 @@ func (m *UbuntuLvmInstallTemplate) slashIp() string {
 func (m *UbuntuLvmInstallTemplate) osdPoolSize(osds ...string) int {
 	return len(osds)
 }
+*/
