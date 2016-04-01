@@ -69,7 +69,7 @@ Uid := uuid.NewUUID()
 		u.Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;ceph auth get client.libvirt -o ceph.client.libvirt.keyring"),
 		u.Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster;cp ceph.client.* /etc/ceph"),
 		u.Shell("cd "+UserHomePrefix + Ceph_User+"/ceph-cluster; "+fmt.Sprintf(Echo,Uid)+" >uid"),
-		u.Shell("echo '*****************************************' "),
+		u.Shell("echo '*****************CEPH_SECRET************************' "),
 		u.Shell(fmt.Sprintf(Echo,Uid)),
 		u.Shell("echo '*****************************************' "),
 		u.WriteFile(UserHomePrefix + Ceph_User + "/ceph-cluster" + "/secret.xml",fmt.Sprintf(Xml,Uid),"root",644),

@@ -68,6 +68,9 @@ type UbuntuCreateNetworkTemplate struct {
 }
 
 func (m *UbuntuCreateNetworkTemplate) Render(pkg urknall.Package) {
+	pkg.AddCommands("vswitch",
+		InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),
+	)
 	pkg.AddCommands("ovs-createnetwork",
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-vsctl' > //etc/sudoers.d/openvswitch"),
 		Shell("sudo echo '"+"%"+"oneadmin ALL=(root) NOPASSWD: /usr/bin/ovs-ofctl' >> //etc/sudoers.d/openvswitch"),

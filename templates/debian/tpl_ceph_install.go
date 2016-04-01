@@ -108,7 +108,7 @@ func (m *DebianCephInstallTemplate) Render(pkg urknall.Package) {
 	hostosd := u.ArraytoString(host+":/","/osd",m.osds)
 	CephUser := m.cephuser
 	CephHome := m.cephhome
-	
+
  pkg.AddCommands("cephinstall",
 		u.Shell("echo deb https://download.ceph.com/debian-infernalis/ jessie main | tee /etc/apt/sources.list.d/ceph.list"),
 		u.Shell("wget -q -O- 'https://download.ceph.com/keys/release.asc' | apt-key add -"),
@@ -146,7 +146,7 @@ func (m *DebianCephInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("mkdir_osd",
 		u.Mkdir(osddir,"", 0755),
-		u.Shell("sudo chown -R"+CephUser+":"+CephUser+" "+osddir ),
+		u.Shell("sudo chown -R ceph:ceph "+osddir),
 	)
 
 	pkg.AddCommands("write_cephconf",

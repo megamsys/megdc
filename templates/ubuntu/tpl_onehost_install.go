@@ -68,8 +68,4 @@ func (m *UbuntuOneHostInstallTemplate) Render(pkg urknall.Package) {
   pkg.AddCommands("node",
 		Shell("sudo usermod -p $(echo oneadmin | openssl passwd -1 -stdin) oneadmin"),
 	)
-	pkg.AddCommands("vswitch",
-		InstallPackages("openvswitch-common openvswitch-switch bridge-utils"),
-	)
-
 }

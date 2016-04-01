@@ -28,7 +28,7 @@ type Lvminstall struct {
 	Osd cmd.MapFlag
 	Bridge string
 	PhyDev  string
-  Vgname string
+  VgName string
 }
 
 func (g *Lvminstall) Info() *cmd.Info {
@@ -69,7 +69,7 @@ func (g *Lvminstall) Info() *cmd.Info {
   		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
   		c.Fs.Var(&c.Osd, "osd", "list of osd storage drive for hosted machine")
   		c.Fs.StringVar(&c.Bridge, "bridge", "br0", "Bridge over Interface")
-  		c.Fs.StringVar(&c.Vgname, "vg", "megdc", "password of the ceph user")
+  		c.Fs.StringVar(&c.VgName, "vg", "megdc", "password of the ceph user")
       c.Fs.StringVar(&c.PhyDev, "phy", "eth0", "Physical device or Network interface")
   	}
   	return c.Fs

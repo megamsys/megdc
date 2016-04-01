@@ -143,7 +143,7 @@ func (m *UbuntuCephInstallTemplate) Render(pkg urknall.Package) {
 
 	pkg.AddCommands("mkdir_osd",
 		Mkdir(osddir,"", 0755),
-		Shell("sudo chown -R "+CephUser+":"+CephUser+" "+osddir ),
+		Shell("sudo chown -R ceph:ceph "+osddir ),
 	)
 
 	pkg.AddCommands("write_cephconf",
