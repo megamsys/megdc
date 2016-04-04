@@ -24,10 +24,10 @@ import (
 
 	pp "github.com/megamsys/libgo/cmd"
 	"github.com/megamsys/libgo/os"
-	"github.com/megamsys/megdc/templates"
-	_ "github.com/megamsys/megdc/templates/ubuntu"
-	_ "github.com/megamsys/megdc/templates/debian"
-		_ "github.com/megamsys/megdc/templates/centos"
+	"github.com/megamsys/libmegdc/templates"
+	_ "github.com/megamsys/libmegdc/templates/ubuntu"
+	_ "github.com/megamsys/libmegdc/templates/debian"
+		_ "github.com/megamsys/libmegdc/templates/centos"
 	"github.com/tj/go-spin"
 )
 
