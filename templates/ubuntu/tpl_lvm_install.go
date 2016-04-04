@@ -18,9 +18,8 @@ package ubuntu
 
 /*
 import (
-	"fmt"
 	"os"
-	"strings"
+	"fmt"
 	"github.com/megamsys/megdc/templates"
 	"github.com/megamsys/urknall"
 	//"github.com/megamsys/libgo/cmd"
@@ -28,8 +27,9 @@ import (
 
 const (
 	Bridge = "Bridge"
-	Hdd     = "Hdd"
-	Phydev    = "PhyDev"
+	Hdd     = "Osd"
+	Phy    = "PhyDev"
+	VgName  = "VgName"
 )
 
 var ubuntulvminstall *UbuntuLvmInstall
@@ -43,17 +43,21 @@ type UbuntuLvmInstall struct {
 	osds      []string
 	bridge string
 	phydev    string
+	vgname string
 }
 
 func (tpl *UbuntuLvmInstall) Options(t *templates.Template) {
-	if osds, ok := t.Maps[Osd]; ok {
+	if osds, ok := t.Maps[Hdd]; ok {
 		tpl.osds = osds
 	}
-	if bridge, ok := t.Options[LvmUser]; ok {
+	if bridge, ok := t.Options[Bridge]; ok {
 		tpl.bridge = bridge
 	}
-	if phydev, ok := t.Options[Phydev]; ok {
+	if phydev, ok := t.Options[Phy]; ok {
 		tpl.phydev = phydev
+	}
+	if vgname, ok := t.Options[VgName]; ok {
+		tpl.vgname = vgname
 	}
 }
 
@@ -61,7 +65,7 @@ func (tpl *UbuntuLvmInstall) Render(p urknall.Package) {
 	p.AddTemplate("lvm", &UbuntuLvmInstallTemplate{
 		osds:     tpl.osds,
 		bridge: tpl.bridge,
-		lvmhome: UserHomePrefix + tpl.bridge,
+	  vgname: tpl.vgname,
 		phydev:    tpl.phydev,
 	})
 }
@@ -71,6 +75,7 @@ func (tpl *UbuntuLvmInstall) Run(target urknall.Target) error {
 		osds:     tpl.osds,
 		bridge: tpl.bridge,
 		phydev:    tpl.phydev,
+		vgname: tpl.vgname,
 
 	})
 }
@@ -78,40 +83,28 @@ func (tpl *UbuntuLvmInstall) Run(target urknall.Target) error {
 type UbuntuLvmInstallTemplate struct {
   osds     []string
 	bridge string
-	lvmhome string
+	vgname string
 	phydev    string
 }
 
 func (m *UbuntuLvmInstallTemplate) Render(pkg urknall.Package) {
-	host, _ := os.Hostname()
-	ip := u.IP(m.phydev)
-  osddir := u.ArraytoString("/dev","/osd",m.osds)
-	hostosd := u.ArraytoString(host+":/","/osd",m.osds)
-	LvmUser := m.bridge
-	LvmHome := m.lvmhome
-
+	host,_ := os.Hostname()
+	phy := m.phydev
+	ip := IP(phy)
+  osddir := ArraytoString("/dev/","",m.osds)
+	bridge := m.bridge
+	vg := m.vgname
+  fmt.Println("bridge  ",bridge )
  pkg.AddCommands("lvminstall",
 	  UpdatePackagesOmitError(),
 		InstallPackages("clvm lvm2 kvm libvirt-bin ruby nfs-common bridge-utils"),
 	)
-	pkg.AddCommands("lvminstall",
-		Shell("echo "+ osddir +">test")
+	pkg.AddCommands("vg-setup",
+		Shell("ip addr flush dev "+phy+""),
+		Shell("brctl addbr "+ bridge),
+		Shell("brctl addif "+ bridge+" "+phy+""),
+		Shell("pvcreate "+osddir+""),
+		Shell("vgcreate "+vg+" "+osddir+""),
 	)
-}
-
-func (m *UbuntuLvmInstallTemplate) noOfIpsFromMask() int {
-	si, _ := u.IPNet(m.phydev).Mask.Size() //from your netwwork
-	return si
-}
-
-func (m *UbuntuLvmInstallTemplate) slashIp() string {
-	s := strings.Split(u.IP(m.phydev), ".")
-	p := s[0 : len(s)-1]
-	p = append(p, "0")
-	return fmt.Sprintf("%s/%d", strings.Join(p, "."), m.noOfIpsFromMask())
-}
-
-func (m *UbuntuLvmInstallTemplate) osdPoolSize(osds ...string) int {
-	return len(osds)
 }
 */
