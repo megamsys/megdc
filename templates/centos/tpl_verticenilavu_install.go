@@ -26,6 +26,13 @@ const (
 	DefaultMegamRepo = "http://get.megam.io/1.0/ubuntu/14.04/ trusty nightly"
 
 	ListFilePath = "/etc/apt/sources.list.d/megam.list"
+
+
+	Strict = `
+	ConnectTimeout 5
+	Host *
+	StrictHostKeyChecking no
+	`
 )
 
 var centosnilavuinstall *CentosNilavuInstall
@@ -53,20 +60,12 @@ type CentosNilavuInstallTemplate struct{}
 func (m *CentosNilavuInstallTemplate) Render(pkg urknall.Package) {
   //fail on ruby2.0 < check
 
-	//pkg.AddCommands("repository",
-		//Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
-	//UpdatePackagesOmitError(),
-//	)
+	pkg.AddCommands("repository",
+		Shell("echo 'deb [arch=amd64] "+DefaultMegamRepo+"' > "+ListFilePath),
+		UpdatePackagesOmitError(),
+	)
 
-	//pkg.AddCommands("verticenilavu",
-		//InstallPackages("verticenilavu"),
-	//)
-
-   pkg.AddCommands("nginx",
-   InstallPackages("epel-release"),
- )
-	 pkg.AddCommands("install",
-   InstallPackages("nginx"),
-	 )
-
+	pkg.AddCommands("verticenilavu",
+		InstallPackages("verticenilavu"),
+	)
 }

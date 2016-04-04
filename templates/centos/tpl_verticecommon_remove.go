@@ -47,7 +47,6 @@ func (m *CentOsMegamCommonRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("verticecommon",
 		RemovePackage("verticecommon"),
 		RemovePackages(""),
-		PurgePackages("verticecommon"),
 		Shell("dpkg --get-selections megam*"),
 	)
 	pkg.AddCommands("common-clean",

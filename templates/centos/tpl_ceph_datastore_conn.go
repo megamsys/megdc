@@ -38,28 +38,28 @@ Setval=`sudo virsh secret-set-value --secret %v --base64 $(cat client.libvirt.ke
 Echo =`echo '%v'`
 )
 
-var centoscephdatastore *CentosCephDatastore
+var centoscephdatastore *CentOsCephDatastore
 
 func init() {
-	centoscephdatastore = &CentosCephDatastore{}
-	templates.Register("CentosCephDatastore", centoscephdatastore)
+	centoscephdatastore = &CentOsCephDatastore{}
+	templates.Register("CentOsCephDatastore", centoscephdatastore)
 }
 
-type CentosCephDatastore struct {}
+type CentOsCephDatastore struct {}
 
-func (tpl *CentosCephDatastore) Options(t *templates.Template) {}
+func (tpl *CentOsCephDatastore) Options(t *templates.Template) {}
 
-func (tpl *CentosCephDatastore) Render(p urknall.Package) {
-	p.AddTemplate("cephds", &CentosCephDatastoreTemplate{})
+func (tpl *CentOsCephDatastore) Render(p urknall.Package) {
+	p.AddTemplate("cephds", &CentOsCephDatastoreTemplate{})
 }
 
-func (tpl *CentosCephDatastore) Run(target urknall.Target) error {
-	return urknall.Run(target, &CentosCephDatastore{})
+func (tpl *CentOsCephDatastore) Run(target urknall.Target) error {
+	return urknall.Run(target, &CentOsCephDatastore{})
 }
 
-type CentosCephDatastoreTemplate struct {}
+type CentOsCephDatastoreTemplate struct {}
 
-func (m *CentosCephDatastoreTemplate) Render(pkg urknall.Package) {
+func (m *CentOsCephDatastoreTemplate) Render(pkg urknall.Package) {
 Uid := uuid.NewUUID()
 		pkg.AddCommands("cephdatastore",
   	AsUser(Ceph_User,Shell("ceph osd pool create "+Poolname+" 150")),

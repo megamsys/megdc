@@ -48,7 +48,7 @@ func (m *CentOsOneHostRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("onehost",
 		RemovePackage("opennebula-node openvswitch-common openvswitch-switch bridge-utils sshpass"),
 		RemovePackages(""),
-		PurgePackages("opennebula-node openvswitch-common openvswitch-switch bridge-utils sshpass"),
+		
 	)
 	pkg.AddCommands("onehost-clean",
 		Shell("rm -rf /var/lib/urknall/onehost*"),

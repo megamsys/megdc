@@ -47,7 +47,6 @@ func (m *CentOsNilavuRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("verticenilavu",
 		RemovePackage("verticenilavu"),
 		RemovePackages(""),
-		PurgePackages("verticenilavu"),
 		Shell("dpkg --get-selections megam*"),
 	)
 	pkg.AddCommands("nilavu-clean",

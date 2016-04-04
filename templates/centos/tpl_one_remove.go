@@ -48,7 +48,7 @@ func (m *CentOsOneRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("one",
 		RemovePackage("opennebula opennebula-sunstone"),
 		RemovePackages(""),
-		PurgePackages("opennebula opennebula-sunstone"),
+		
 	)
 	pkg.AddCommands("one-clean",
 		Shell("rm -rf /var/lib/urknall/one.*"),

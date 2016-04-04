@@ -25,7 +25,7 @@ var centosverticeremove *CentOsMegamdRemove
 
 func init() {
 	centosverticeremove = &CentOsMegamdRemove{}
-	templates.Register("CentosMegamdRemove", centosverticeremove)
+	templates.Register("CentOsMegamdRemove", centosverticeremove)
 }
 
 type CentOsMegamdRemove struct{}
@@ -48,7 +48,6 @@ func (m *CentOsMegamdRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("vertice",
 		RemovePackage("vertice"),
 		RemovePackages(""),
-		PurgePackages("vertice"),
 		Shell("dpkg --get-selections megam*"),
 	)
 	pkg.AddCommands("vertice-clean",

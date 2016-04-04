@@ -47,7 +47,6 @@ func (m *CentOsGatewayRemoveTemplate) Render(pkg urknall.Package) {
 	pkg.AddCommands("verticegateway",
 		RemovePackage("verticegateway"),
 		RemovePackages(""),
-		PurgePackages("verticegateway"),
 		Shell("dpkg --get-selections megam*"),
 	)
 	pkg.AddCommands("verticegateway-clean",
