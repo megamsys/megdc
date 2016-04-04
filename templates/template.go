@@ -151,6 +151,8 @@ func get(name string) (TemplateRunnable, error) {
 // Register registers a new repository manager, that can be later configured
 // and used.
 func Register(name string, runnable TemplateRunnable) {
+	fmt.Println("================================")
+	fmt.Println(name)
 	if runnables == nil {
 		runnables = make(map[string]TemplateRunnable)
 	}

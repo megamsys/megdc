@@ -16,6 +16,7 @@
 package main
 
 import (
+       "fmt"
 	"os"
 	log "github.com/Sirupsen/logrus"
 	"github.com/megamsys/megdc/packages/megam"
@@ -75,6 +76,8 @@ func cmdRegistry(name string) *cmd.Manager {
 //Run the commands from cli.
 func main() {
 	name := cmd.ExtractProgramName(os.Args[0])
+        fmt.Println("****************************")
+        fmt.Println(name)
 	manager := cmdRegistry(name)
 	manager.Run(os.Args[1:])
 }
