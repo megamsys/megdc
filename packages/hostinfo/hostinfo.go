@@ -28,6 +28,9 @@ type HostInfo struct {
 	Fs               *gnuflag.FlagSet
 	All              bool
 	HostInfo    bool
+	Host string
+	Username string
+	Password string
 }
 
 func (c *HostInfo) Info() *cmd.Info {
@@ -54,7 +57,13 @@ func (c *HostInfo) Run(context *cmd.Context) error {
 func (c *HostInfo) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
+		
+		hostMsg := "The host of the server to ssh"
+		c.Fs.StringVar(&c.Host, "host", "localhost", hostMsg)
+		usrMsg := "The username of the server"
+		c.Fs.StringVar(&c.Username, "username", "", usrMsg)
+		pwdMsg := "The password of the server"
+		c.Fs.StringVar(&c.Password, "password", "", pwdMsg)
 	}
 
 	return c.Fs
