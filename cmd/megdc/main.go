@@ -26,6 +26,9 @@ import (
 	"github.com/megamsys/megdc/packages/ceph"
 	"github.com/megamsys/megdc/packages/mesos"
          "github.com/megamsys/megdc/packages/hostinfo"
+        "github.com/megamsys/megdc/packages/hostcheck"
+         "github.com/megamsys/megdc/packages/volume"
+         "github.com/megamsys/megdc/packages/bridge"
 	"github.com/megamsys/libgo/cmd"
 )
 
@@ -70,6 +73,9 @@ func cmdRegistry(name string) *cmd.Manager {
 	m.Register(&mesos.MesosMasterInstall{})
 	m.Register(&mesos.MesosSlaveInstall{})
         m.Register(&hostinfo.HostInfo{})
+        m.Register(&hostcheck.HostCheck{})
+        m.Register(&volume.CreateVolume{})
+        m.Register(&bridge.CreateBridge{})
 	return m
 }
 
