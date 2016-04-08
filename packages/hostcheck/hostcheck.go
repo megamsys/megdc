@@ -13,7 +13,7 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-package hostinfo
+package hostcheck
 
 import (
 	"github.com/megamsys/libgo/cmd"
@@ -22,27 +22,28 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-var INSTALL_PACKAGES = []string{"HostInfo"}
+var INSTALL_PACKAGES = []string{"HostCheck"}
 
-type HostInfo struct {
+type HostCheck struct {
 	Fs               *gnuflag.FlagSet
 	All              bool
-	HostInfo    bool
+	HostCheck    bool
 	Host string
 	Username string
 	Password string
 }
 
-func (c *HostInfo) Info() *cmd.Info {
+func (c *HostCheck) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:  "hostinfo",
-		Usage: "hostinfo",
-		Desc: `To get host information like to check hostname, memory, ipaddress, cpu etc..`,
+		Name:  "hostcheck",
+		Usage: "hostcheck",
+		Desc: `The hostcheck is used to check that vt enable`,
 		MinArgs: 0,
 	}
 }
 
-func (c *HostInfo) Run(context *cmd.Context) error {
+
+func (c *HostCheck) Run(context *cmd.Context) error {
 	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "installing")
 	w := handler.NewWrap(c)
 	w.IfNoneAddPackages(INSTALL_PACKAGES)
@@ -54,10 +55,9 @@ func (c *HostInfo) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *HostInfo) Flags() *gnuflag.FlagSet {
+func (c *HostCheck) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
 		hostMsg := "The host of the server to ssh"
 		c.Fs.StringVar(&c.Host, "host", "localhost", hostMsg)
 		usrMsg := "The username of the server"

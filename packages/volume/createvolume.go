@@ -13,7 +13,7 @@
 ** See the License for the specific language governing permissions and
 ** limitations under the License.
  */
-package hostinfo
+package volume
 
 import (
 	"github.com/megamsys/libgo/cmd"
@@ -22,27 +22,32 @@ import (
 	"launchpad.net/gnuflag"
 )
 
-var INSTALL_PACKAGES = []string{"HostInfo"}
+var INSTALL_PACKAGES = []string{"CreateVolume"}
 
-type HostInfo struct {
+type CreateVolume struct {
 	Fs               *gnuflag.FlagSet
 	All              bool
-	HostInfo    bool
+	CreateVolume    bool
+  Disk string
 	Host string
 	Username string
 	Password string
-}
+  }
 
-func (c *HostInfo) Info() *cmd.Info {
+func (c *CreateVolume) Info() *cmd.Info {
 	return &cmd.Info{
-		Name:  "hostinfo",
-		Usage: "hostinfo",
-		Desc: `To get host information like to check hostname, memory, ipaddress, cpu etc..`,
+		Name:  "createvolume",
+		Usage: "createvolume",
+		Desc: `The createvolume is used to create the volume and group.
+    In order to install individual packages use the following options.
+
+    The [[--disk]] parameter defines add the volume to disk`,
 		MinArgs: 0,
 	}
 }
 
-func (c *HostInfo) Run(context *cmd.Context) error {
+
+func (c *CreateVolume) Run(context *cmd.Context) error {
 	handler.FunSpin(cmd.Colorfy(handler.Logo, "green", "", "bold"), "", "installing")
 	w := handler.NewWrap(c)
 	w.IfNoneAddPackages(INSTALL_PACKAGES)
@@ -54,10 +59,11 @@ func (c *HostInfo) Run(context *cmd.Context) error {
 	return nil
 }
 
-func (c *HostInfo) Flags() *gnuflag.FlagSet {
+func (c *CreateVolume) Flags() *gnuflag.FlagSet {
 	if c.Fs == nil {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
-
+    diskMsg := "create volume in disk"
+		c.Fs.StringVar(&c.Disk, "disk", "", diskMsg)
 		hostMsg := "The host of the server to ssh"
 		c.Fs.StringVar(&c.Host, "host", "localhost", hostMsg)
 		usrMsg := "The username of the server"
