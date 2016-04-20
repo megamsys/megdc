@@ -29,6 +29,9 @@ import (
         "github.com/megamsys/megdc/packages/hostcheck"
          "github.com/megamsys/megdc/packages/volume"
          "github.com/megamsys/megdc/packages/bridge"
+         "github.com/megamsys/megdc/packages/attachonehost"
+          "github.com/megamsys/megdc/packages/datastore"
+         "github.com/megamsys/megdc/packages/network"
 	"github.com/megamsys/libgo/cmd"
 )
 
@@ -76,6 +79,9 @@ func cmdRegistry(name string) *cmd.Manager {
         m.Register(&hostcheck.HostCheck{})
         m.Register(&volume.CreateVolume{})
         m.Register(&bridge.CreateBridge{})
+        m.Register(&attachonehost.AttachOneHost{})
+        m.Register(&datastore.CreateDatastoreLvm{})
+        m.Register(&network.CreateNetworkOpennebula{})
 	return m
 }
 

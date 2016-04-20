@@ -29,7 +29,12 @@ type CreateBridge struct {
 	All              bool
 	CreateBridge    bool
   Bridgename string
-  Port string
+  PhyDev string
+	Network string
+	Netmask string
+	Gateway string
+	Dnsname1 string
+	Dnsname2 string
 	Host string
 	Username string
 	Password string
@@ -42,7 +47,12 @@ func (c *CreateBridge) Info() *cmd.Info {
 		Desc: ` Create bridge and interfaces.
     In order to install individual packages use the following options.
     The [[--bridgename]] parameter defines to specify which name the bridge is created.
-    The [[--port]] parameter defines to specify the interface name`,
+    The [[--phydev]] parameter defines to specify the interface name
+		The [[--network]] parameter defines to specify the network address
+		The [[--netmask]] parameter defines to specify the netmask address
+		The [[--gateway]] parameter defines to specify the gateway address
+    The [[--dnsname1]] parameter defines to specify the  name server
+		The [[--dnsname2]] parameter defines to specify the  name server`,
 		MinArgs: 0,
 	}
 }
@@ -65,8 +75,18 @@ func (c *CreateBridge) Flags() *gnuflag.FlagSet {
 		c.Fs = gnuflag.NewFlagSet("megdc", gnuflag.ExitOnError)
     bridgeMsg := "specify the name of bridge"
 		c.Fs.StringVar(&c.Bridgename, "bridgename", "one", bridgeMsg)
-    portMsg := "specify the interfacename"
-		c.Fs.StringVar(&c.Port, "port", "", portMsg)
+    phydevMsg := "specify the interfacename"
+		c.Fs.StringVar(&c.PhyDev, "phydev", "eth0", phydevMsg)
+		networkMsg := "specify the network address"
+		c.Fs.StringVar(&c.Network, "network", "", networkMsg)
+		netmaskMsg := "specify the netmask address"
+		c.Fs.StringVar(&c.Netmask, "netmask", "", netmaskMsg)
+		gatewayMsg := "specify the gateway address"
+		c.Fs.StringVar(&c.Gateway, "gateway", "", gatewayMsg)
+		dnsname1Msg := "specify the name server"
+		c.Fs.StringVar(&c.Dnsname1, "dnsname1", "", dnsname1Msg)
+		dnsname2Msg := "specify the name server"
+		c.Fs.StringVar(&c.Dnsname2, "dnsname2", "", dnsname2Msg)
 		hostMsg := "The host of the server to ssh"
 		c.Fs.StringVar(&c.Host, "host", "localhost", hostMsg)
 		usrMsg := "The username of the server"
