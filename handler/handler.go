@@ -26,8 +26,8 @@ import (
 	"github.com/megamsys/libgo/os"
 	"github.com/megamsys/libmegdc/templates"
 	_ "github.com/megamsys/libmegdc/templates/ubuntu"
-	//_ "github.com/megamsys/libmegdc/templates/debian"
-	//_ "github.com/megamsys/libmegdc/templates/centos"
+	_ "github.com/megamsys/libmegdc/templates/debian"
+	_ "github.com/megamsys/libmegdc/templates/centos"
 	"github.com/tj/go-spin"
 )
 
