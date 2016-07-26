@@ -25,10 +25,10 @@ import (
 var INSTALL_PACKAGES = []string{"HostInfo"}
 
 type HostInfo struct {
-	Fs               *gnuflag.FlagSet
-	All              bool
+	Fs           *gnuflag.FlagSet
+	All         bool
 	HostInfo    bool
-	Host string
+	Host     string
 	Username string
 	Password string
 }
