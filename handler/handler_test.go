@@ -14,3 +14,27 @@
 ** limitations under the License.
  */
 package handler
+/*
+func Runner(packages []string, i *WrappedParms) (string, error) {
+	var outBuffer bytes.Buffer
+	inputs := []string{"email=info@megam.io"} // Email is needed for urknall template's events trigger
+	logWriter.Async()
+	defer logWriter.Close()
+	writer := io.MultiWriter(&outBuffer, os.Stdout)
+	i.IfNoneAddPackages(packages)
+	if h, err := NewHandler(i); err != nil {
+		return "", err
+	} else if err := h.Run(writer, inputs); err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	s := outBuffer.String()
+	if strings.Contains(s, "failed to initiate user") {
+		return s, ers.ErrUserPrivileges
+	} else if strings.Contains(s, "ssh: handshake failed") {
+		return s, ers.ErrAuthendication
+	}
+	return s, nil
+}
+*/
