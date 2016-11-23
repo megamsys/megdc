@@ -80,7 +80,7 @@ func (h *Handler) SetTemplates(w *WrappedParms) {
 	}
 }
 
-func (h *Handler) Run(w io.Writer,inputs []string) error {
+func (h *Handler) Run(w io.Writer,inputs map[string]string) error {
 	return templates.RunInTemplates(h.templates, func(t *templates.Template, _ chan *templates.Template) error {
 		err := t.Run(w,inputs)
 		if err != nil {
