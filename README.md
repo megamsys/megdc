@@ -40,7 +40,7 @@ make
 
 ### Documentation
 
-Refer [documentation] (http://www.docs.megam.io)
+Refer [documentation] (https://megam.io)
 
 
 
